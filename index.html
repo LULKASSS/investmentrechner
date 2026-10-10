@@ -21,6 +21,7 @@
   --accent:#7F5FE8; --accent-ink:#6445CF; --accent-soft:rgba(127,95,232,.14); --accent-line:rgba(127,95,232,.42);
   --c-grv:#C7C7D1; --c-best:#DEDEE6; --c-today:#18181D; --c-imm:#D9CEFB;
   --gap:#E5484D; --gap-soft:rgba(229,72,77,.13); --ok:#26925F; --ok-soft:rgba(38,146,95,.12);
+  --gap-ink:#C8353B; --ok-ink:#1E7A4E;
   --thumb:#FFFFFF; --shadow:0 1px 2px rgba(12,12,20,.05),0 8px 24px rgba(12,12,20,.06);
   --sans:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
   --mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -35,6 +36,7 @@
   --accent:#A78BFA; --accent-ink:#C4B5FD; --accent-soft:rgba(167,139,250,.15); --accent-line:rgba(167,139,250,.48);
   --c-grv:#4B4B55; --c-best:#34343C; --c-today:#E8E8EC; --c-imm:#3D3260;
   --gap:#F2555A; --gap-soft:rgba(242,85,90,.15); --ok:#3DB67A; --ok-soft:rgba(61,182,122,.14);
+  --gap-ink:#F2555A; --ok-ink:#3DB67A;
   --thumb:#EEEEF1; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
 }}
 :root[data-theme="dark"]{
@@ -45,6 +47,7 @@
   --accent:#A78BFA; --accent-ink:#C4B5FD; --accent-soft:rgba(167,139,250,.15); --accent-line:rgba(167,139,250,.48);
   --c-grv:#4B4B55; --c-best:#34343C; --c-today:#E8E8EC; --c-imm:#3D3260;
   --gap:#F2555A; --gap-soft:rgba(242,85,90,.15); --ok:#3DB67A; --ok-soft:rgba(61,182,122,.14);
+  --gap-ink:#F2555A; --ok-ink:#3DB67A;
   --thumb:#EEEEF1; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
 }
 
@@ -222,7 +225,7 @@ label.fcell.box:focus-within{box-shadow:0 0 0 2px var(--accent)}
 .infl-row{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding-top:16px;border-top:1px solid var(--line)}
 .infl-row label{font-weight:500;font-size:14px;white-space:nowrap}
 .bridge{font-size:13.5px;color:var(--fg-2)}
-.bridge b{color:var(--gap);font-weight:600}
+.bridge b{color:var(--gap-ink);font-weight:600}
 .kpi-note{font-size:12.5px;color:var(--fg-3);padding:0 22px 18px;grid-column:1/-1}
 
 /* 2 · Sparrate */
@@ -230,7 +233,7 @@ label.fcell.box:focus-within{box-shadow:0 0 0 2px var(--accent)}
 .cost{padding:30px 26px 20px}
 .cbars{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;height:240px;align-items:end}
 .cb{height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px}
-.cb .d{font-size:12.5px;font-weight:600;color:var(--gap);height:16px;font-variant-numeric:tabular-nums}
+.cb .d{font-size:12.5px;font-weight:600;color:var(--gap-ink);height:16px;font-variant-numeric:tabular-nums}
 .cb .v{font-size:19px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .cb .col2{width:min(78px,72%);border-radius:12px 12px 4px 4px;background:var(--surface-3);transition:height .9s var(--ease)}
 .cb:first-child .col2{background:var(--accent)}
@@ -246,25 +249,16 @@ label.fcell.box:focus-within{box-shadow:0 0 0 2px var(--accent)}
 .cov{padding:26px 22px 20px;display:grid;gap:14px}
 .cov-plot{--colw:150px;position:relative;display:grid;grid-template-columns:var(--colw) minmax(0,1fr);gap:0 22px;height:380px}
 .cov-col{position:relative;display:flex;flex-direction:column-reverse;gap:2px;height:100%}
-.hseg{position:relative;flex:none;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1px;cursor:pointer;outline:none;overflow:hidden;transition:height .8s var(--ease),filter .2s;min-height:0;border-radius:3px}
-.hseg b,.hseg span{position:relative;z-index:3}
-.hseg b{font-weight:500;font-size:12px;line-height:1.15;white-space:nowrap}
-.hseg span{font-weight:600;font-size:12.5px;line-height:1.2;font-variant-numeric:tabular-nums;white-space:nowrap}
 .hseg b:empty,.hseg span:empty{display:none}
-.hseg:hover{filter:brightness(1.05) saturate(1.06)}
-.hseg:focus-visible{box-shadow:inset 0 0 0 2px var(--fg)}
-.hseg.zero{height:0!important}
 .h-grv{background:var(--c-grv);color:var(--fg)}
 .h-best{background:var(--c-best);color:var(--fg-2)}
 .h-av{background:var(--accent);color:var(--on-accent)}
 .h-dep{background:repeating-linear-gradient(135deg,var(--accent) 0 5px,color-mix(in srgb,var(--accent) 50%,transparent) 5px 10px);color:var(--on-accent)}
-.hseg b,.hseg span{padding:0 5px;border-radius:4px}
 .h-grv b,.h-grv span{background:var(--c-grv)} .h-best b,.h-best span{background:var(--c-best)} .h-av b,.h-av span{background:var(--accent)} .h-imm b,.h-imm span{background:var(--c-imm)}
 .h-dep b,.h-dep span{background:var(--accent)}
 .h-imm{background:var(--c-imm);color:var(--fg)}
 .h-open{background:repeating-linear-gradient(135deg,var(--gap-soft) 0 6px,transparent 6px 12px);box-shadow:inset 0 0 0 1.5px var(--gap);color:var(--gap)}
 .h-open b,.h-open span{background:var(--surface);padding:0 5px;border-radius:4px}
-.hseg.hl{animation:segHl 1.2s var(--ease)}
 @keyframes segHl{0%,100%{filter:none}20%,60%{filter:brightness(1.25) saturate(1.2)}40%,80%{filter:none}}
 .cov-ann{position:relative;height:100%}
 .ann{position:absolute;left:0;right:0;display:grid;gap:1px;font-size:12.5px;line-height:1.25;color:var(--fg-2);transition:bottom .8s var(--ease)}
@@ -274,7 +268,7 @@ label.fcell.box:focus-within{box-shadow:0 0 0 2px var(--accent)}
 .min-line{position:absolute;left:-8px;width:calc(var(--colw) + 22px);height:0;border-top:2px dashed var(--fg);z-index:2;pointer-events:none;transition:bottom .8s var(--ease)}
 .min-line::after{content:"";position:absolute;right:-4px;top:-5px;width:8px;height:8px;border-radius:50%;background:var(--fg)}
 .ann.min .st{justify-self:start;font-size:11.5px;font-weight:500;padding:1px 8px;border-radius:999px;margin-top:3px}
-.st.ok{background:var(--ok-soft);color:var(--ok)} .st.no{background:var(--gap-soft);color:var(--gap)}
+.st.ok{background:var(--ok-soft);color:var(--ok-ink)} .st.no{background:var(--gap-soft);color:var(--gap-ink)}
 .cov-x{display:grid;grid-template-columns:150px 1fr;gap:22px;font-size:12px;color:var(--fg-3)}
 .cov-x span:first-child{text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-2)}
 
@@ -338,11 +332,11 @@ label.fcell.box:focus-within{box-shadow:0 0 0 2px var(--accent)}
 .uv-mark{position:absolute;transform:translate(-50%,-50%);opacity:0;transition:opacity .35s}
 .uv-mark.on{opacity:1}
 .uv-mark i{display:block;width:9px;height:9px;border-radius:50%;background:var(--gap);box-shadow:0 0 0 3px var(--surface)}
-.uv-mark span{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);font-size:11.5px;font-weight:600;color:var(--gap);white-space:nowrap;background:var(--surface);padding:0 3px;border-radius:3px;font-variant-numeric:tabular-nums}
+.uv-mark span{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);font-size:11.5px;font-weight:600;color:var(--gap-ink);white-space:nowrap;background:var(--surface);padding:0 3px;border-radius:3px;font-variant-numeric:tabular-nums}
 .uv-calc{margin:0;display:grid;grid-template-columns:auto auto;justify-content:start;column-gap:28px;row-gap:4px;font-size:13.5px}
 .uv-calc dt{color:var(--fg-2)}
 .uv-calc dd{margin:0;text-align:right;font-weight:500;font-variant-numeric:tabular-nums;color:var(--fg)}
-.uv-calc .neg{color:var(--gap)}
+.uv-calc .neg{color:var(--gap-ink)}
 .uv-calc .sum{font-weight:600;color:var(--fg);border-top:1px solid var(--line);padding-top:5px}
 .uv-calc i{display:inline-block;width:12px;height:0;border-top:2px solid;vertical-align:3px;margin-right:8px}
 .d-ohne{border-color:var(--accent)} .d-mit{border-color:var(--fg-2)}
@@ -369,7 +363,7 @@ label.fcell.box:focus-within{box-shadow:0 0 0 2px var(--accent)}
 .pAge{font-style:normal}
 .pot dl{margin:0;display:grid;grid-template-columns:1fr auto;gap:5px 12px;font-size:13px}
 .pot dt{color:var(--fg-3)} .pot dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;color:var(--fg-2);font-weight:500}
-.okc{color:var(--ok)!important} .negc{color:var(--gap)!important}
+.okc{color:var(--ok-ink)!important} .negc{color:var(--gap-ink)!important}
 .pots.single .pot{grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);column-gap:32px;align-items:center}
 .pots.single .pot-h,.pots.single .rate{grid-column:1}
 .pots.single .pot-big{grid-column:2;grid-row:1 / span 2;border-top:0;padding-top:0;padding-left:32px;border-left:1px solid var(--line);grid-template-columns:repeat(3,1fr)}
@@ -406,7 +400,6 @@ label.fcell.box:focus-within{box-shadow:0 0 0 2px var(--accent)}
 .gl-ein{background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent-line)} .gl-zins{background:var(--accent)}
 .pot-big .only-single{display:none}
 .pots.single .pot-big .only-single{display:grid}
-.hseg.top{border-radius:12px 12px 3px 3px}
 .foot{margin-top:48px;font-size:12.5px;color:var(--fg-3);display:flex;gap:10px;flex-wrap:wrap;align-items:baseline}
 
 /* Einblenden beim Scrollen: Ausgangszustand sichtbar, nur die Bewegung kommt dazu */
@@ -419,7 +412,7 @@ label.fcell.box:focus-within{box-shadow:0 0 0 2px var(--accent)}
 .modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
 .modal-act{display:flex;gap:8px;flex-wrap:wrap}
 #vHint{padding:10px 16px 0}
-#vHint.warn{color:var(--gap)}
+#vHint.warn{color:var(--gap-ink)}
 .modal-pages{overflow:auto;padding:14px 16px 18px;display:grid;gap:14px;background:var(--surface-2)}
 .modal-pages img{width:100%;height:auto;display:block;border-radius:6px;box-shadow:var(--shadow);background:#fff}
 
@@ -576,8 +569,6 @@ body.ld-open{overflow:hidden}
 
 /* 3 · Töpfe: die Säule ist ein Gefäß, das sich von unten füllt; was fehlt, bleibt leer */
 .cov-col{background:var(--surface-2);border-radius:16px;padding:0;overflow:hidden;box-shadow:inset 0 0 0 1px var(--line)}
-.hseg{border-radius:0}
-.hseg.top{border-radius:0}
 .h-open{background:none;box-shadow:none;color:var(--gap)}
 .h-open b,.h-open span{background:none!important}
 .h-open::before{content:"";position:absolute;left:0;right:0;bottom:0;border-top:2px dashed color-mix(in srgb,var(--gap) 55%,transparent)}
@@ -617,8 +608,6 @@ body.ld-open{overflow:hidden}
 .min-tag{position:absolute;right:10px;top:0;transform:translateY(-50%);display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-size:12px;padding:4px 10px;border-radius:999px;background:var(--surface);box-shadow:var(--shadow);color:var(--fg-2)}
 .min-tag b{color:var(--fg);font-weight:600;font-variant-numeric:tabular-nums}
 .min-tag .st{font-size:11.5px;font-weight:500;padding:1px 7px;border-radius:999px}
-.hseg b,.hseg span{font-size:13px}
-.hseg span{font-size:14px}
 
 /* Lücke: ruhiger Entwicklungsgraph hinter der stehenden Grafik */
 .sy-sticky{overflow:visible}
@@ -854,7 +843,7 @@ body.ld-open{overflow:hidden}
 .lt{display:grid;gap:1px}
 .lt span{font-size:12px;color:var(--fg-3)}
 .lt b{font-size:16px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
-.lt i{font-style:normal;font-size:12px;font-weight:600;color:var(--gap);min-height:18px;font-variant-numeric:tabular-nums}
+.lt i{font-style:normal;font-size:12px;font-weight:600;color:var(--gap-ink);min-height:18px;font-variant-numeric:tabular-nums}
 .lt:nth-of-type(1) b{color:var(--accent-ink)}
 
 /* 3 · Lösung */
@@ -863,9 +852,9 @@ body.ld-open{overflow:hidden}
 .qchip b{font-weight:600;color:var(--fg);font-variant-numeric:tabular-nums;margin-left:3px}
 .qchip:hover{border-color:var(--fg-3);color:var(--fg)}
 .qchip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--fg)}
-.ring-c em{font-style:normal;font-size:12.5px;font-weight:600;color:var(--gap);font-variant-numeric:tabular-nums}
+.ring-c em{font-style:normal;font-size:12.5px;font-weight:600;color:var(--gap-ink);font-variant-numeric:tabular-nums}
 .ring-c em:empty{display:none}
-.ring-c em.plus{color:var(--ok)}
+.ring-c em.plus{color:var(--ok-ink)}
 .r-ziel{stroke:var(--ok);stroke-width:2.5;stroke-linecap:round}
 .r-ziel-dot{fill:var(--ok)}
 .cov-need i{display:none;width:12px;height:0;border-top:2.5px solid var(--ok);border-radius:2px;margin-right:7px;vertical-align:middle;position:relative;top:-1px}
@@ -928,6 +917,9 @@ body.ld-open{overflow:hidden}
 @keyframes pgInF{from{opacity:0}}
 .page.out-f{animation:pgOutF .6s var(--ease) forwards}
 @keyframes pgOutF{to{opacity:0}}
+/* Überschriften stehen beim Überblenden an derselben Stelle: alte geht schnell, neue kommt danach */
+.page.out-f .mod-h{animation:pgOutF .15s ease forwards}
+.page.in-f .mod-h{animation:pgInF .35s var(--ease) .15s backwards}
 .morph{position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:25;overflow:visible}
 .morph-src{opacity:0!important;transition:none!important}
 .morph-boxes{position:fixed;inset:0;pointer-events:none;z-index:25}
@@ -967,24 +959,20 @@ body.started .qs{padding-top:92px}
 .sc-seg.ers{background:var(--c-ers);color:var(--fg-2);box-shadow:0 -2px 0 var(--surface)}
 .r-ver{stroke:var(--c-best)} .r-ers{stroke:var(--c-ers)}
 
-/* V71: Einmalzahlung als eigener Baustein ganz unten in der Lösung */
+/* Einmalzahlung: eingestellt unter „Dazu als Bonus“, Ergebnis als eigene Spalte in der Lösungs-Pille */
 :root{--c-einm:#AD97F3}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--c-einm:#7660C8}}
 :root[data-theme="dark"]{--c-einm:#7660C8}
 .r-einm{stroke:var(--c-einm)}
-.einm-card{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);column-gap:32px;row-gap:16px;align-items:center;margin-top:20px}
-.ec-l{display:grid;gap:14px;align-content:start;min-width:0}
-.ec-l .pot-h .dot-e{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--c-einm);margin-right:8px;vertical-align:0}
-.einm-card .seg button{font-size:13.5px;padding:7px 8px;white-space:nowrap}
-.einm-card .pot-big{border-top:0;padding-top:0;padding-left:32px;border-left:1px solid var(--line);grid-template-columns:repeat(3,minmax(0,1fr));row-gap:10px}
-.einm-card .pot-big b{font-size:22px}
-.einm-card .ec-h{grid-column:1/-1;font-size:13px;color:var(--fg-2)}
-.einm-card .pot-big .ec-h b{font-size:13px;font-weight:600;color:var(--fg);letter-spacing:0}
-.einm-card .ec-h:empty{display:none}
+.einm-set{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:center}
+.einm-set .seg button{font-size:13.5px;padding:8px 8px;white-space:nowrap}
+.einm-fx{font-size:13.5px;color:var(--fg-2);font-variant-numeric:tabular-nums}
+.einm-fx b{font-size:17px;font-weight:600;letter-spacing:-.02em;color:var(--ok-ink,var(--ok))}
+.einm-fx:empty{display:none}
+.dot-e{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--c-einm);margin-right:8px;vertical-align:0}
+#eSpar.okc{font-weight:600}
 @media (max-width:640px){
-  .einm-card{grid-template-columns:minmax(0,1fr);margin-top:16px}
-  .einm-card .pot-big{border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:14px}
-  .einm-card .pot-big b{font-size:16px}
+  .einm-set{grid-template-columns:minmax(0,1fr)}
 }
 .cr .badge{font-variant-numeric:tabular-nums}
 
@@ -1003,10 +991,15 @@ body.started .qs{padding-top:92px}
 .sol{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:stretch}
 .side{display:grid;grid-template-rows:auto 1fr;gap:20px;min-width:0}
 .sol-ctl,.sol-bonus{display:grid;gap:14px;align-content:start}
+/* zugeklappte Bereiche (Aufteilung, Einmalzahlung) dürfen keinen Abstand belegen */
+.sol-bonus{row-gap:0}
+.sol-bonus .split-wrap .split-row{margin-top:18px}
 .sol-ctl .ctl{gap:10px}
 .split-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s var(--ease)}
 .split-wrap.open{grid-template-rows:1fr}
 .split-in{min-height:0;overflow:hidden}
+/* zugeklappt wirklich weg: nicht mit Tab erreichbar, erst nach dem Zuklappen unsichtbar */
+.split-wrap:not(.open) .split-in{visibility:hidden;transition:visibility 0s .55s}
 .split-wrap .split-row{margin-top:4px;opacity:0;transform:translateY(-6px);transition:opacity .35s var(--ease),transform .45s var(--ease)}
 .split-wrap.open .split-row{opacity:1;transform:none;transition-delay:.15s}
 #pots.pots{display:grid;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:20px;margin-top:20px}
@@ -1097,6 +1090,10 @@ body.started .qs{padding-top:92px}
   .sp-sum,#pots.with-imm .sp-sum{grid-template-columns:repeat(2,minmax(0,1fr));padding:16px 18px}
   .sp-sum .tag{grid-column:1/-1}
 }
+#pots.pots.with-imm.three{grid-template-columns:minmax(0,1fr)}
+#pots.three .sp-sum{grid-template-columns:auto repeat(4,minmax(0,1fr))}
+#pots.three .sp-sum .tag{grid-column:auto}
+@media (max-width:640px){ #pots.three .sp-sum{grid-template-columns:repeat(2,minmax(0,1fr))} #pots.three .sp-sum .tag{grid-column:1/-1} .sp-sum{align-items:start} }
 @media (min-width:641px){
   .sol-pill:not(.single) .sp-cols{grid-template-rows:repeat(4,auto)}
   .sol-pill:not(.single) .sp-col{display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:16px;align-content:start}
@@ -1447,6 +1444,14 @@ body.started .qs{padding-top:92px}
             <div class="range aufteilung"><input type="range" id="split" min="0" max="100" step="5" aria-label="Betrag Altersvorsorge in Euro"></div>
             <div class="split-lbl"><span class="sa"><span id="splitA"></span><button class="qchip" type="button" id="qMin"></button></span><span id="splitB"></span></div>
           </div></div></div>
+          <div class="split-wrap" id="einmWrap"><div class="split-in"><div class="split-row einm-row">
+            <span class="lbl">Einmalzahlung</span>
+            <div class="einm-set">
+              <div class="money" id="einmBox"><input id="einm" inputmode="decimal" autocomplete="off" placeholder="0" aria-label="Einmalzahlung in Euro"><span class="unit">€</span><button class="step" type="button" tabindex="-1" data-for="einm" data-d="-1000" aria-label="1.000 € weniger">−</button><button class="step" type="button" tabindex="-1" data-for="einm" data-d="1000" aria-label="1.000 € mehr">+</button></div>
+              <div class="seg" id="einmZiel" role="group" aria-label="Einmalzahlung anlegen in"><span class="pill"></span><button type="button" data-v="av">Altersvorsorge</button><button type="button" data-v="dep">Depot</button></div>
+            </div>
+            <p class="einm-fx" id="einmH"></p>
+          </div></div></div>
           <div class="bonus-inline" id="bonusInline"></div>
         </div>
       </div>
@@ -1527,10 +1532,22 @@ body.started .qs{padding-top:92px}
             <dt>Vorabpauschale</dt><dd id="pDepV"></dd>
           </dl>
         </div>
+        <div class="pot sp-col einm" id="potEinm" hidden>
+          <div class="pot-h"><b><i class="dot-e"></i>Einmalzahlung</b><span class="tag" id="pEinmTag">Bonus</span></div>
+          <div class="rate"><span id="pEinmR"></span><small>€ einmalig</small></div>
+          <div class="pot-big">
+            <div><b id="eK"></b><span>Kapital mit <i class="pAge"></i></span></div>
+            <div><b id="eL"></b><span id="eLk">Rente im Monat</span></div>
+          </div>
+          <dl>
+            <dt>in heutiger Kaufkraft</dt><dd id="eLh"></dd>
+            <dt>Sparrate dadurch</dt><dd id="eSpar"></dd>
+          </dl>
+        </div>
         </div>
           <div class="sp-sum" id="potSum" hidden>
             <span class="tag">Zusammen</span>
-            <div><b id="pSumR"></b><span>im Monat sparen</span></div>
+            <div><b id="pSumR"></b><span id="pSumRs">im Monat sparen</span></div>
             <div><b id="pSumK"></b><span>Kapital mit <i class="pAge"></i></span></div>
             <div><b id="pSumL"></b><span>Rente im Monat</span></div>
             <div><b id="pSumLh"></b><span>in heutiger Kaufkraft</span></div>
@@ -1549,20 +1566,6 @@ body.started .qs{padding-top:92px}
           </dl>
         </div>
       </div>
-      <div class="panel pot einm-card" id="einmCard" hidden>
-        <div class="ec-l">
-          <div class="pot-h"><b><i class="dot-e"></i>Einmalzahlung</b><span class="tag">einmalig</span></div>
-          <div class="money" id="einmBox"><input id="einm" inputmode="decimal" autocomplete="off" placeholder="0" aria-label="Einmalzahlung in Euro"><span class="unit">€</span><button class="step" type="button" tabindex="-1" data-for="einm" data-d="-1000" aria-label="1.000 € weniger">−</button><button class="step" type="button" tabindex="-1" data-for="einm" data-d="1000" aria-label="1.000 € mehr">+</button></div>
-          <div class="seg" id="einmZiel" role="group" aria-label="Einmalzahlung anlegen in"><span class="pill"></span><button type="button" data-v="av">Altersvorsorge</button><button type="button" data-v="dep">Depot</button></div>
-        </div>
-        <div class="pot-big">
-          <div><b id="eK"></b><span>Kapital mit <i class="pAge"></i></span></div>
-          <div><b id="eL"></b><span id="eLk">Rente im Monat</span></div>
-          <div><b id="eLh"></b><span>in heutiger Kaufkraft</span></div>
-          <p class="ec-h" id="einmH"></p>
-        </div>
-      </div>
-
     <div class="pnav"><button class="primary" type="button" data-pdf>Vorschlag ansehen</button></div>
   </section>
 
@@ -1898,7 +1901,7 @@ function buildPdf(Doc, D) {
   const nf = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 0 });
   const nf1 = new Intl.NumberFormat('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   const fE = v => nf.format(Math.round(v)) + ' €';
-  const fK = v => v >= 1e6 ? nf1.format(v / 1e6) + ' Mio. €' : nf.format(Math.round(v / 1000) * 1000) + ' €';
+  const fK = v => v >= 1e6 ? nf1.format(v / 1e6) + ' Mio. €' : nf.format(Math.round(v / 100) * 100) + ' €';
   const fP = v => nf1.format(v * 100) + ' %';
   const safe = s => fonts ? String(s) : String(s).replace(/−/g, '-').replace(/→/g, '->').replace(/–/g, '-').replace(/Ø/g, 'O');
   const tc = c => doc.setTextColor(c[0], c[1], c[2]);
@@ -2183,25 +2186,31 @@ function buildPdf(Doc, D) {
   const cols = [{ t: 'Altersvorsorge', tag: 'GRUNDSICHERUNG', rate: T.av, rows: [[fK(T.kAV), `Kapital mit ${p.rentenbeginn}`], [fE(T.lAV), 'Rente im Monat'], [fE(T.lAV / r.fI), 'in heutiger Kaufkraft']], foot: 'Steuer beim Umschichten 0 €' }];
   if (mitDepot) cols.push({ t: 'Depot', tag: 'BONUS', rate: T.dep, rows: [[fK(T.kDep), `Kapital mit ${p.rentenbeginn}`], [fE(T.lDep), 'Entnahme im Monat'], [fE(T.lDep / r.fI), 'in heutiger Kaufkraft']],
     foot: S.ums ? `${S.ums}× umgeschichtet · Steuer −${fE(T.umsSteuer || 0)}` : 'nie umgeschichtet' });
-  const ph = 34 + (mitDepot ? 14 : 0);
+  // Einmalzahlung als eigene Spalte, wie in der App
+  const e = D.E;
+  if (e) cols.push({ t: 'Einmalzahlung', tag: e.dep ? 'IM DEPOT' : 'IN DER AV', rate: e.betrag, unit: '€ einmalig', rows: [[fK(e.k), `Kapital mit ${p.rentenbeginn}`], [fE(e.l), e.dep ? 'Entnahme im Monat' : 'Rente im Monat'], [fE(e.l / r.fI), 'in heutiger Kaufkraft']],
+    foot: D.einmPlus >= 1 ? `Sparrate −${fE(D.einmPlus)}` : '' });
+  // drei Spalten sind im PDF zu schmal für drei Werte nebeneinander: Kaufkraft und Hinweis rutschen in eine Zeile darunter
+  const mehr = cols.length > 1, eng = cols.length > 2, top = eng ? 38 : 34, ph = top + (mehr ? 14 : 0);
   card(M, y, CW, ph, { border: C.accM, lw: 0.4 });
   const cw3 = CW / cols.length;
   cols.forEach((o, i) => {
     const x = M + i * cw3 + 6, w = cw3 - 12;
-    if (i) { dc(C.line); doc.setLineWidth(0.2); doc.line(M + i * cw3, y + 4, M + i * cw3, y + 30); }
+    if (i) { dc(C.line); doc.setLineWidth(0.2); doc.line(M + i * cw3, y + 4, M + i * cw3, y + top - 4); }
     font(9, 'sb'); txt(o.t, x, y + 8); font(5.8, 'mono', i === 0 ? C.accI : C.fg3); txt(o.tag, x + w, y + 8, { align: 'right' });
     font(18, 'sb'); txt(nf.format(Math.round(o.rate)), x, y + 18); const rw2 = tw(nf.format(Math.round(o.rate)));
-    font(6.5, 'r', C.fg3); txt('€ im Monat', x + rw2 + 1.5, y + 18);
-    const k3 = w / 3;
-    o.rows.forEach(([v, k], j) => { font(9, 'sb'); txt(v, x + j * k3, y + 25.5); font(6, 'r', C.fg3); txt(k, x + j * k3, y + 28.8); });
-    font(6, 'r', C.fg3); txt(o.foot, x + w, y + 18, { align: 'right' });
+    font(6.5, 'r', C.fg3); txt(o.unit || '€ im Monat', x + rw2 + 1.5, y + 18);
+    const rows = eng ? o.rows.slice(0, 2) : o.rows, k3 = w / rows.length;
+    rows.forEach(([v, k], j) => { font(9, 'sb'); txt(v, x + j * k3, y + 25.5); font(6, 'r', C.fg3); txt(k, x + j * k3, y + 28.8); });
+    if (eng) { font(6, 'r', C.fg3); txt([`heute ${o.rows[2][0]}`, o.foot].filter(Boolean).join(' · '), x, y + 33.5); }
+    else { font(6, 'r', C.fg3); txt(o.foot, x + w, y + 18, { align: 'right' }); }
   });
-  if (mitDepot) {
-    const sy = y + 34;
-    fc(C.s2); doc.rect(M + 0.3, sy, CW - 0.6, ph - 34 - 0.3, 'F'); fc(C.s2); doc.roundedRect(M + 0.3, sy + 4, CW - 0.6, ph - 38 - 0.3, 3, 3, 'F');
+  if (mehr) {
+    const sy = y + top, eK = e ? e.k : 0, eL = e ? e.l : 0;
+    fc(C.s2); doc.rect(M + 0.3, sy, CW - 0.6, ph - top - 0.3, 'F'); fc(C.s2); doc.roundedRect(M + 0.3, sy + 4, CW - 0.6, ph - top - 4 - 0.3, 3, 3, 'F');
     hline(M + 0.3, W - M - 0.3, sy, C.line);
     font(6, 'mono', C.fg2); txt('ZUSAMMEN', M + 6, sy + 8);
-    const sumv = [[fE(T.av + T.dep), 'im Monat sparen'], [fK(T.kAV + T.kDep), `Kapital mit ${p.rentenbeginn}`], [fE(T.lAV + T.lDep), 'Rente im Monat'], [fE((T.lAV + T.lDep) / r.fI), 'in heutiger Kaufkraft']];
+    const sumv = [[fE(T.av + T.dep), e ? `im Monat + ${fE(e.betrag)} einmalig` : 'im Monat sparen'], [fK(T.kAV + T.kDep + eK), `Kapital mit ${p.rentenbeginn}`], [fE(T.lAV + T.lDep + eL), 'Rente im Monat'], [fE((T.lAV + T.lDep + eL) / r.fI), 'in heutiger Kaufkraft']];
     const sx4 = M + 30, sw4 = (CW - 36) / 4;
     sumv.forEach(([v, k], j) => { font(9.5, 'sb'); txt(v, sx4 + j * sw4, sy + 7); font(6, 'r', C.fg3); txt(k, sx4 + j * sw4, sy + 10.5); });
   }
@@ -2216,21 +2225,6 @@ function buildPdf(Doc, D) {
     iv.forEach(([v, k], j) => { font(9, 'sb'); txt(v, ix + j * iws, y + 14); font(6, 'r', C.fg3); txt(k, ix + j * iws, y + 17.5); });
     y += 27;
   }
-  // Einmalzahlung als eigener Baustein
-  if (D.E) {
-    const e = D.E;
-    card(M, y, CW, 22);
-    fc(C.einm); doc.roundedRect(M + 6, y + 5.4, 2.6, 2.6, 0.7, 0.7, 'F');
-    font(9, 'sb'); txt('Einmalzahlung', M + 10.5, y + 8); font(5.8, 'mono', C.fg3); txt(e.dep ? 'IM DEPOT' : 'IN DER ALTERSVORSORGE', W - M - 6, y + 8, { align: 'right' });
-    font(16, 'sb'); txt(fE(e.betrag), M + 6, y + 17); const ew = tw(fE(e.betrag));
-    font(6.5, 'r', C.fg3); txt('einmalig', M + 7.5 + ew, y + 17);
-    const ev = [[fK(e.k), `Kapital mit ${p.rentenbeginn}`], [fE(e.l), e.dep ? 'Entnahme im Monat' : 'Rente im Monat'], [fE(e.l / r.fI), 'in heutiger Kaufkraft']];
-    if (D.einmPlus >= 1) ev.push([`−${fE(D.einmPlus)}`, 'nötige Sparrate im Monat']);
-    const ix = M + 62, iws = (CW - 68) / 4;
-    ev.forEach(([v, k], j) => { font(9, 'sb'); txt(v, ix + j * iws, y + 14); font(6, 'r', C.fg3); txt(k, ix + j * iws, y + 17.5); });
-    y += 27;
-  }
-
   // Annahmen, knapp
   y = Math.max(y + 2, 248);
   hline(M, W - M, y); y += 5;
@@ -2260,7 +2254,7 @@ const $ = id => document.getElementById(id);
 const eur0 = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 0 });
 const pct1 = new Intl.NumberFormat('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const fE = v => eur0.format(Math.round(v)) + ' €';
-const fK = v => v >= 1e6 ? pct1.format(v / 1e6) + ' Mio. €' : eur0.format(Math.round(v / 1000) * 1000) + ' €';
+const fK = v => v >= 1e6 ? pct1.format(v / 1e6) + ' Mio. €' : eur0.format(Math.round(v / 100) * 100) + ' €';
 const parse = s => { s = String(s).replace(/[^\d,.-]/g, ''); if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.'); else s = s.replace(/\.(?=\d{3}(\D|$))/g, ''); const v = parseFloat(s); return isFinite(v) ? v : 0; };
 const reduce = false;
 const fPct = v => String(Math.round(v));
@@ -2318,7 +2312,7 @@ function compute() {
   const mindest = S.mindestHeute == null ? mindestAuto : Math.max(0, Math.min(S.mindestHeute, S.bedarf));
   const depA = S.depot, immA = S.imm;
   // Immobilie: Eigenkapital 10 % des Kaufpreises (Faustregel), Rücklage mit 2 % Zins, Miete zählt ab Rentenbeginn als Einkommen
-  const I = { ek: S.immPreis * 0.1, jahre: S.immJahre, rate: 0, mieteRb: 0, mieteStart: 0, kMiete: 0 };
+  const I = { ek: S.immPreis * 0.1, jahre: Math.max(1, Math.min(S.immJahre, r.n || 1)), rate: 0, mieteRb: 0, mieteStart: 0, kMiete: 0 };
   if (immA) {
     I.rate = rateFuer(I.ek, I.jahre, 0.02);
     I.mieteRb = S.immMiete * r.fI; I.mieteStart = S.immMiete * r.fS;
@@ -2503,12 +2497,18 @@ function render() {
   const avMin = compute.last ? compute.last.avMin : 0;
   $('qFull').textContent = `ganze Lücke: ${fE(vorschlag)}`;
   setMoney('einm', S.ersp, S.ersp <= 0);
-  const einmOn = !einmAus();
-  $('bEinm').setAttribute('aria-pressed', einmOn); $('einmCard').hidden = !einmOn;
+  // Einmalzahlung: eingestellt unter dem Chip, Ergebnis als eigene Spalte in der Pille
+  const einmOn = !einmAus(), einmCol = einmOn && E.betrag > 0, spart = r.kapital > 0 && vorteil >= 1;
+  $('bEinm').setAttribute('aria-pressed', einmOn);
+  $('einmWrap').classList.toggle('open', einmOn); $('einmWrap').inert = !einmOn;
+  $('potEinm').hidden = !einmCol;
   setSeg('einmZiel', E.dep ? 'dep' : 'av');
+  tween($('pEinmR'), E.betrag, v => eur0.format(Math.round(v)));
+  $('pEinmTag').textContent = E.dep ? 'im Depot' : 'in der AV';
   tween($('eK'), E.k, fK); tween($('eL'), E.l, fE); tween($('eLh'), E.l / r.fI, fE);
   $('eLk').textContent = E.dep ? 'Entnahme im Monat' : 'Rente im Monat';
-  $('einmH').innerHTML = !einmOn || !(S.ersp > 0) ? '' : r.kapital <= 0 ? 'Lücke schon ohne gedeckt' : vorteil >= 1 ? `nötige Sparrate <b>${fE(vorteil)}</b> niedriger` : '';
+  $('eSpar').textContent = spart ? '−' + fE(vorteil) : '–'; $('eSpar').className = spart ? 'okc' : '';
+  $('einmH').innerHTML = !einmCol ? '' : r.kapital <= 0 ? 'Die Lücke ist auch ohne gedeckt.' : spart ? `<b>−${fE(vorteil)}</b> Sparrate für die ganze Lücke` : '';
   $('qFull').classList.toggle('on', S.spar == null || Math.round(spar) === Math.round(vorschlag));
   const zeigMin = depA && avMin > 0 && avMin < spar;
   $('qMin').hidden = !zeigMin;
@@ -2517,11 +2517,11 @@ function render() {
   $('qMin').setAttribute('aria-pressed', zeigMin && (depA ? Math.round(T.av) === avMin : Math.round(spar) === avMin));
   $('bDep').setAttribute('aria-pressed', S.depot); $('bImm').setAttribute('aria-pressed', S.imm);
   $('depBlock').hidden = !depA; $('immBlock').hidden = !immA; $('bonusGrid').classList.toggle('with-imm', !!immA); $('bonusGrid').hidden = !depA && !immA;
-  $('potDep').hidden = !depA; $('potSum').hidden = !depA; $('potImm').hidden = !immA;
-  $('solPill').classList.toggle('single', !depA); $('pots').classList.toggle('with-imm', !!immA);
+  $('potDep').hidden = !depA; $('potSum').hidden = !depA && !einmCol; $('potImm').hidden = !immA;
+  $('solPill').classList.toggle('single', !depA && !einmCol); $('pots').classList.toggle('with-imm', !!immA); $('pots').classList.toggle('three', depA && einmCol);
   setMoney('immPreis', S.immPreis); setMoney('immMiete', S.immMiete);
   $('immJahre').max = Math.max(1, Math.min(30, r.n));
-  setRange('immJahre', Math.min(S.immJahre, r.n || 1), v => v + ' J.'); $('immJahreV').textContent = `${S.immJahre} J. (${2026 + S.immJahre})`;
+  setRange('immJahre', I.jahre, v => v + ' J.'); $('immJahreV').textContent = `${I.jahre} J. (${K.jahr + I.jahre})`;
   // Hinweis Kredit: 90 % des Kaufpreises, 30 Jahre, Zins laut Dr. Klein 25.09.2026 (10 J. Bindung, gerundet)
   const kredit = S.immPreis * 0.9, kz = KREDIT_ZINS / 12, kN = 360, kRate = kredit > 0 ? kredit * kz / (1 - Math.pow(1 + kz, -kN)) : 0;
   $('ekLine').innerHTML = `Eigenanteil ca. 10 %: <b>${fE(I.ek)}</b>, dafür <b>${fE(I.rate)} im Monat</b> extra`;
@@ -2553,8 +2553,10 @@ function render() {
   drawCov(r, T, I, vals, tot, sicher, mindest, { pct: anteil * 100, offen, voll: voll || r.kapital <= 0, plus: r.kapital > 0 && anteil > 1.005 ? r.luecke * (anteil - 1) : 0 });
   document.querySelectorAll('.pAge').forEach(e => e.textContent = S.rentenbeginn);
   tween($('pAvR'), T.av, v => eur0.format(Math.round(v)));
-  tween($('pSumR'), T.av + T.dep, fE); tween($('pSumK'), T.kAV + T.kDep, fK);
-  tween($('pSumL'), T.lAV + T.lDep, fE); tween($('pSumLh'), (T.lAV + T.lDep) / r.fI, fE);
+  const eSum = einmCol ? E : { k: 0, l: 0 };
+  tween($('pSumR'), T.av + T.dep, fE); $('pSumRs').textContent = einmCol ? `im Monat + ${fE(E.betrag)} einmalig` : 'im Monat sparen';
+  tween($('pSumK'), T.kAV + T.kDep + eSum.k, fK);
+  tween($('pSumL'), T.lAV + T.lDep + eSum.l, fE); tween($('pSumLh'), (T.lAV + T.lDep + eSum.l) / r.fI, fE);
   tween($('pDepR'), T.dep, v => eur0.format(Math.round(v)));
   tween($('pAvK'), T.kAV, fK); tween($('pDepK'), T.kDep, fK);
   tween($('pAvL'), T.lAV, fE); tween($('pDepL'), T.lDep, fE);
@@ -2563,7 +2565,7 @@ function render() {
   tween($('pDepV'), T.vpSteuer || 0, v => v < 0.5 ? '0 €' : '−' + fE(v)); $('pDepV').className = T.vpSteuer > 0.5 ? 'negc' : 'okc';
   $('pDepV').title = 'Steuer auf die Vorabpauschale bis Rentenbeginn, nach Pauschbetrag. Wird beim Verkauf angerechnet.';
   tween($('pImmR'), I.rate, v => eur0.format(Math.round(v)));
-  $('pImmRs').textContent = `€ im Monat, ${yrs(S.immJahre)}`;
+  $('pImmRs').textContent = `€ im Monat, ${yrs(I.jahre)}`;
   $('pImmP').textContent = fE(S.immPreis); $('pImmEK').textContent = fE(I.ek);
   tween($('pImmM'), I.mieteRb, fE); tween($('pImmMh'), S.immMiete, fE);
 
@@ -2715,7 +2717,6 @@ function drawCov(r, T, I, vals, tot, sicher, mindest, ex) {
   const H = Math.round(small ? W * 0.74 : Math.min(400, W * 0.74));
   const sw = small ? 24 : 38, R = Math.round(Math.min(H / 2 - sw / 2 - 8, W * (small ? 0.25 : 0.23)));
   const cx = W / 2, cy = H / 2, C = 2 * Math.PI * R, gap = 3;
-  const bn = bestName(r);
   const name = id => SEG_INFO[id][0];
   const kurz = id => RING.kurz[id];
   const cls = { hGrv: 'r-grv', hVer: 'r-ver', hErs: 'r-ers', hAv: 'r-av', hDep: 'r-dep', hEinm: 'r-einm', hImm: 'r-imm', hOpen: 'r-open' };
@@ -3003,40 +3004,6 @@ function drawViz(r, T) {
 }
 
 
-/* Balken: Beschriftung, Klick zeigt die Herkunft, Griffe zum Ziehen */
-const SEG_NAMEN = { hGrv: ['Gesetzl. Rente', 'GRV'], hBest: ['Verträge', 'Vertr.'], hAv: ['Altersvorsorge', 'AV'], hDep: ['Depot', 'Dep.'], hImm: ['Immobilie', 'Imm.'], hOpen: ['offen', 'offen'] };
-const bestName = r => r.erspK > 0 && r.vertraege > 0 ? ['Vorhanden', 'Vorh.'] : r.erspK > 0 ? ['Erspartes', 'Ersp.'] : SEG_NAMEN.hBest;
-const mctx = document.createElement('canvas').getContext('2d');
-function textW(t, k) {
-  const small = innerWidth <= 620;
-  mctx.font = k === 'n' ? `500 ${small ? 10 : 11}px Geist, system-ui, sans-serif` : `500 ${small ? 10 : 11}px "Geist Mono", ui-monospace, monospace`;
-  return mctx.measureText(t).width;
-}
-const SEG_ZIEL = {
-  hGrv: () => [document.querySelector('.adjust')], hBest: () => [$('bestand').closest('.ctl'), $('ersp').closest('.ctl')],
-  hAv: () => [$('potAv')], hDep: () => [$('potDep'), $('depBlock')], hImm: () => [$('potImm'), $('immBlock')], hEinm: () => [$('einmCard')], hOpen: () => [$('sparBox')]
-};
-function blink(ids) {
-  ids.map(x => typeof x === 'string' ? $(x) : x).filter(Boolean).forEach(el => { el.classList.remove('hl'); void el.offsetWidth; el.classList.add('hl'); clearTimeout(el._hl); el._hl = setTimeout(() => el.classList.remove('hl'), 1700); });
-}
-// Element sichtbar machen (unter der Kopfzeile), dann kurz aufleuchten lassen
-function zeige(ziele, seg) {
-  const els = ziele.map(x => typeof x === 'string' ? $(x) : x).filter(e => e && !e.hidden);
-  if (seg) blink([seg]);
-  if (!els.length) return;
-  const r0 = els[0].getBoundingClientRect(), oben = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--tb')) || 60) + 20, unten = innerHeight - 16;
-  const sichtbar = r0.top >= oben && r0.top + Math.min(r0.height, 220) <= unten;
-  if (!sichtbar) {
-    const ziel = scrollY + r0.top - (r0.height + oben + 16 < innerHeight ? (innerHeight - r0.height) / 2 : oben);
-    scrollTo({ top: Math.max(0, ziel), behavior: reduce ? 'auto' : 'smooth' });
-  }
-  setTimeout(() => blink(els), sichtbar || reduce ? 0 : 420);
-}
-document.querySelectorAll('.hseg').forEach(el => {
-  const go = () => zeige(SEG_ZIEL[el.id](), el.id);
-  el.addEventListener('click', go);
-  el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
-});
 /* Kopfzeile: Grunddaten, im Lösungsteil die Abdeckung */
 function onScroll() {
   cancelAnimationFrame(onScroll._r);
@@ -3332,7 +3299,7 @@ function start() {
   $('q3').classList.add('just'); setTimeout(() => $('q3').classList.remove('just'), 1300);
   render();
   onScroll();
-  setTimeout(() => go('luecke'), 120);
+  setTimeout(() => { if (PAGE === 'intake') go('luecke'); }, 120);
   setTimeout(() => { countUp = false; }, 2600);
 }
 $('go').addEventListener('click', () => {
@@ -3394,7 +3361,7 @@ onRange('entn', v => S.entnahme = v / 100);
 $('drv').addEventListener('change', e => { S.drv = e.target.checked; render(); });
 // Umbau mit Bewegung: vorhandene Karten gleiten an ihren neuen Platz, neue klappen auf
 function umbau(change) {
-  const els = [...document.querySelectorAll('#bonusGrid > .bblock, #pots > .panel, #einmCard, #solPill .sp-col, #potSum, #toepfe .pnav, #results > .foot')];
+  const els = [...document.querySelectorAll('#bonusGrid > .bblock, #pots > .panel, #solPill .sp-col, #potSum, #toepfe .pnav, #results > .foot')];
   const vor = new Map(els.filter(e => !e.hidden).map(e => [e, e.getBoundingClientRect()]));
   change();
   if (reduce) return;
@@ -3439,8 +3406,9 @@ const money = {
   netto: v => S.netto = v, gewinn: v => S.gewinn = v,
   bedarf: v => { S.bedarf = v; S.bedarfManuell = v > 0; },
   bestand: v => S.bestand = v,
-  ersp: v => { S.ersp = v; S.einmAn = null; },
-  einm: v => { S.ersp = v; S.einmAn = true; },
+  ersp: v => { S.ersp = v; },
+  // kommt die Spalte in der Pille dazu oder geht sie, gleitet die Pille um
+  einm: v => { const neu = () => { S.ersp = v; S.einmAn = true; }; if ((S.ersp > 0) !== (v > 0) && S.started) umbau(() => { neu(); render(); }); else neu(); },
   grvB: v => { if (v > 0) { S.grvMode = 'brief'; S.grvWert = v; } else S.grvMode = 'auto'; },
   spar: v => S.spar = v,
   immPreis: v => S.immPreis = v, immMiete: v => halteAnteil(() => { S.immMiete = v; }),
@@ -3538,7 +3506,7 @@ const docDaten = () => {
     sicher: r.kapital > 0 && sicher.heute > 0 ? sicher : null,
     avMin: compute().avMin, einmPlus: einmAus() ? 0 : einmVorteil(), E: E.on && E.betrag > 0 ? E : null, weg: r.kapital > 0 && r.raten[0].rate > 0 && isFinite(r.raten[0].rate) ? pathData(r, Math.ceil(r.raten[0].rate)) : null,
     viz: depA && S.ums ? depotVerlauf(T.dep >= 1 ? T.dep : 100, r.n, S.anspar, S.ums) : null,
-    imm: immA ? { kredit: true, zins: KREDIT_ZINS, kreditRate: (() => { const k = S.immPreis * 0.9, z = KREDIT_ZINS / 12; return k > 0 ? k * z / (1 - Math.pow(1 + z, -360)) : 0; })(), preis: S.immPreis, ek: I.ek, jahre: S.immJahre, rate: I.rate, miete: S.immMiete, mieteRb: I.mieteRb, kMiete: I.kMiete } : null } };
+    imm: immA ? { kredit: true, zins: KREDIT_ZINS, kreditRate: (() => { const k = S.immPreis * 0.9, z = KREDIT_ZINS / 12; return k > 0 ? k * z / (1 - Math.pow(1 + z, -360)) : 0; })(), preis: S.immPreis, ek: I.ek, jahre: I.jahre, rate: I.rate, miete: S.immMiete, mieteRb: I.mieteRb, kMiete: I.kMiete } : null } };
 };
 let vorschau = null;
 function hinweis(t, warn) { const h = $('vHint'); h.textContent = t; h.classList.toggle('warn', !!warn); }
