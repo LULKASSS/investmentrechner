@@ -1902,6 +1902,7 @@ function buildPdf(Doc, D) {
   const nf1 = new Intl.NumberFormat('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   const fE = v => nf.format(Math.round(v)) + ' €';
   const fK = v => v >= 1e6 ? nf1.format(v / 1e6) + ' Mio. €' : nf.format(Math.round(v / 100) * 100) + ' €';
+  const rSt = v => v >= 100 ? Math.round(v / 100) * 100 : Math.round(v); // wie in der App
   const fP = v => nf1.format(v * 100) + ' %';
   const safe = s => fonts ? String(s) : String(s).replace(/−/g, '-').replace(/→/g, '->').replace(/–/g, '-').replace(/Ø/g, 'O');
   const tc = c => doc.setTextColor(c[0], c[1], c[2]);
@@ -2185,7 +2186,7 @@ function buildPdf(Doc, D) {
   // Lösungs-Pille: Altersvorsorge und Depot nebeneinander, darunter die Summe
   const cols = [{ t: 'Altersvorsorge', tag: 'GRUNDSICHERUNG', rate: T.av, rows: [[fK(T.kAV), `Kapital mit ${p.rentenbeginn}`], [fE(T.lAV), 'Rente im Monat'], [fE(T.lAV / r.fI), 'in heutiger Kaufkraft']], foot: 'Steuer beim Umschichten 0 €' }];
   if (mitDepot) cols.push({ t: 'Depot', tag: 'BONUS', rate: T.dep, rows: [[fK(T.kDep), `Kapital mit ${p.rentenbeginn}`], [fE(T.lDep), 'Entnahme im Monat'], [fE(T.lDep / r.fI), 'in heutiger Kaufkraft']],
-    foot: S.ums ? `${S.ums}× umgeschichtet · Steuer −${fE(T.umsSteuer || 0)}` : 'nie umgeschichtet' });
+    foot: S.ums ? `${S.ums}× umgeschichtet · Steuer −${fE(rSt(T.umsSteuer || 0))}` : 'nie umgeschichtet' });
   // Einmalzahlung als eigene Spalte, wie in der App
   const e = D.E;
   if (e) cols.push({ t: 'Einmalzahlung', tag: e.dep ? 'IM DEPOT' : 'IN DER AV', rate: e.betrag, unit: '€ einmalig', rows: [[fK(e.k), `Kapital mit ${p.rentenbeginn}`], [fE(e.l), e.dep ? 'Entnahme im Monat' : 'Rente im Monat'], [fE(e.l / r.fI), 'in heutiger Kaufkraft']],
@@ -2255,6 +2256,8 @@ const eur0 = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 0 });
 const pct1 = new Intl.NumberFormat('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const fE = v => eur0.format(Math.round(v)) + ' €';
 const fK = v => v >= 1e6 ? pct1.format(v / 1e6) + ' Mio. €' : eur0.format(Math.round(v / 100) * 100) + ' €';
+// Steuer beim Umschichten: ab 100 € so gerundet wie das Kapital, darunter auf den Euro (Pille, Rechnung und PDF gleich)
+const rSt = v => v >= 100 ? Math.round(v / 100) * 100 : Math.round(v);
 const parse = s => { s = String(s).replace(/[^\d,.-]/g, ''); if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.'); else s = s.replace(/\.(?=\d{3}(\D|$))/g, ''); const v = parseFloat(s); return isFinite(v) ? v : 0; };
 const reduce = false;
 const fPct = v => String(Math.round(v));
@@ -2271,7 +2274,8 @@ let countUp = false;
 
 function tween(el, to, fmt, dur) {
   if (!el) return;
-  const from = el._v ?? (countUp ? 0 : to); el._v = to;
+  // eingegebene und daraus abgeleitete Werte stehen sofort richtig da (passend zur Grafik daneben); hochzählen nur bei Werten, die die Geschichte aufdeckt (Lücke, Kapital)
+  const from = el._v ?? to; el._v = to;
   if (reduce || from === to || !isFinite(from) || !isFinite(to)) { el.textContent = fmt(to); return; }
   const t0 = performance.now(), d = dur || (countUp ? 900 : 550);
   cancelAnimationFrame(el._raf);
@@ -2392,7 +2396,7 @@ function renderIntake(r, mindest, sicher) {
   $('next2').disabled = !inc;
   $('go').disabled = !ok;
   $('goH').textContent = S.started ? 'Änderungen werden direkt übernommen.' : '';
-  $('intakeNav').hidden = !S.started; document.body.classList.toggle('started', S.started);
+  $('intakeNav').hidden = !S.started || !!start.laeuft; document.body.classList.toggle('started', S.started);
   const ein = Math.min(S.einstieg, S.alter);
   $('sum0').textContent = `${S.alter} Jahre · Jobstart mit ${ein}`;
   $('sum1').textContent = `Mit ${S.rentenbeginn} (${r.beginnJahr}) · bis ${S.lebenserwartung}`;
@@ -2561,7 +2565,7 @@ function render() {
   tween($('pAvK'), T.kAV, fK); tween($('pDepK'), T.kDep, fK);
   tween($('pAvL'), T.lAV, fE); tween($('pDepL'), T.lDep, fE);
   tween($('pAvLh'), T.lAV / r.fI, fE); tween($('pAvLh2'), T.lAV / r.fI, fE); tween($('pDepLh'), T.lDep / r.fI, fE);
-  tween($('pDepT'), T.umsSteuer, v => v < 0.5 ? '0 €' : '−' + fE(v)); $('pDepT').className = T.umsSteuer > 0.5 ? 'negc' : 'okc';
+  tween($('pDepT'), rSt(T.umsSteuer), v => v < 0.5 ? '0 €' : '−' + fE(v)); $('pDepT').className = T.umsSteuer > 0.5 ? 'negc' : 'okc';
   tween($('pDepV'), T.vpSteuer || 0, v => v < 0.5 ? '0 €' : '−' + fE(v)); $('pDepV').className = T.vpSteuer > 0.5 ? 'negc' : 'okc';
   $('pDepV').title = 'Steuer auf die Vorabpauschale bis Rentenbeginn, nach Pauschbetrag. Wird beim Verkauf angerechnet.';
   tween($('pImmR'), I.rate, v => eur0.format(Math.round(v)));
@@ -2747,9 +2751,13 @@ function drawCov(r, T, I, vals, tot, sicher, mindest, ex) {
   });
   // Beschriftung außen, links und rechts sortiert, damit sich nichts überlappt
   const outer = R + sw / 2, sides = { l: [], r: [] };
+  // Striche für Mindestsicherung und Bedarf ragen aus dem Ring: Beschriftungslinien setzen daneben an, nicht darauf
+  const striche = seen && RING.k >= 4 && r.kapital > 0 ? [mindest > 0 ? Math.min(1, sicher.nom / tot) : null, tot > r.bedarfNom * 1.005 ? r.bedarfNom / tot : null].filter(x => x != null) : [];
   segs.forEach(sg => {
     if (sg.a1 - sg.a0 < 0.035) return;
-    const m = (sg.a0 + sg.a1) / 2 * 2 * Math.PI, sx = Math.sin(m), cy0 = -Math.cos(m);
+    let f = (sg.a0 + sg.a1) / 2;
+    if (striche.some(t => Math.abs(f - t) < 0.03)) { const q = (sg.a1 - sg.a0) * 0.22, wo = x => Math.min(...striche.map(t => Math.abs(x - t))); f = wo(sg.a0 + q) > wo(sg.a1 - q) ? sg.a0 + q : sg.a1 - q; }
+    const m = f * 2 * Math.PI, sx = Math.sin(m), cy0 = -Math.cos(m);
     const side = sx >= 0 ? 'r' : 'l';
     sides[side].push({ ...sg, px: cx + sx * (outer + 3), py: cy + cy0 * (outer + 3), y: cy + cy0 * (outer + 14) });
   });
@@ -2994,10 +3002,10 @@ function drawViz(r, T) {
   $('uvRM').setAttribute('width', 0);
   if (S.ums) reveal($('uvRM'), 1300, tick);
   const fR = v => fE(Math.round(v / 100) * 100);
-  const e0 = Math.round(V.ende0 / 100) * 100, st = Math.round(V.steuer / 100) * 100, e1 = Math.round(V.ende / 100) * 100, zz = e0 - st - e1;
+  const e0 = Math.round(V.ende0 / 100) * 100, st = rSt(V.steuer), e1 = Math.round(V.ende / 100) * 100, zz = e0 - st - e1;
   $('uvCalc').hidden = false;
   $('uvCalc').innerHTML = !S.ums ? `<dt class="sum"><i class="d-ohne"></i>Nie umgeschichtet</dt><dd class="sum">${fR(e0)}</dd>` : `<dt><i class="d-ohne"></i>Ohne Umschichten</dt><dd>${fR(e0)}</dd>
-    <dt class="neg">− Steuer beim Verkauf</dt><dd class="neg">${fR(st)}</dd>
+    <dt class="neg">− Steuer beim Umschichten</dt><dd class="neg">${fR(st)}</dd>
     <dt class="neg">− entgangener Zinseszins</dt><dd class="neg">${fR(zz)}</dd>
     <dt class="sum"><i class="d-mit"></i>= mit ${S.ums}× Umschichten</dt><dd class="sum">${fR(e1)}</dd>`;
   $('uvCap').textContent = bsp ? 'Beispiel mit 100 € im Monat.' : ''; $('uvCap').hidden = !bsp;
@@ -3142,7 +3150,8 @@ function morphWegRing(A, Z, done) {
   const a = A.line, k = A.k, n = a.length;
   const dEin = a.map((p, i) => i < k ? A.ein[i] - p[1] : 0), dBase = a.map(p => A.base - p[1]);
   const R = Z.Rs, cx = Z.X, yb = Z.Y + R, U = 2 * Math.PI * R;
-  const L0 = Math.min(U, innerWidth * 0.86, a[n - 1][0] - a[0][0]);
+  const karte = $('ring').getBoundingClientRect();
+  const L0 = Math.min(U, innerWidth * 0.86, karte.width * 0.9, a[n - 1][0] - a[0][0]);
   const aBei = u => { const x = u * (n - 1), i = Math.min(n - 2, Math.floor(x)), t = x - i; return [a[i][0] + (a[i + 1][0] - a[i][0]) * t, a[i][1] + (a[i + 1][1] - a[i][1]) * t]; };
   // Teile im Ring laufen im Uhrzeigersinn ab oben; die Linie läuft andersherum, darum u = 1 − Anteil
   const segs = Z.segs.map(sg => { const el = document.createElementNS('http://www.w3.org/2000/svg', 'path'); el.setAttribute('class', Z.cls[sg.id]); el.setAttribute('fill', 'none'); $('mSegs').appendChild(el); return { ...sg, el }; });
@@ -3292,14 +3301,14 @@ function start() {
   go._dq = innerWidth <= 640 ? datenQuellen() : null;
   // Fragen bleiben stehen, wo sie sind, auch wenn oben die Leiste einfährt (sonst springt alles kurz nach unten)
   { const ip = $('intake'), rc = ip.getBoundingClientRect(); Object.assign(ip.style, { position: 'fixed', top: rc.top + 'px', left: rc.left + 'px', width: rc.width + 'px', zIndex: 4, margin: 0 }); $('qs').style.paddingTop = getComputedStyle($('qs')).paddingTop; }
-  S.started = true; S.open.clear();
+  S.started = true; S.open.clear(); start.laeuft = true;
   document.querySelectorAll('#results [id]').forEach(el => { el._v = undefined; });
   $('kGap').textContent = '–'; $('kKap').textContent = '–';
   countUp = true; ST.t = 0; PLAY.pending = true;
   $('q3').classList.add('just'); setTimeout(() => $('q3').classList.remove('just'), 1300);
   render();
   onScroll();
-  setTimeout(() => { if (PAGE === 'intake') go('luecke'); }, 120);
+  setTimeout(() => { if (PAGE === 'intake') go('luecke'); start.laeuft = false; }, 120);
   setTimeout(() => { countUp = false; }, 2600);
 }
 $('go').addEventListener('click', () => {

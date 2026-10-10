@@ -119,6 +119,8 @@ test('Depot: Kapital in der Pille und in der Umschicht-Rechnung gleich gerundet'
   const pille = await page.locator('#pDepK').textContent();
   const rechnung = await page.locator('#uvCalc dd.sum').textContent();
   expect(pille).toBe(rechnung);
+  // Steuer beim Umschichten: Pille und Rechnung zeigen dieselbe Zahl
+  expect(zahl(await page.locator('#pDepT').textContent())).toBe(zahl(await page.locator('#uvCalc dd.neg').first().textContent()));
 });
 
 test('Immobilie: Eigenanteil nie länger als bis zur Rente', async ({ page }) => {
