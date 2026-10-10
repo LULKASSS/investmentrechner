@@ -1,0 +1,44 @@
+{
+  "name": "investmentrechner",
+  "productName": "Investmentrechner",
+  "version": "1.0.0",
+  "description": "Rentenlücke, Sparrate und Töpfe – als Geschichte für den Beratungstermin",
+  "main": "desktop/main.js",
+  "private": true,
+  "author": "Lukas Rückborn",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "check": "node scripts/check.mjs",
+    "test": "node scripts/check.mjs && playwright test",
+    "app": "electron .",
+    "app:build": "electron-builder --mac --arm64 --dir",
+    "app:install": "node scripts/install-app.mjs",
+    "postinstall": "node node_modules/electron/install.js",
+    "icon": "electron scripts/make-icon.js"
+  },
+  "build": {
+    "appId": "de.rueckborn.investmentrechner",
+    "productName": "Investmentrechner",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "index.html",
+      "desktop/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.finance",
+      "icon": "desktop/icon.png",
+      "identity": null
+    }
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.0",
+    "electron": "^44.7.0",
+    "electron-builder": "^26.15.3"
+  },
+  "allowScripts": {
+    "electron-winstaller": false
+  }
+}
