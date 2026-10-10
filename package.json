@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "node scripts/serve.mjs",
     "check": "node scripts/check.mjs",
+    "kern": "node scripts/kern-sync.mjs",
     "test": "node scripts/check.mjs && playwright test",
     "app": "electron .",
     "app:build": "electron-builder --mac --arm64 --dir",

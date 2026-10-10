@@ -1,0 +1,1369 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ziele-Planer</title>
+<link rel="icon" type="image/svg+xml" href="desktop/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Ziele-Planer (Versuch): was du vorhast, was es im Monat kostet, wann es eng wird und wie es passt.
+   Gleiche Bauweise wie der Investmentrechner (Skill app-ui): Tokens → Grundlagen → Bausteine → Seiten. */
+
+/* ===== Tokens ===== */
+:root{
+  color-scheme:light;
+  --bg:#F6F6F8; --surface:#FFFFFF; --surface-2:#EFEFF3; --surface-3:#E6E6EC;
+  --fg:#0B0B0F; --fg-2:#45454F; --fg-3:#6B6B76; --on-accent:#FFFFFF;
+  --line:#E4E4EA; --line-2:#D2D2DA;
+  --accent:#7F5FE8; --accent-ink:#6445CF; --accent-soft:rgba(127,95,232,.14); --accent-line:rgba(127,95,232,.42);
+  --gap:#E5484D; --gap-ink:#C8353B; --gap-soft:rgba(229,72,77,.13);
+  --ok:#26925F; --ok-ink:#1E7A4E; --ok-soft:rgba(38,146,95,.12);
+  /* Ziele im Zeitstrahl: Flieder- und Grautöne, hell und dunkel im Wechsel, damit Nachbarn sich abheben */
+  --z0:#7F5FE8; --z1:#D9CEFB; --z2:#4B33A8; --z3:#B9A6F7; --z4:#9C9CA8; --z5:#E7E2F6; --z6:#6445CF; --z7:#C7C7D1; --z8:#A48CF2; --z9:#DEDEE6; --z10:#5B5B66;
+  --frei:#EFEFF3;
+  --shadow:0 1px 2px rgba(12,12,20,.05),0 8px 24px rgba(12,12,20,.06);
+  --shadow-lift:0 2px 4px rgba(12,12,20,.06),0 16px 40px rgba(12,12,20,.12);
+  --sans:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:18px; --r-s:10px; --ease:cubic-bezier(.22,1,.36,1);
+  --tb:60px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --bg:#09090B; --surface:#131316; --surface-2:#1B1B20; --surface-3:#24242A;
+  --fg:#EEEEF1; --fg-2:#BDBDC6; --fg-3:#8F8F99; --on-accent:#0B0B0F;
+  --line:#232329; --line-2:#33333B;
+  --accent:#A78BFA; --accent-ink:#C4B5FD; --accent-soft:rgba(167,139,250,.15); --accent-line:rgba(167,139,250,.48);
+  --gap:#F2555A; --gap-ink:#F2555A; --gap-soft:rgba(242,85,90,.15);
+  --ok:#3DB67A; --ok-ink:#3DB67A; --ok-soft:rgba(61,182,122,.14);
+  --z0:#A78BFA; --z1:#3D3260; --z2:#C4B5FD; --z3:#6D55C9; --z4:#5B5B66; --z5:#2D2939; --z6:#8B6FEA; --z7:#3A3A43; --z8:#7C63D6; --z9:#2A2A31; --z10:#8F8F99;
+  --frei:#1B1B20;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  --shadow-lift:0 2px 4px rgba(0,0,0,.5),0 16px 40px rgba(0,0,0,.5);
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#09090B; --surface:#131316; --surface-2:#1B1B20; --surface-3:#24242A;
+  --fg:#EEEEF1; --fg-2:#BDBDC6; --fg-3:#8F8F99; --on-accent:#0B0B0F;
+  --line:#232329; --line-2:#33333B;
+  --accent:#A78BFA; --accent-ink:#C4B5FD; --accent-soft:rgba(167,139,250,.15); --accent-line:rgba(167,139,250,.48);
+  --gap:#F2555A; --gap-ink:#F2555A; --gap-soft:rgba(242,85,90,.15);
+  --ok:#3DB67A; --ok-ink:#3DB67A; --ok-soft:rgba(61,182,122,.14);
+  --z0:#A78BFA; --z1:#3D3260; --z2:#C4B5FD; --z3:#6D55C9; --z4:#5B5B66; --z5:#2D2939; --z6:#8B6FEA; --z7:#3A3A43; --z8:#7C63D6; --z9:#2A2A31; --z10:#8F8F99;
+  --frei:#1B1B20;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  --shadow-lift:0 2px 4px rgba(0,0,0,.5),0 16px 40px rgba(0,0,0,.5);
+}
+
+/* ===== Grundlagen ===== */
+*{box-sizing:border-box}
+html{scroll-padding-top:calc(var(--tb) + 16px);scroll-padding-bottom:96px}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;padding:0 24px 64px}
+.wrap{max-width:1120px;margin:0 auto}
+h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.035em;text-wrap:balance}
+p{margin:0}
+button{font:inherit;color:inherit}
+input{font:inherit;color:inherit}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--fg-3);font-weight:500}
+.mut{color:var(--fg-3)}
+.ink-gap{color:var(--gap-ink)} .ink-ok{color:var(--ok-ink)}
+.link{background:none;border:0;padding:0;color:var(--accent-ink);cursor:pointer;font-size:12.5px;text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--accent-line)}
+.primary{background:var(--fg);color:var(--bg);border:0;border-radius:999px;padding:10px 20px;font-weight:500;cursor:pointer;white-space:nowrap;transition:transform .2s var(--ease),opacity .2s;min-height:40px}
+.primary:hover{transform:translateY(-1px)}
+.primary:disabled{opacity:.35;cursor:default;transform:none}
+.ico{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* ===== Bausteine ===== */
+.panel{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);padding:22px}
+
+/* Tippfeld */
+.fld{display:flex;flex-direction:column;gap:6px;min-width:0}
+.fld-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;font-weight:500;color:var(--fg)}
+.fld-h small{font-size:12px;font-weight:400;color:var(--fg-3)}
+.money{display:flex;align-items:center;height:44px;border:1px solid var(--line-2);border-radius:var(--r-s);background:var(--surface);transition:border-color .2s,box-shadow .2s;overflow:hidden}
+.money:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.money input{flex:1;min-width:0;border:0;background:none;outline:none;height:100%;padding:0 12px;font-size:15.5px;font-weight:500}
+.money input::placeholder{color:var(--fg-3);font-weight:400}
+.money .unit{color:var(--fg-3);font-size:13px;padding-right:12px}
+.money .step{width:38px;height:100%;border:0;border-left:1px solid var(--line);background:none;cursor:pointer;color:var(--fg-2);font-size:16px}
+.money .step:hover{background:var(--surface-2)}
+.money.big{height:56px}
+.money.big input{font-size:26px;font-weight:600;letter-spacing:-.02em}
+
+/* Umschalter */
+.seg{position:relative;display:inline-flex;background:var(--surface-2);border-radius:999px;padding:3px;gap:0}
+.seg button{position:relative;z-index:1;border:0;background:none;border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:500;color:var(--fg-3);cursor:pointer;transition:color .3s;min-height:28px}
+.seg button[aria-pressed="true"]{color:var(--fg)}
+.seg .seg-pill{position:absolute;z-index:0;top:3px;bottom:3px;left:0;border-radius:999px;background:var(--surface);box-shadow:0 1px 2px rgba(12,12,20,.08),0 2px 6px rgba(12,12,20,.06);transition:transform .4s var(--ease),width .4s var(--ease)}
+
+/* Ziel-Kacheln (Häkchen-Karten) */
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:10px}
+.tile{display:flex;align-items:center;gap:10px;min-height:52px;padding:10px 12px;border:1px solid var(--line-2);border-radius:14px;background:var(--surface);cursor:pointer;text-align:left;transition:border-color .2s,background .2s,transform .2s var(--ease)}
+.tile:hover{border-color:var(--fg-3)}
+.tile .ic{display:grid;place-items:center;width:32px;height:32px;border-radius:9px;background:var(--surface-2);color:var(--fg-2);flex:none;transition:background .2s,color .2s}
+.tile span.n{flex:1;font-size:14px;font-weight:500;line-height:1.25}
+.tile .box{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--line-2);display:grid;place-items:center;flex:none;transition:background .2s,border-color .2s}
+.tile .box svg{width:12px;height:12px;stroke:var(--on-accent);stroke-width:2.4;fill:none;opacity:0;transform:scale(.6);transition:opacity .2s,transform .25s var(--ease)}
+.tile[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.tile[aria-pressed="true"] .ic{background:var(--accent);color:var(--on-accent)}
+.tile[aria-pressed="true"] .box{background:var(--accent);border-color:var(--accent)}
+.tile[aria-pressed="true"] .box svg{opacity:1;transform:none}
+
+/* Schnellknopf */
+.quick{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-2);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:12.5px;color:var(--fg-2);cursor:pointer;transition:border-color .2s;min-height:30px}
+.quick b{color:var(--fg);font-weight:600}
+.quick:hover{border-color:var(--accent)}
+
+/* Etikett */
+.tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-3);font-weight:500;white-space:nowrap}
+.tag.acc{color:var(--accent-ink)}
+
+/* ===== Kopfzeile ===== */
+.tb{position:fixed;inset:0 0 auto 0;height:var(--tb);z-index:30;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:saturate(1.6) blur(14px);-webkit-backdrop-filter:saturate(1.6) blur(14px);border-bottom:1px solid var(--line);padding:0 24px;opacity:0;transform:translateY(-8px);transition:opacity .35s var(--ease),transform .35s var(--ease);pointer-events:none}
+.tb.on{opacity:1;transform:none;pointer-events:auto}
+.tb .wrap{height:100%;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.tb .seg button{font-size:13.5px;padding:6px 14px;min-height:34px}
+.tb .seg{padding:4px}
+.tb .seg .seg-pill{top:4px;bottom:4px}
+.tb-r{font-size:12.5px;color:var(--fg-3)}
+.tb-r a{color:inherit}
+
+/* ===== Startseite ===== */
+.land{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:center;margin:0 -24px;padding:0 24px;overflow:hidden;transition:transform 1s var(--ease),opacity 1s var(--ease)}
+.land canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.land .brand{position:absolute;top:22px;left:max(24px,calc((100% - 1120px)/2));display:flex;align-items:center;gap:10px;font-weight:600;font-size:14.5px;letter-spacing:-.01em}
+.land .brand i{width:22px;height:22px;border-radius:6px;background:var(--fg);display:grid;place-items:center}
+.land .brand i::after{content:"";width:8px;height:8px;border-radius:2px;background:var(--accent)}
+.land .in{position:relative;max-width:1120px;width:100%;margin:0 auto}
+.land h1{font-size:clamp(64px,11vw,140px);line-height:.95;letter-spacing:-.055em;font-weight:600}
+.land h1 em{font-style:normal;color:var(--accent-ink)}
+.land p{margin-top:22px;max-width:440px;font-size:19px;line-height:1.55;color:var(--fg-2)}
+.land .primary{margin-top:34px;padding:16px 32px;font-size:16px;box-shadow:0 8px 24px rgba(12,12,20,.18)}
+.land .in>*{animation:aufIn .9s var(--ease) both}
+.land .in>:nth-child(2){animation-delay:.08s} .land .in>:nth-child(3){animation-delay:.16s}
+@keyframes aufIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+body.started .land{transform:translateY(-100%);opacity:0;pointer-events:none}
+
+/* ===== Fragen ===== */
+#qs{display:flex;flex-direction:column;gap:10px;padding-top:24px}
+.q{background:var(--surface);border-radius:20px;box-shadow:var(--shadow);border:1px solid transparent;transition:border-color .25s,box-shadow .25s,transform .25s var(--ease)}
+.q.fin{animation:fin .25s var(--ease)}
+@keyframes fin{0%{transform:none}45%{transform:scale(1.012);border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft),var(--shadow)}100%{transform:none}}
+.q-fold{display:grid;grid-template-rows:0fr;transition:grid-template-rows .33s var(--ease)}
+.q-fold>div{overflow:hidden;min-height:0}
+.q.open .q-fold.body,.q:not(.open) .q-fold.row{grid-template-rows:1fr}
+/* Zugeklapptes ist auch für Tab und Vorleser weg */
+.q.open .q-fold.row>div,.q:not(.open) .q-fold.body>div{visibility:hidden;transition:visibility 0s .33s}
+.q-in{padding:22px 26px 24px}
+.q h2{font-size:28px;line-height:1.15;margin-bottom:18px}
+.q-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.q-foot{display:flex;justify-content:flex-end;align-items:center;gap:12px;margin-top:20px}
+.q-row{width:100%;display:flex;align-items:center;gap:14px;border:0;background:none;padding:14px 22px;cursor:pointer;text-align:left;min-height:52px}
+.q-row .ok{width:20px;height:20px;border-radius:50%;background:var(--accent);display:grid;place-items:center;flex:none}
+.q-row .ok svg{width:12px;height:12px;stroke:var(--on-accent);stroke-width:2.6;fill:none}
+.q-row .eyebrow{width:64px;flex:none}
+.q-row .sum{flex:1;font-size:14.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.q-row .chg{font-size:12.5px;color:var(--fg-3)}
+.q:not(.done):not(.open){display:none}
+body.started #qs .q:not(.open):hover{box-shadow:var(--shadow-lift)}
+.q.reveal{animation:qIn .5s var(--ease) both}
+@keyframes qIn{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+/* Sparanteil: Netto als Balken, der Sparbetrag als Flieder-Teil */
+.share{margin-top:18px;display:grid;grid-template-columns:110px 1fr 80px;align-items:center;gap:6px 14px;font-size:13px;color:var(--fg-2)}
+.share .bar{height:10px;border-radius:999px;background:var(--surface-2);overflow:hidden;position:relative}
+.share .bar i{position:absolute;inset:0 auto 0 0;border-radius:999px;background:var(--accent);transition:width .6s var(--ease)}
+.share .bar i.n{background:var(--line-2)}
+.share b{text-align:right;font-weight:600;color:var(--fg)}
+
+/* ===== Seiten ===== */
+#app{padding-top:calc(var(--tb) + 28px)}
+body:not(.started) #app{padding-top:24px}
+.page{animation:none}
+/* nach dem Einblenden kein transform stehen lassen, sonst klebt der feste Weiter-Knopf an der Seite statt am Bildrand */
+.page.in-r{animation:inR .33s var(--ease) backwards} .page.in-l{animation:inL .33s var(--ease) backwards}
+.page.out-l{animation:outL .17s ease-in both} .page.out-r{animation:outR .17s ease-in both}
+@keyframes inR{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+@keyframes inL{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+@keyframes outL{to{opacity:0;transform:translateX(-20px)}}
+@keyframes outR{to{opacity:0;transform:translateX(20px)}}
+.mod-h{font-size:32px;line-height:1.1;margin:0 0 20px}
+.next{position:fixed;right:max(24px,calc((100vw - 1120px)/2));bottom:24px;z-index:20;padding:14px 26px;font-size:15px;box-shadow:0 10px 30px rgba(12,12,20,.22);animation:nextIn .25s var(--ease) .34s both}
+@keyframes nextIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.foot{margin-top:56px;font-size:12.5px;color:var(--fg-3);display:flex;gap:16px;flex-wrap:wrap;align-items:baseline;max-width:820px}
+
+/* Pille mit der wichtigsten Zahl */
+.hero{display:flex;flex-direction:column;gap:2px}
+.hero .big{font-size:34px;font-weight:600;letter-spacing:-.035em;line-height:1.1}
+.hero .big small{font-size:14px;font-weight:400;color:var(--fg-3);letter-spacing:0;margin-left:6px}
+.hero .sub{font-size:13px;color:var(--fg-3)}
+
+/* ===== Seite: Deine Ziele ===== */
+.zl-top{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:16px}
+.zl-top .hero{align-items:flex-end;text-align:right}
+.zl-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:stretch}
+.zk{position:relative;display:flex;flex-direction:column;gap:16px}
+.zk-h{display:flex;align-items:center;gap:12px;min-height:36px}
+.zk-h .ic{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;color:var(--on-accent);flex:none}
+.zk-h .ic svg{width:19px;height:19px}
+.zk-h h3{font-size:17px;flex:1;min-width:0;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.zk-h input.titel{flex:1;min-width:0;font-size:17px;font-weight:600;letter-spacing:-.02em;border:0;border-bottom:1px dashed var(--line-2);background:none;outline:none;padding:2px 0}
+.zk-h input.titel:focus{border-bottom-color:var(--accent)}
+.zk-x{width:30px;height:30px;border-radius:999px;border:0;background:none;color:var(--fg-3);cursor:pointer;display:grid;place-items:center;flex:none}
+.zk-x:hover{background:var(--surface-2);color:var(--fg)}
+.zk-x svg{width:15px;height:15px}
+.zk-f{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.zk-calc{font-size:12.5px;color:var(--fg-3);margin-top:-6px}
+.zk-calc b{color:var(--fg-2);font-weight:500}
+.zk-r{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding-top:16px;border-top:1px solid var(--line)}
+.zk-r .rate{font-size:26px;font-weight:600;letter-spacing:-.03em;line-height:1.1}
+.zk-r .rate small{font-size:13px;font-weight:400;color:var(--fg-3);letter-spacing:0;margin-left:5px}
+.zk-r .meta{display:flex;flex-direction:column;align-items:flex-end;gap:3px;text-align:right;font-size:12.5px;color:var(--fg-3)}
+.zk-r .meta b{color:var(--fg-2);font-weight:500}
+.zk-bar{height:6px;border-radius:999px;background:var(--surface-2);overflow:hidden;display:flex;margin-top:-6px}
+.zk-bar i{display:block;height:100%;background:var(--accent);transition:width .6s var(--ease)}
+.zk.neu{animation:zkIn .5s var(--ease) both}
+@keyframes zkIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+.zk.weg{animation:zkOut .28s ease-in both}
+@keyframes zkOut{to{opacity:0;transform:scale(.97)}}
+.zk-add{border:1.5px dashed var(--line-2);background:none;box-shadow:none;display:flex;align-items:center;justify-content:center;gap:10px;min-height:120px;cursor:pointer;color:var(--fg-2);font-weight:500;border-radius:var(--r);transition:border-color .2s,color .2s}
+.zk-add:hover{border-color:var(--accent);color:var(--accent-ink)}
+.picker{grid-column:1/-1}
+.picker .pk-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.picker .pk-h h3{font-size:17px}
+
+/* ===== Seiten mit Zeitstrahl ===== */
+.ts{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
+.chart-p{padding:18px 18px 12px}
+.chart{position:relative}
+.chart svg{display:block;width:100%;overflow:visible}
+.chart text{font-family:var(--sans);font-size:12px;fill:var(--fg-2)}
+.chart .yr{fill:var(--fg-3);font-size:11.5px}
+.chart .ms-n{font-weight:500;fill:var(--fg)}
+.chart .ms-y{fill:var(--fg-3)}
+.chart .ms-y.spaet{fill:var(--gap-ink)}
+.chart .ms-l{stroke:var(--line-2);stroke-width:1;stroke-dasharray:2 3}
+.chart .ms-d{stroke:var(--surface);stroke-width:2}
+.chart .ms-alt{fill:var(--surface);stroke:var(--fg-3);stroke-width:1.5}
+.chart .ms-pf{fill:none;stroke:var(--fg-3);stroke-width:1.25}
+.chart .axis{stroke:var(--line-2);stroke-width:1}
+.chart .bud{stroke:var(--fg);stroke-width:1.5;stroke-dasharray:5 4;fill:none}
+.chart .bud-t{font-weight:600;fill:var(--fg)}
+.chart .over{fill:url(#zHatch)}
+.chart .over-l{fill:none;stroke:var(--gap);stroke-width:1.5}
+.chart .frei{fill:var(--frei)}
+.chart .frei-t{fill:var(--fg-3)}
+.chart .band{transition:opacity .25s;stroke:var(--surface);stroke-width:.75;cursor:pointer}
+.chart.sel .band:not(.on){opacity:.28}
+.chart .rente-t{fill:var(--fg-2);font-size:11.5px}
+.side{display:flex;flex-direction:column;gap:16px}
+.side .panel{display:flex;flex-direction:column;gap:14px}
+.rows{display:flex;flex-direction:column}
+.rw{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line);font-size:13.5px;cursor:pointer;background:none;border-left:0;border-right:0;border-bottom:0;text-align:left;width:100%}
+.rw:first-child{border-top:0;padding-top:2px}
+.rw .dot{width:10px;height:10px;border-radius:3px;flex:none}
+.rw .nm{flex:1;min-width:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rw .nm small{display:block;font-weight:400;color:var(--fg-3);font-size:12px}
+.rw .v{text-align:right;white-space:nowrap}
+.rw .v small{display:block;color:var(--fg-3);font-size:12px}
+.rw.on .nm{color:var(--accent-ink)}
+.lbl{font-size:13px;font-weight:500}
+.ctl{display:flex;flex-direction:column;gap:8px}
+.ctl .q2{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ===== Handy ===== */
+@media (max-width:640px){
+  body{padding:0 16px 40px;font-size:14.5px}
+  .tb{padding:0 12px;background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .tb .seg button{padding:6px 10px;font-size:13px}
+  .tb-r{display:none}
+  .land{margin:0 -16px;padding:0 16px}
+  .land .brand{left:16px}
+  .land p{font-size:17px}
+  .land .primary{width:100%}
+  .q-in{padding:18px 18px 20px}
+  .q h2{font-size:22px;margin-bottom:14px}
+  .q-grid{gap:10px}
+  .q-foot .primary{width:100%;padding:13px}
+  .q-row{padding:12px 16px}
+  .q-row .chg{display:none}
+  .money input{font-size:16px}
+  .tiles{grid-template-columns:1fr 1fr;gap:8px}
+  .tile{padding:8px 10px;gap:8px;min-height:48px}
+  .tile .ic{width:28px;height:28px}
+  .tile span.n{font-size:13.5px}
+  .tile .box{display:none}
+  .share{grid-template-columns:90px 1fr 64px}
+  .mod-h{font-size:26px;margin-bottom:14px}
+  .zl-top{flex-direction:column;align-items:stretch;gap:12px}
+  .zl-top .hero{align-items:flex-start;text-align:left}
+  .zl-grid{grid-template-columns:minmax(0,1fr)}
+  .zk-r .rate{font-size:22px}
+  .zk-h{flex-wrap:wrap;row-gap:10px}
+  .zk-h h3,.zk-h input.titel{flex:1 1 calc(100% - 96px)}
+  .zk-h .seg{order:5;margin-left:48px}
+  .zk-f{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:10px}
+  .zk .money .step{display:none}
+  .ts{grid-template-columns:minmax(0,1fr)}
+  .chart-p{padding:14px 10px 8px}
+  .panel{padding:18px}
+  .next{position:static;display:block;width:100%;margin-top:24px;animation:none}
+}
+</style>
+</head>
+<body>
+
+<header class="tb" id="tb">
+  <div class="wrap">
+    <nav class="seg" id="nav" aria-label="Schritte">
+      <span class="seg-pill" id="navPill"></span>
+      <button type="button" data-go="daten">Daten</button>
+      <button type="button" data-go="ziele">Ziele</button>
+      <button type="button" data-go="zeit">Zeitstrahl</button>
+      <button type="button" data-go="plan">Plan</button>
+    </nav>
+    <span class="tb-r">Versuch · <a href="./">Investmentrechner</a></span>
+  </div>
+</header>
+
+<section class="land" id="land">
+  <canvas id="landCv" aria-hidden="true"></canvas>
+  <div class="brand"><i></i>Ziele-Planer</div>
+  <div class="in">
+    <h1>Deine <em>Ziele.</em></h1>
+    <p>Was du vorhast, was es im Monat kostet und wie alles zusammenpasst.</p>
+    <button class="primary" id="los" type="button">Ziele planen</button>
+  </div>
+</section>
+
+<main class="wrap" id="app" hidden>
+
+  <!-- Daten: drei Fragen, immer nur eine offen -->
+  <section class="page" id="daten">
+    <div id="qs">
+      <div class="q" id="q0">
+        <div class="q-fold row"><div><button class="q-row" type="button" data-q="0"><span class="ok"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="eyebrow">Du</span><span class="sum" id="sum0"></span><span class="chg">ändern</span></button></div></div>
+        <div class="q-fold body"><div><div class="q-in">
+          <h2>Wie alt bist du, und was verdienst du?</h2>
+          <div class="q-grid">
+            <label class="fld"><span class="fld-h">Alter</span><span class="money"><input id="alter" data-k="alter" inputmode="numeric" autocomplete="off"><span class="unit">J.</span></span></label>
+            <label class="fld"><span class="fld-h">Netto im Monat</span><span class="money"><input id="netto" data-k="netto" inputmode="numeric" autocomplete="off" placeholder="z. B. 2.800"><span class="unit">€</span></span></label>
+          </div>
+          <div class="q-foot"><button class="primary q-next" type="button" data-q="0" id="next0">Weiter</button></div>
+        </div></div></div>
+      </div>
+
+      <div class="q" id="q1">
+        <div class="q-fold row"><div><button class="q-row" type="button" data-q="1"><span class="ok"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="eyebrow">Ziele</span><span class="sum" id="sum1"></span><span class="chg">ändern</span></button></div></div>
+        <div class="q-fold body"><div><div class="q-in">
+          <h2>Was hast du vor?</h2>
+          <div class="tiles" id="tiles"></div>
+          <div class="q-foot"><button class="primary q-next" type="button" data-q="1" id="next1" disabled>Weiter</button></div>
+        </div></div></div>
+      </div>
+
+      <div class="q" id="q2">
+        <div class="q-fold row"><div><button class="q-row" type="button" data-q="2"><span class="ok"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="eyebrow">Budget</span><span class="sum" id="sum2"></span><span class="chg">ändern</span></button></div></div>
+        <div class="q-fold body"><div><div class="q-in">
+          <h2>Was kannst du dafür zurücklegen?</h2>
+          <div class="q-grid">
+            <label class="fld"><span class="fld-h">Im Monat<small id="budHint"></small></span><span class="money"><input id="budget" data-k="budget" inputmode="numeric" autocomplete="off"><span class="unit">€</span><button class="step" type="button" tabindex="-1" data-step="budget" data-d="-1" aria-label="weniger">−</button><button class="step" type="button" tabindex="-1" data-step="budget" data-d="1" aria-label="mehr">+</button></span></label>
+            <label class="fld"><span class="fld-h">Schon gespart<small>Tagesgeld, Konto</small></span><span class="money"><input id="ersp" data-k="ersp" inputmode="numeric" autocomplete="off" placeholder="0"><span class="unit">€</span></span></label>
+          </div>
+          <div class="share" id="share">
+            <span>Netto</span><span class="bar"><i class="n" style="width:100%"></i></span><b id="shN"></b>
+            <span>Zurücklegen <span class="mut" id="shP"></span></span><span class="bar"><i id="shBar" style="width:0"></i></span><b id="shB"></b>
+          </div>
+          <div class="q-foot"><button class="primary" type="button" id="plane" disabled>Ziele planen</button></div>
+        </div></div></div>
+      </div>
+    </div>
+    <button class="primary next" type="button" data-go="ziele" id="nextDaten" hidden>Weiter: Deine Ziele</button>
+  </section>
+
+  <!-- Deine Ziele: jedes Ziel mit Betrag, Zeitpunkt und Sparrate -->
+  <section class="page" id="ziele" hidden>
+    <div class="zl-top">
+      <h2 class="mod-h" style="margin:0">Deine Ziele</h2>
+      <div class="hero"><span class="big" id="zSum"></span><span class="sub" id="zSumS"></span></div>
+    </div>
+    <div class="zl-grid" id="zGrid"></div>
+    <button class="primary next" type="button" data-go="zeit">Weiter: Zeitstrahl</button>
+  </section>
+
+  <!-- Zeitstrahl: alles pünktlich – wann wird es eng? -->
+  <section class="page" id="zeit" hidden>
+    <h2 class="mod-h">Dein Zeitstrahl</h2>
+    <div class="ts">
+      <div class="panel chart-p"><div class="chart" id="chZeit"></div></div>
+      <div class="side">
+        <div class="panel">
+          <div class="hero"><span class="eyebrow" id="tHeroK"></span><span class="big" id="tHero"></span><span class="sub" id="tHeroS"></span></div>
+        </div>
+        <div class="panel">
+          <div class="ctl">
+            <span class="lbl">Dein Budget im Monat</span>
+            <span class="money"><input data-k="budget" class="budIn" inputmode="numeric" autocomplete="off"><span class="unit">€</span><button class="step" type="button" tabindex="-1" data-step="budget" data-d="-1" aria-label="weniger">−</button><button class="step" type="button" tabindex="-1" data-step="budget" data-d="1" aria-label="mehr">+</button></span>
+          </div>
+          <div class="rows" id="tRows"></div>
+        </div>
+      </div>
+    </div>
+    <button class="primary next" type="button" data-go="plan">Weiter: Dein Plan</button>
+  </section>
+
+  <!-- Plan: so passt es ins Budget – Wichtiges zuerst, der Rest rückt nach -->
+  <section class="page" id="plan" hidden>
+    <h2 class="mod-h">Dein Plan</h2>
+    <div class="ts">
+      <div class="panel chart-p"><div class="chart" id="chPlan"></div></div>
+      <div class="side">
+        <div class="panel">
+          <div class="hero"><span class="eyebrow">Pünktlich</span><span class="big" id="pHero"></span><span class="sub" id="pHeroS"></span></div>
+          <div class="rows" id="pRows"></div>
+        </div>
+        <div class="panel">
+          <div class="ctl">
+            <span class="lbl">Dein Budget im Monat</span>
+            <span class="money"><input data-k="budget" class="budIn" inputmode="numeric" autocomplete="off"><span class="unit">€</span><button class="step" type="button" tabindex="-1" data-step="budget" data-d="-1" aria-label="weniger">−</button><button class="step" type="button" tabindex="-1" data-step="budget" data-d="1" aria-label="mehr">+</button></span>
+            <div class="q2" id="pQuick"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot" id="foot" hidden>
+    <span>Modellrechnung, keine Zusage und keine Anlageberatung. Preise steigen mit 2 % im Jahr; Rendite je nach Dauer 2 %, 4 % oder 7 %; Rente wie im Investmentrechner.</span>
+    <button class="link" type="button" id="reset">Alles zurücksetzen</button>
+  </div>
+</main>
+
+<script data-kern>
+/* ===== Rechenkern (Werte 2026) ===== */
+const K = {
+  rentenwert: 42.52,          // € je Entgeltpunkt ab 01.07.2026
+  durchschnitt: 51944,        // vorl. Durchschnittsentgelt 2026
+  bbgRV: 8450,                // BBG RV/AV mtl. 2026
+  bbgKV: 5812.5,              // BBG KV/PV mtl. 2026
+  mindestKV: 1318.33,         // Mindestbemessung freiwillig Versicherte 2026
+  kvAN: 0.073 + 0.0145,       // 7,3 % + halber Ø-Zusatzbeitrag 2,9 %
+  kvVoll: 0.146 + 0.029,
+  pvAN: 0.018 + 0.006,        // kinderlos
+  pvVoll: 0.042,              // kinderlos
+  rvAN: 0.093, rvVoll: 0.186, avAN: 0.013,
+  regelalter: 67, fruehestens: 63, wartezeit: 35,
+  abgeltung: 0.26375 * 0.7,   // Abgeltungsteuer + Soli, 30 % Teilfreistellung Aktien-ETF
+  kest: 0.26375, teilfrei: 0.7, // steuerpflichtig sind 70 % des Gewinns
+  pauschbetrag: 1000,         // Sparerpauschbetrag je Jahr, hier ganz fürs Depot
+  basiszins: 0.032,           // Basiszins Vorabpauschale 2026 (BMF 13.01.2026), fortgeschrieben
+  erspZins: 0.06,             // vorhandenes Erspartes bis Rentenbeginn
+  jahr: 2026
+};
+
+function tarif(zve) {                     // § 32a EStG 2026, Grundtabelle
+  zve = Math.floor(Math.max(0, zve));
+  let t;
+  if (zve <= 12348) t = 0;
+  else if (zve <= 17799) { const y = (zve - 12348) / 1e4; t = (914.51 * y + 1400) * y; }
+  else if (zve <= 69878) { const z = (zve - 17800) / 1e4; t = (173.10 * z + 2397) * z + 1034.87; }
+  else if (zve <= 277825) t = 0.42 * zve - 11135.63;
+  else t = 0.45 * zve - 19470.38;
+  t = Math.floor(t);
+  const soli = t <= 20350 ? 0 : Math.min(0.055 * t, 0.119 * (t - 20350));
+  return t + soli;
+}
+
+// Angestellt: Brutto -> Netto (StKl. I, kinderlos, ohne Kirchensteuer)
+function nettoAusBrutto(b) {
+  const rv = Math.min(b, K.bbgRV), kv = Math.min(b, K.bbgKV);
+  const sv = rv * (K.rvAN + K.avAN) + kv * (K.kvAN + K.pvAN);
+  const vorsorge = 12 * (rv * K.rvAN + kv * (K.kvAN + K.pvAN));
+  const zve = 12 * b - 1230 - 36 - vorsorge;
+  return b - sv - tarif(zve) / 12;
+}
+function bruttoAusNetto(n) {
+  if (n <= 0) return 0;
+  let lo = n, hi = n * 3 + 3000;
+  for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; nettoAusBrutto(m) < n ? lo = m : hi = m; }
+  return (lo + hi) / 2;
+}
+// Selbstständig: Gewinn -> grobes Netto (freiwillig GKV, kinderlos)
+function nettoSelbst(g, drv) {
+  const kvBasis = Math.min(Math.max(g, K.mindestKV), K.bbgKV);
+  const kvpv = kvBasis * (K.kvVoll + K.pvVoll);
+  const rv = drv ? Math.min(g, K.bbgRV) * K.rvVoll : 0;
+  const zve = 12 * (g - kvpv - rv) - 36;
+  return g - kvpv - rv - tarif(zve) / 12;
+}
+
+// Ab wann gibt es gesetzliche Rente?
+function grvStartAlter(p) {
+  const jahre = Math.max(0, p.rentenbeginn - p.einstieg);
+  if (p.rentenbeginn >= K.regelalter) return p.rentenbeginn;
+  return jahre >= K.wartezeit ? Math.max(K.fruehestens, p.rentenbeginn) : K.regelalter;
+}
+// Gesetzliche Rente brutto in heutigen Werten
+// Wie die Renteninformation: künftige Jahre mit dem heutigen Einkommen fortgeschrieben.
+// Frühere Jahre: Berufsstart mit rund der Hälfte des heutigen Verdienstniveaus, über 15 Jahre ansteigend (Annahme).
+const karriere = (a, einstieg) => Math.min(1, 0.5 + 0.5 * Math.max(0, a - einstieg) / 15);
+function grvBrutto(p, start) {
+  if (p.status === 'selbst' && !p.drv) return 0;
+  const b = p.status === 'ang' ? bruttoAusNetto(p.netto) : p.gewinn;
+  const epJahr = Math.min(b, K.bbgRV) * 12 / K.durchschnitt;
+  const jetzt = karriere(p.alter, p.einstieg);
+  let ep = 0;
+  for (let a = p.einstieg; a < p.rentenbeginn; a++) ep += a < p.alter ? epJahr * karriere(a, p.einstieg) / jetzt : epJahr;
+  const diff = start - K.regelalter;
+  const faktor = diff < 0 ? 1 + 0.036 * diff : 1 + 0.06 * diff;
+  return ep * K.rentenwert * faktor;
+}
+// Netto aus Brutto; defl rechnet künftige Beträge für den Steuertarif auf heutige Werte zurück
+// Kranken- und Pflegebeitrag der Rentner im Jahr des Rentenbeginns.
+// 2026: 7,3 % + halber Zusatzbeitrag 1,45 % KV, 4,2 % PV (kinderlos).
+// Projektion IGES/DAK 2025: GKV gesamt 20,0 % bis 2035 (Rentner-Anteil 10,0 %), PV 4,7 % bis 2029 (+0,6 kinderlos).
+function kvpvSatz(jahr) {
+  const tk = Math.min(1, Math.max(0, (jahr - 2026) / (2035 - 2026)));
+  const tp = Math.min(1, Math.max(0, (jahr - 2026) / (2029 - 2026)));
+  return { kv: 0.0875 + tk * (0.10 - 0.0875), pv: 0.042 + tp * (0.053 - 0.042) };
+}
+function grvNetto(brutto, beginnJahr, defl = 1) {
+  if (brutto <= 0) return { netto: 0, kvpv: 0, steuer: 0 };
+  const s = kvpvSatz(beginnJahr);
+  const kvpv = brutto * (s.kv + s.pv);
+  const anteil = Math.min(1, 0.825 + 0.005 * (beginnJahr - 2023));
+  // vorsichtig wie gängige Rentensteuerrechner: Tarif 2026 auf den hochgerechneten Betrag, ohne mitwachsende Freibeträge
+  const zve = 12 * brutto * anteil - 12 * kvpv - 102 - 36;
+  const steuer = tarif(zve) / 12;
+  return { netto: brutto - kvpv - steuer, kvpv, steuer, anteil, satz: s.kv + s.pv };
+}
+const abschlagFaktor = start => { const d = start - K.regelalter; return d < 0 ? 1 + 0.036 * d : 1 + 0.06 * d; };
+// Barwert: Monatsbetrag L, steigt mit dyn, Kapital verzinst mit entnahme, Monate m0..m1
+function barwert(L, m0, m1, entnahme, dyn) {
+  if (L <= 0 || m1 <= m0) return 0;
+  const q = Math.pow((1 + dyn) / (1 + entnahme), 1 / 12);
+  if (Math.abs(q - 1) < 1e-9) return L * (m1 - m0);
+  return L * (Math.pow(q, m0) - Math.pow(q, m1)) / (1 - q);
+}
+function endwert(rate, jahre, zins) {
+  const n = Math.round(jahre * 12);
+  if (n <= 0 || rate <= 0) return 0;
+  const r = Math.pow(1 + zins, 1 / 12) - 1;
+  return r === 0 ? rate * n : rate * (Math.pow(1 + r, n) - 1) / r * (1 + r);
+}
+function rateFuer(kapital, jahre, zins) {
+  const e = endwert(1, jahre, zins);
+  return e > 0 ? kapital / e : Infinity;
+}
+// Depot Monat für Monat: k komplette Umschichtungen gleichmäßig über die Sparjahre, jedes Jahr Vorabpauschale.
+// Steuer = (70 % des Gewinns − übriger Pauschbetrag des Jahres) × 26,375 %. Die versteuerte Vorabpauschale erhöht
+// die Anschaffungskosten, wird beim Verkauf also nicht nochmal besteuert.
+function depotSim(rate, jahre, zins, k, vp = true, verlauf = false) {
+  const N = Math.round(jahre * 12), r = Math.pow(1 + zins, 1 / 12) - 1;
+  const pts = new Set(); for (let j = 1; j <= k; j++) pts.add(Math.round(j * N / (k + 1)));
+  const st = gewinn => { const zve = Math.max(0, gewinn * K.teilfrei - pb); pb = Math.max(0, pb - gewinn * K.teilfrei); return zve * K.kest; };
+  let v0 = 0, b0 = 0, v = 0, b = 0, steuer = 0, vpSteuer = 0, vp0Steuer = 0, offen = 0, pb = K.pauschbetrag, pb0 = K.pauschbetrag;
+  let j0v = 0, j0b = 0, jv = 0, jb = 0;                    // Stand zu Jahresbeginn: Wert, Einzahlungen bis dahin
+  const ohne = [[0, 0]], mit = [[0, 0]], stufen = [];
+  for (let m = 0; m < N; m++) {
+    v0 += rate; b0 += rate; v0 *= 1 + r;
+    v += rate; b += rate; v *= 1 + r;
+    if (pts.has(m + 1)) {
+      const t = st(Math.max(0, v - b));
+      if (verlauf) { mit.push([m + 1, v]); stufen.push({ m: m + 1, vor: v, nach: v - t, t }); }
+      v -= t; steuer += t; b = v; offen = 0;
+      if (verlauf) mit.push([m + 1, v]);
+    } else if (verlauf && ((m + 1) % 6 === 0 || m === N - 1)) mit.push([m + 1, v]);
+    if (verlauf && ((m + 1) % 6 === 0 || m === N - 1)) ohne.push([m + 1, v0]);
+    if ((m + 1) % 12 === 0) {                              // Jahresende: Vorabpauschale, neuer Pauschbetrag
+      if (vp) {
+        const ein = (m + 1) / 12;
+        // ohne Umschichten
+        const g0 = Math.max(0, v0 - j0v - (b0 - j0b)), p0 = Math.min(j0v * K.basiszins * 0.7, g0);
+        { const z = Math.max(0, p0 * K.teilfrei - pb0); const t = z * K.kest; v0 -= t; vp0Steuer += t; b0 += p0; }
+        // mit Umschichten
+        const g = Math.max(0, v - jv - (b - jb)), p = Math.min(jv * K.basiszins * 0.7, g);
+        const t = st(p); v -= t; vpSteuer += t; b += p; offen += t;
+      }
+      pb = pb0 = K.pauschbetrag; j0v = v0; j0b = b0; jv = v; jb = b;
+    }
+  }
+  return { N, ohne, mit, stufen, ende0: v0, ende: v, steuer, vpSteuer, vp0Steuer, vpOffen: offen };
+}
+const depotMitUmschichten = (rate, jahre, zins, k) => { const d = depotSim(rate, jahre, zins, k); return { kapital: d.ende, steuer: d.steuer, vpSteuer: d.vpSteuer }; };
+const depotVerlauf = (rate, jahre, zins, k) => depotSim(rate, jahre, zins, k, true, true);
+// Was die Vorabpauschale am Depot kostet, als Faktor: Wert mit Vorabpauschale (plus noch offene Anrechnung) zu Wert ohne
+function vpFaktor(rate, jahre, zins, k) {
+  if (rate <= 0 || jahre <= 0) return 1;
+  const a = depotSim(rate, jahre, zins, k, true), o = depotSim(rate, jahre, zins, k, false);
+  const ea = k ? a.ende + a.vpOffen : a.ende0 + a.vp0Steuer, eo = k ? o.ende : o.ende0;
+  return eo > 0 ? Math.min(1, ea / eo) : 1;
+}
+
+function rechne(p) {
+  const n = Math.max(0, p.rentenbeginn - p.alter);
+  const fI = Math.pow(1 + p.inflation, n);
+  const beginnJahr = K.jahr + n;
+  const start = grvStartAlter(p);
+  const nS = Math.max(n, start - p.alter);                 // Jahre bis zur gesetzlichen Rente
+  const fS = Math.pow(1 + p.inflation, nS);
+  const startJahr = K.jahr + nS;
+  const nettoHeute = p.status === 'ang' ? p.netto : nettoSelbst(p.gewinn, p.drv);
+  // Brutto so, wie es in der Renteninformation hochgerechnet steht (inkl. Rentenerhöhungen)
+  const grvHeuteB = grvBrutto(p, start);                   // Schätzung, heutige Werte
+  let grvBriefB, quelle;
+  if (p.grvBrief != null) { grvBriefB = p.grvBrief * (start !== K.regelalter ? abschlagFaktor(start) : 1); quelle = 'brief'; }
+  else { grvBriefB = grvHeuteB * Math.pow(1 + p.anpassung, nS); quelle = 'schaetzung'; }
+  const grvN = grvNetto(grvBriefB, startJahr, fS);
+  const grvNom = Math.max(0, grvN.netto);                  // netto, Wert im Jahr des Rentenstarts
+  const vertraege = p.bestand || 0;                        // Vertragswert, schon hochgerechnet
+  const bedarfNom = p.bedarf * fS;                         // Bedarf ab gesetzlicher Rente
+  const bedarfRb = p.bedarf * fI;                          // Bedarf zu Rentenbeginn
+  const dauer = Math.max(1, p.lebenserwartung - p.rentenbeginn);
+  const N = Math.round(dauer * 12);
+  const bruecke = grvNom > 0 ? Math.min(N, Math.max(0, (start - p.rentenbeginn) * 12)) : 0;
+  // Erspartes: mit 6 % bis Rentenbeginn, dann wie die Töpfe als Entnahme verrentet (steigt mit der Inflation)
+  const erspK = (p.ersp || 0) * Math.pow(1 + K.erspZins, n);
+  const fR = barwert(1, 0, N, p.entnahme, p.inflation);
+  const erspL = fR > 0 ? erspK / fR : 0;                   // im Monat, Preise Rentenbeginn
+  const erspLS = erspL * fS / fI;                          // dasselbe ab gesetzlicher Rente
+  const bestand = vertraege + erspLS;                      // alles, was schon da ist
+  const luecke0 = Math.max(0, bedarfNom - grvNom - vertraege);
+  const luecke = Math.max(0, luecke0 - erspLS);
+  const lueckeBruecke = Math.max(0, bedarfRb - vertraege - erspL);
+  const kapital0 = barwert(Math.max(0, bedarfRb - vertraege), 0, bruecke, p.entnahme, p.inflation) + barwert(luecke0 * fI / fS, bruecke, N, p.entnahme, p.inflation);
+  const kapital = Math.max(0, kapital0 - erspK);           // das Ersparte deckt einen Teil des nötigen Kapitals
+  const raten = [0, 1, 3, 5].map(w => ({ w, rate: n - w > 0 && kapital > 0 ? rateFuer(kapital, n - w, p.anspar) : (n - w > 0 ? 0 : null) }));
+  return { n, fI, fS, beginnJahr, start, startJahr, nettoHeute, grvHeuteB, grvBriefB, grvN, grvNom, quelle, bedarfNom, bedarfRb, bestand, vertraege, erspK, erspL, erspLS, kapital0, luecke,
+           lueckeHeute: luecke / fS, dauer, N, bruecke: bruecke / 12, lueckeBruecke, kapital, raten };
+}
+
+// Netto-Rente je Euro im Depot im Verhältnis zur Rentenpolice, laut Modellrechnung (300 €, 36 J., 6 %)
+// 5x und 6x fortgeschrieben: Kapitalverlust aus der Umschicht-Simulation, davon kommt in der Rente ein sinkender Teil zurück
+const DEPOT_FAKTOR = { 0: 1904 / 1755, 1: 1878 / 1755, 2: 1787 / 1755, 3: 1763 / 1755, 4: 1748 / 1755, 5: 1740 / 1755, 6: 1736 / 1755 };
+function toepfe(p, r, sparrate, avAnteil, topf2, tgZins, ums) {
+  const av = sparrate * avAnteil, dep = sparrate - av;
+  const kAV = endwert(av, r.n, p.anspar);
+  const tg = topf2 === 'tg';
+  const kDep0 = endwert(dep, r.n, tg ? tgZins : p.anspar);
+  const d = tg ? { kapital: kDep0, steuer: 0, vpSteuer: 0 } : depotMitUmschichten(dep, r.n, p.anspar, ums);
+  const vpF = tg ? 1 : vpFaktor(dep, r.n, p.anspar, ums);
+  const faktor = tg ? 1 : (DEPOT_FAKTOR[ums] ?? 1) * vpF;
+  const f = barwert(1, 0, r.N, p.entnahme, p.inflation);
+  const lAV = f > 0 ? kAV / f : 0, lDep = f > 0 ? kDep0 * faktor / f : 0;
+  return { av, dep, kAV, kDep: d.kapital, kDep0, umsSteuer: d.steuer, vpSteuer: d.vpSteuer, vpF, faktor, lAV, lDep,
+    anteil: r.kapital > 0 ? (kAV + kDep0 * faktor) / r.kapital : 1 };
+}
+
+if (typeof module !== 'undefined') module.exports = { kvpvSatz, depotVerlauf, depotSim, vpFaktor, DEPOT_FAKTOR, abschlagFaktor, K, tarif, nettoAusBrutto, bruttoAusNetto, nettoSelbst, grvBrutto, grvNetto, rechne, toepfe, barwert, endwert, depotMitUmschichten, grvStartAlter };
+
+</script>
+
+<script>
+/* ===== Ziele-Planer ===== */
+const $ = id => document.getElementById(id);
+const eur0 = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 0 });
+const dez1 = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 1 });
+const fE = v => eur0.format(Math.round(v)) + ' €';
+const fK = v => v >= 1e6 ? dez1.format(v / 1e6) + ' Mio. €' : eur0.format(Math.round(v / 100) * 100) + ' €';
+const fN = v => eur0.format(Math.round(v));
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const rundAuf = (v, s) => Math.ceil(v / s) * s;
+const JAHR = K.jahr;
+
+/* Annahmen (von Lukas zu prüfen) */
+const A = {
+  inflation: 0.02,          // Zielbeträge in heutigen Preisen, steigen bis zum Termin
+  toepfe: [                 // Rendite nach Dauer bis zum Ziel
+    { bis: 3, name: 'Tagesgeld', zins: 0.02 },
+    { bis: 10, name: 'Mischung', zins: 0.04 },
+    { bis: 99, name: 'Depot', zins: 0.07 }
+  ],
+  ekQuote: 0.30,            // Wohnung: 20 % Eigenkapital + ca. 10 % Kaufnebenkosten
+  budgetQuote: 0.15,        // Vorschlag Sparbetrag: 15 % vom Netto
+  // Rente: dieselben Werte wie im Investmentrechner (Startwerte dort)
+  rente: { status: 'ang', gewinn: 0, drv: false, inflation: 0.02, anpassung: 0.015, lebenserwartung: 85, entnahme: 0.03, anspar: 0.07, bestand: 0, grvBrief: null }
+};
+
+const I = {
+  schirm: '<path d="M22 12a10 10 0 0 0-20 0Z"/><path d="M12 12v7a2 2 0 0 0 4 0"/><path d="M12 2v1"/>',
+  reise: '<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>',
+  auto: '<path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/>',
+  haus: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9v11h14V9"/><path d="M10 20v-6h4v6"/>',
+  kind: '<circle cx="9" cy="7" r="3"/><path d="M3 21v-2a6 6 0 0 1 12 0v2"/><circle cx="17.5" cy="11" r="2"/><path d="M15 21v-1.5a2.5 2.5 0 0 1 5 0V21"/>',
+  ringe: '<circle cx="9" cy="14" r="6"/><circle cx="15" cy="14" r="6"/><path d="M9.5 4 12 6.5 14.5 4"/>',
+  sonne: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  koffer: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 13h20"/>',
+  kurve: '<path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/>',
+  uhr: '<path d="M6 2h12M6 22h12"/><path d="M7 2v4a5 5 0 0 0 10 0V2"/><path d="M7 22v-4a5 5 0 0 1 10 0v4"/>',
+  flagge: '<path d="M4 22V4"/><path d="M4 4h13l-2 4 2 4H4"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  x: '<path d="M6 6l12 12M18 6 6 18"/>',
+  haken: '<path d="M5 12.5l4.5 4.5L19 7.5"/>'
+};
+const svgI = k => `<svg class="ico" viewBox="0 0 24 24">${I[k]}</svg>`;
+
+/* Felder der Ziele: Beschriftung, Einheit, Bereich, Schritt */
+const FELD = {
+  betrag: { t: 'Betrag', h: 'heutige Preise', u: '€', min: 0, max: 5e6, st: 500 },
+  jahre: { t: 'In', u: 'J.', min: 1, max: 50, st: 1 },
+  preis: { t: 'Kaufpreis', u: '€', min: 0, max: 5e6, st: 10000 },
+  kindAlter: { t: 'Kind ist', u: 'J.', min: 0, max: 17, st: 1 },
+  bisAlter: { t: 'Bis', u: 'J.', min: 19, max: 90, st: 1 },
+  wunsch: { t: 'Wunschrente', h: 'heutige Kaufkraft', u: '€', min: 0, max: 20000, st: 50 },
+  renteMit: { t: 'Rente mit', u: 'J.', min: 60, max: 70, st: 1 }
+};
+
+/* Ziele, die man anhaken kann. Reihenfolge = Reihenfolge der Kacheln. */
+const TYP = {
+  notgroschen: { n: 'Notgroschen', i: 'schirm', muss: true, f: ['betrag', 'jahre'], start: () => ({ betrag: rundAuf(Math.max(3000, S.netto * 3), 500), jahre: 1 }), topf: 'Tagesgeld' },
+  reise: { n: 'Reise', i: 'reise', f: ['betrag', 'jahre'], start: () => ({ betrag: 4000, jahre: 1 }) },
+  auto: { n: 'Auto', i: 'auto', f: ['betrag', 'jahre'], start: () => ({ betrag: 25000, jahre: 4 }) },
+  wohnung: { n: 'Eigene Wohnung', k: 'Wohnung', i: 'haus', f: ['preis', 'jahre'], start: () => ({ preis: 350000, jahre: 8 }), betrag: z => z.preis * A.ekQuote },
+  kind: { n: 'Für ein Kind', k: 'Kind', i: 'kind', f: ['betrag', 'kindAlter'], start: () => ({ betrag: 20000, kindAlter: 0 }), jahre: z => Math.max(1, 18 - z.kindAlter) },
+  hochzeit: { n: 'Hochzeit', i: 'ringe', f: ['betrag', 'jahre'], start: () => ({ betrag: 15000, jahre: 2 }) },
+  auszeit: { n: 'Auszeit', i: 'sonne', f: ['betrag', 'jahre'], start: () => ({ betrag: rundAuf(Math.max(6000, S.netto * 6), 500), jahre: 5 }) },
+  gruendung: { n: 'Selbstständig machen', k: 'Gründung', i: 'koffer', f: ['betrag', 'jahre'], start: () => ({ betrag: 20000, jahre: 5 }) },
+  vermoegen: { n: 'Vermögen aufbauen', k: 'Vermögen', i: 'kurve', f: ['betrag', 'bisAlter'], start: () => ({ betrag: 100000, bisAlter: Math.max(S.alter + 10, Math.min(60, S.alter + 20)) }), jahre: z => Math.max(1, z.bisAlter - S.alter) },
+  rente: { n: 'Rente', i: 'uhr', muss: true, f: ['wunsch', 'renteMit'], start: () => ({ wunsch: rundAuf(S.netto * 0.9, 50), renteMit: 67 }), rente: true },
+  eigen: { n: 'Eigenes Ziel', i: 'flagge', f: ['betrag', 'jahre'], start: () => ({ titel: '', betrag: 10000, jahre: 3 }) }
+};
+const name = z => z.typ === 'eigen' ? (z.titel || 'Eigenes Ziel') : TYP[z.typ].n;
+const kurz = z => z.typ === 'eigen' ? (z.titel || 'Eigenes') : (TYP[z.typ].k || TYP[z.typ].n);
+
+/* ===== Zustand ===== */
+const DEF = { started: false, alter: 32, netto: 0, budget: null, ersp: 0, ziele: [], open: 0, done: new Set(), farbe: 0 };
+let S = { ...DEF, done: new Set(), ziele: [] };
+let PAGE = 'daten';
+const SEEN = new Set();
+
+/* ===== Rechnen ===== */
+const topfFuer = (z, jahre) => TYP[z.typ].topf ? A.toepfe.find(t => t.name === TYP[z.typ].topf) : A.toepfe.find(t => jahre < t.bis);
+// Monatsfaktor wie im Investmentrechner: Einzahlung am Monatsanfang, Zins monatlich
+const mz = zins => Math.pow(1 + zins, 1 / 12) - 1;
+const ewF = (m, zins) => { const r = mz(zins); return m <= 0 ? 0 : r === 0 ? m : (Math.pow(1 + r, m) - 1) / r * (1 + r); };
+const budget = () => S.budget ?? vorschlagBudget();
+const vorschlagBudget = () => S.netto > 0 ? rundAuf(S.netto * A.budgetQuote, 50) : 300;
+// Reihenfolge: „Muss“ zuerst, dann nach Termin
+function reihenfolge() {
+  return S.ziele.slice().sort((a, b) => (b.muss - a.muss) || (termin(a) - termin(b)) || (S.ziele.indexOf(a) - S.ziele.indexOf(b)));
+}
+const jahreVon = z => TYP[z.typ].rente ? Math.max(1, z.renteMit - S.alter) : TYP[z.typ].jahre ? TYP[z.typ].jahre(z) : z.jahre;
+const termin = z => Math.round(jahreVon(z) * 12);
+
+function rechneZiele() {
+  let rest = Math.max(0, S.ersp);
+  const out = reihenfolge().map(z => {
+    const jahre = jahreVon(z), n = Math.round(jahre * 12), t = TYP[z.typ];
+    if (t.rente) {
+      // Erspartes, das hier landet, rechnet der Investmentrechner mit 6 % bis Rentenbeginn
+      const p0 = { ...A.rente, alter: S.alter, rentenbeginn: z.renteMit, netto: S.netto, einstieg: Math.min(22, S.alter), bedarf: z.wunsch, ersp: 0 };
+      const r0 = rechne(p0), braucht = r0.kapital / Math.pow(1 + K.erspZins, r0.n);
+      const ersp = Math.min(rest, braucht); rest -= ersp;
+      const r = rechne({ ...p0, ersp });
+      // aufgerundet wie im Investmentrechner (Seite „Weg“)
+      const rate = r.kapital > 0 && r.n > 0 ? Math.ceil(rateFuer(r.kapital, r.n, A.rente.anspar)) : 0;
+      return { z, n, jahre, jahr: JAHR + Math.round(jahre), heute: z.wunsch, ziel: r.kapital, zins: A.rente.anspar, topf: 'Altersvorsorge', ersp, start: 0, rate, rente: r };
+    }
+    const heute = t.betrag ? t.betrag(z) : z.betrag;
+    const ziel = heute * Math.pow(1 + A.inflation, jahre);
+    const tp = topfFuer(z, jahre), q = Math.pow(1 + mz(tp.zins), n);
+    const ersp = Math.min(rest, ziel / q); rest -= ersp;
+    const rate = Math.ceil(Math.max(0, (ziel - ersp * q) / (ewF(n, tp.zins) || 1)) - 1e-9);
+    return { z, n, jahre, jahr: JAHR + Math.round(jahre), heute, ziel, zins: tp.zins, topf: tp.name, ersp, start: ersp, rate };
+  });
+  return { liste: out, frei: rest };
+}
+
+/* Plan: Monat für Monat das Budget verteilen. Wichtiges zuerst; wer im Plan liegt, bekommt seine Rate,
+   wer hinterher ist, bekommt, was übrig ist, bis es erreicht ist. Rente läuft bis Rentenbeginn und wird ggf. nur teilweise gedeckt. */
+function planen(liste, B, maxM) {
+  const g = liste.map(x => ({ x, bal: x.start, r: mz(x.zins), pay: [], fertig: null, anteil: null }));
+  const frei = [];
+  for (let t = 0; t < maxM; t++) {
+    let avail = B, offen = 0;
+    for (const s of g) {
+      if (s.fertig != null) { s.pay.push(0); continue; }
+      offen++;
+      const x = s.x;
+      let need;
+      if (x.rente) {
+        if (t >= x.n) { s.fertig = x.n; s.anteil = x.ziel > 0 ? Math.min(1, s.bal / x.ziel) : 1; s.pay.push(0); continue; }
+        const rm = x.n - t; need = Math.max(0, (x.ziel - s.bal * Math.pow(1 + s.r, rm)) / ewF(rm, x.zins));
+      } else {
+        const bis = Math.max(x.n, t + 1), rm = bis - t, ziel = x.heute * Math.pow(1 + A.inflation, bis / 12);
+        need = Math.max(0, (ziel - s.bal * Math.pow(1 + s.r, rm)) / ewF(rm, x.zins));
+      }
+      const p = Math.min(avail, need); avail -= p; s.pay.push(p);
+      s.bal = (s.bal + p) * (1 + s.r);
+      if (!x.rente) {
+        const zielJetzt = x.heute * Math.pow(1 + A.inflation, (t + 1) / 12);
+        // erreicht: das Ziel ist trotzdem erst zu seinem Termin dran, nicht früher
+        if (s.bal >= zielJetzt - 0.5) s.fertig = Math.max(t + 1, x.n);
+      }
+    }
+    frei.push(avail);
+    if (!offen) break;
+  }
+  g.forEach(s => { if (s.x.rente && s.fertig == null) { s.fertig = s.x.n; s.anteil = s.x.ziel > 0 ? Math.min(1, s.bal / s.x.ziel) : 1; } if (s.x.ziel <= 0.5 && s.fertig == null) s.fertig = 0; });
+  return { g, frei };
+}
+
+function compute() {
+  const { liste, frei: erspFrei } = rechneZiele();
+  const B = budget();
+  const summe = liste.reduce((a, x) => a + x.rate, 0);
+  const plan = planen(liste, B, 12 * 60);
+  // Zeitfenster: bis zum letzten Ziel (ohne Rente) plus Luft, mind. 5 Jahre. Nur Rente: bis Rentenbeginn.
+  const nicht = liste.filter(x => !x.rente), rente = liste.find(x => x.rente);
+  const fenster = ende => nicht.length ? Math.min(12 * 45, Math.max(60, Math.ceil((ende + 18) / 12) * 12)) : (rente ? rente.n : 60);
+  const Tz = fenster(Math.max(0, ...nicht.map(x => x.n)));
+  const Tp = Math.max(Tz, fenster(Math.max(0, ...plan.g.filter(s => !s.x.rente && s.fertig != null).map(s => s.fertig))));
+  const T = Tp;
+  const dem = liste.map(x => Array.from({ length: T }, (_, t) => t < x.n ? x.rate : 0));
+  const pl = plan.g.map(s => Array.from({ length: T }, (_, t) => s.pay[t] || 0));
+  const demSum = Array.from({ length: T }, (_, t) => dem.reduce((a, d) => a + d[t], 0));
+  const plSum = Array.from({ length: T }, (_, t) => pl.reduce((a, d) => a + d[t], 0));
+  const over = demSum.map(v => Math.max(0, v - B));
+  // Maßstab: Zeitstrahl zeigt alles pünktlich, der Plan zoomt auf das Budget
+  const yZ = Math.max(B, ...demSum, 1) * 1.1, yP = Math.max(B, ...plSum, 1) * 1.3;
+  return { liste, erspFrei, B, summe, plan, T, Tz, Tp, yZ, yP, dem, pl, demSum, plSum, over };
+}
+
+/* ===== Hilfen fürs Darstellen ===== */
+function tween(el, to, fmt, dur = 550) {
+  if (!el) return;
+  const from = el._v ?? to; el._v = to; el._soll = to;
+  if (from === to || !isFinite(from) || !isFinite(to)) { el.textContent = fmt(to); return; }
+  cancelAnimationFrame(el._raf);
+  const t0 = performance.now();
+  const step = t => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = fmt(from + (to - from) * e); if (k < 1) el._raf = requestAnimationFrame(step); };
+  el._raf = requestAnimationFrame(step);
+}
+// Hochzählen beim ersten Auftritt (nur für Ergebnisse, die die Seite aufdeckt)
+// Ändert sich der Wert in der Zwischenzeit (jemand tippt schon), gilt der neue und das Hochzählen entfällt
+function zaehle(el, to, fmt, dur = 1000, delay = 0) {
+  el._v = 0; el._soll = to; el.textContent = fmt(0);
+  setTimeout(() => { if (el._soll !== to) return; el._v = 0; tween(el, to, fmt, dur); }, delay);
+}
+const easeIO = x => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const easeO = x => 1 - Math.pow(1 - x, 3);
+function animiere(dur, fn, done) {
+  const t0 = performance.now();
+  const step = t => { const k = Math.min(1, (t - t0) / dur); fn(k); if (k < 1) requestAnimationFrame(step); else done && done(); };
+  requestAnimationFrame(step);
+}
+const farbe = z => `var(--z${z.farbe % 11})`;
+const segPill = nav => {
+  const b = nav.querySelector('button[aria-pressed="true"]'), p = nav.querySelector('.seg-pill');
+  if (!b || !p) return; p.style.width = b.offsetWidth + 'px'; p.style.transform = `translateX(${b.offsetLeft}px)`;
+};
+
+/* ===== Eingaben ===== */
+const parse = s => { const t = String(s).replace(/\s|€/g, '').replace(/\./g, '').replace(',', '.'); return t === '' ? null : +t; };
+const GLOBAL = { alter: { min: 16, max: 75, st: 1 }, netto: { min: 0, max: 100000, st: 100 }, budget: { min: 0, max: 50000, st: 50 }, ersp: { min: 0, max: 1e7, st: 1000 } };
+function setze(k, v, zid) {
+  if (zid != null) { const z = S.ziele.find(x => x.id === +zid); if (!z) return; if (k === 'titel') z.titel = v; else z[k] = v; return; }
+  S[k] = v;
+}
+function lese(k, zid) { if (zid != null) { const z = S.ziele.find(x => x.id === +zid); return z ? z[k] : null; } return k === 'budget' ? budget() : S[k]; }
+function grenzen(k, zid) {
+  if (zid == null) return GLOBAL[k];
+  const f = FELD[k]; if (k === 'bisAlter') return { ...f, min: S.alter + 1 }; if (k === 'renteMit') return { ...f, min: Math.max(60, S.alter + 1) }; return f;
+}
+function feldWert(el) {
+  const v = lese(el.dataset.k, el.dataset.z);
+  if (v == null || (!v && (el.dataset.k === 'ersp' || el.dataset.k === 'netto'))) return '';
+  return el.parentElement.querySelector('.unit')?.textContent === 'J.' ? String(v) : fN(v);
+}
+document.addEventListener('focusin', e => { const el = e.target; if (el.matches('.money input')) setTimeout(() => el.select(), 0); });
+document.addEventListener('input', e => {
+  const el = e.target; if (!el.dataset.k) return;
+  if (el.dataset.k === 'titel') { setze('titel', el.value.slice(0, 40), el.dataset.z); render(); return; }
+  const v = parse(el.value), g = grenzen(el.dataset.k, el.dataset.z);
+  if (v == null) { if (el.dataset.k === 'budget') S.budget = null; else if (el.dataset.k === 'ersp') S.ersp = 0; else return; render(); return; }
+  if (!isFinite(v) || v < 0 || v > g.max) return;
+  if (v < g.min && el.dataset.k !== 'alter') return;
+  if (el.dataset.k === 'alter' && (v < g.min)) return;
+  setze(el.dataset.k, v, el.dataset.z); render();
+});
+document.addEventListener('focusout', e => {
+  const el = e.target; if (!el.dataset.k || el.dataset.k === 'titel') return;
+  const g = grenzen(el.dataset.k, el.dataset.z), v = parse(el.value);
+  if (v != null && isFinite(v)) { const nv = clamp(Math.round(v), g.min, g.max); if (nv !== lese(el.dataset.k, el.dataset.z) || (el.dataset.k === 'budget' && S.budget != null)) setze(el.dataset.k, nv, el.dataset.z); }
+  render(); el.value = feldWert(el);
+});
+document.addEventListener('keydown', e => {
+  const el = e.target;
+  if (e.key === 'Enter' && el.matches('input') && el.closest('.q')) { e.preventDefault(); const i = +el.closest('.q').id.slice(1); el.blur(); weiter(i); return; }
+  if (e.key === 'Enter' && el.matches('.money input')) { el.blur(); return; }
+  if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && el.dataset.k && el.dataset.k !== 'titel') {
+    e.preventDefault(); const g = grenzen(el.dataset.k, el.dataset.z), cur = lese(el.dataset.k, el.dataset.z) || 0;
+    setze(el.dataset.k, clamp(cur + (e.key === 'ArrowUp' ? 1 : -1), g.min, g.max), el.dataset.z); render(); el.value = feldWert(el); el.select();
+  }
+});
+document.addEventListener('click', e => {
+  const st = e.target.closest('[data-step]'); if (!st) return;
+  const k = st.dataset.step, z = st.dataset.z, g = grenzen(k, z), cur = lese(k, z) || 0, d = +st.dataset.d;
+  const nv = d > 0 ? (Math.floor(cur / g.st + 1e-9) + 1) * g.st : Math.max(0, Math.ceil(cur / g.st - 1e-9) - 1) * g.st;
+  setze(k, clamp(nv, g.min, g.max), z); render();
+  document.querySelectorAll(`.money input[data-k="${k}"]${z != null ? `[data-z="${z}"]` : ''}`).forEach(i => { i.value = feldWert(i); });
+});
+
+/* ===== Fragen ===== */
+function tilesHTML(nurNeu) {
+  return Object.entries(TYP).filter(([k]) => !nurNeu || !S.ziele.some(z => z.typ === k)).map(([k, t]) =>
+    `<button type="button" class="tile" data-typ="${k}" aria-pressed="${S.ziele.some(z => z.typ === k)}"><span class="ic">${svgI(t.i)}</span><span class="n">${t.n}</span><span class="box"><svg viewBox="0 0 24 24">${I.haken}</svg></span></button>`).join('');
+}
+let NEXT_ID = 1;
+function neuesZiel(typ) {
+  const t = TYP[typ];
+  const z = { id: NEXT_ID++, typ, muss: !!t.muss, farbe: S.farbe++, ...t.start() };
+  S.ziele.push(z); return z;
+}
+function toggleTyp(typ) {
+  const i = S.ziele.findIndex(z => z.typ === typ);
+  if (i >= 0) S.ziele.splice(i, 1); else neuesZiel(typ);
+}
+$('tiles').addEventListener('click', e => {
+  const b = e.target.closest('.tile'); if (!b) return;
+  toggleTyp(b.dataset.typ); b.setAttribute('aria-pressed', S.ziele.some(z => z.typ === b.dataset.typ)); render();
+});
+function oeffne(i, fokus = true) {
+  S.open = i; renderFragen();
+  const q = $('q' + i);
+  if (fokus) { const f = q.querySelector('.q-fold.body input'); if (f) f.focus({ preventScroll: true }); }
+  setTimeout(() => { const rc = q.getBoundingClientRect(), oben = (S.started ? 60 : 0) + 16; if (rc.bottom > innerHeight - 16 || rc.top < oben) scrollBy({ top: rc.top - oben, behavior: 'smooth' }); }, 340);
+}
+function bereit(i) { return i === 0 ? S.netto > 0 && S.alter >= 16 : i === 1 ? S.ziele.length > 0 : budget() >= 0; }
+function weiter(i) {
+  if (!bereit(i)) return;
+  const q = $('q' + i); q.classList.remove('fin'); void q.offsetWidth; q.classList.add('fin');
+  S.done.add(i);
+  if (i < 2) { if (i === 1 && !S.ziele.length) return; oeffne(i + 1); }
+  else planeLos();
+}
+document.querySelectorAll('.q-next').forEach(b => b.addEventListener('click', () => weiter(+b.dataset.q)));
+document.querySelectorAll('.q-row').forEach(b => b.addEventListener('click', () => oeffne(+b.dataset.q)));
+$('plane').addEventListener('click', () => weiter(2));
+
+/* ===== Seiten ===== */
+const PAGES = ['daten', 'ziele', 'zeit', 'plan'];
+function navPill() {
+  document.querySelectorAll('#nav button').forEach(b => b.setAttribute('aria-pressed', b.dataset.go === PAGE));
+  segPill($('nav'));
+}
+function go(p) {
+  if (p === PAGE || !S.started) return;
+  const from = $(PAGE), to = $(p), dir = PAGES.indexOf(p) > PAGES.indexOf(PAGE) ? 1 : -1;
+  PAGE = p; navPill(); render();
+  from.classList.remove('in-r', 'in-l'); from.classList.add(dir > 0 ? 'out-l' : 'out-r');
+  clearTimeout(go._t);
+  go._t = setTimeout(() => {
+    PAGES.forEach(x => { $(x).hidden = x !== p; $(x).classList.remove('out-l', 'out-r', 'in-r', 'in-l'); });
+    void to.offsetWidth; to.classList.add(dir > 0 ? 'in-r' : 'in-l');
+    scrollTo({ top: 0, behavior: 'auto' });
+    render(); betrete(p);
+  }, 170);
+}
+document.addEventListener('click', e => { const g = e.target.closest('[data-go]'); if (g) go(g.dataset.go); });
+function planeLos() {
+  const erst = !S.started;
+  S.started = true; S.done.add(2); S.open = -1;
+  if (erst) {
+    document.body.classList.add('started');
+    $('tb').classList.add('on'); $('foot').hidden = false;
+    stopLand();
+    setTimeout(() => { $('land').hidden = true; }, 1000);
+  }
+  renderFragen(); go('ziele');
+}
+
+/* Startseite → Fragen */
+$('los').addEventListener('click', () => {
+  $('app').hidden = false;
+  const land = $('land'); land.style.transition = 'transform 1s var(--ease), opacity 1s var(--ease)';
+  land.style.transform = 'translateY(-100%)'; land.style.opacity = 0; land.style.pointerEvents = 'none';
+  const qs = $('qs'); qs.querySelectorAll('.q').forEach((q, i) => { q.classList.add('reveal'); q.style.animationDelay = (0.25 + i * 0.07) + 's'; });
+  // Startseite liegt über den Fragen und fährt nach oben weg
+  Object.assign(land.style, { position: 'fixed', inset: '0', zIndex: 10, margin: 0, background: 'var(--bg)' });
+  setTimeout(() => { land.hidden = true; stopLand(); qs.querySelectorAll('.q').forEach(q => { q.classList.remove('reveal'); q.style.animationDelay = ''; }); }, 1000);
+  oeffne(0);
+});
+
+/* ===== Darstellen ===== */
+function render() {
+  const C = compute(); render.C = C;
+  renderFragen(C);
+  renderZiele(C);
+  if (PAGE === 'zeit' || SEEN.has('zeit')) renderZeit(C);
+  if (PAGE === 'plan' || SEEN.has('plan')) renderPlan(C);
+  document.querySelectorAll('.money input[data-k]').forEach(el => { if (el !== document.activeElement) el.value = feldWert(el); });
+}
+
+function renderFragen(C = render.C || compute()) {
+  ['q0', 'q1', 'q2'].forEach((id, i) => { $(id).classList.toggle('open', S.open === i); $(id).classList.toggle('done', S.done.has(i)); });
+  $('sum0').textContent = `${S.alter} Jahre · ${fE(S.netto)} netto`;
+  $('sum1').textContent = S.ziele.map(name).join(' · ') || 'noch nichts';
+  $('sum2').textContent = `${fE(budget())} im Monat${S.ersp > 0 ? ` · ${fE(S.ersp)} gespart` : ''}`;
+  $('next0').disabled = !bereit(0); $('next1').disabled = !bereit(1); $('plane').disabled = !(bereit(0) && bereit(1));
+  $('plane').textContent = S.started ? 'Fertig' : 'Ziele planen';
+  $('budHint').textContent = S.budget == null ? 'Vorschlag 15 %' : '';
+  const N = Math.max(S.netto, 1), B = budget();
+  $('shN').textContent = fE(S.netto); $('shB').textContent = fE(B); $('shP').textContent = S.netto > 0 ? `${Math.round(B / N * 100)} %` : '';
+  $('shBar').style.width = Math.min(100, B / N * 100) + '%';
+  if (!$('tiles')._ok) { $('tiles').innerHTML = tilesHTML(); $('tiles')._ok = true; }
+  $('tiles').querySelectorAll('.tile').forEach(b => b.setAttribute('aria-pressed', S.ziele.some(z => z.typ === b.dataset.typ)));
+  $('nextDaten').hidden = !S.started || S.open !== -1;
+}
+
+/* --- Deine Ziele --- */
+function feldHTML(z, k) {
+  const f = FELD[k];
+  return `<label class="fld"><span class="fld-h">${f.t}${f.h ? `<small>${f.h}</small>` : ''}</span><span class="money"><input data-z="${z.id}" data-k="${k}" inputmode="numeric" autocomplete="off"><span class="unit">${f.u}</span>${f.u === '€' ? `<button class="step" type="button" tabindex="-1" data-step="${k}" data-z="${z.id}" data-d="-1" aria-label="weniger">−</button><button class="step" type="button" tabindex="-1" data-step="${k}" data-z="${z.id}" data-d="1" aria-label="mehr">+</button>` : ''}</span></label>`;
+}
+function karteHTML(z) {
+  const t = TYP[z.typ];
+  return `<article class="panel zk" data-zid="${z.id}">
+    <div class="zk-h"><span class="ic" style="background:${farbe(z)}">${svgI(t.i)}</span>
+      ${z.typ === 'eigen' ? `<input class="titel" data-z="${z.id}" data-k="titel" placeholder="Eigenes Ziel" aria-label="Name des Ziels" maxlength="40">` : `<h3>${t.n}</h3>`}
+      <span class="seg sm" data-muss="${z.id}"><span class="seg-pill"></span><button type="button" data-v="1">Muss</button><button type="button" data-v="0">Wunsch</button></span>
+      <button class="zk-x" type="button" data-weg="${z.id}" aria-label="${t.n} entfernen">${svgI('x')}</button></div>
+    <div class="zk-f">${t.f.map(k => feldHTML(z, k)).join('')}</div>
+    <div class="zk-calc" data-calc></div>
+    <div class="zk-r"><div><span class="rate"><b data-rate></b><small>im Monat</small></span></div><div class="meta" data-meta></div></div>
+    <div class="zk-bar" data-bar title="Anteil aus dem Ersparten"><i></i></div>
+  </article>`;
+}
+function renderZiele(C) {
+  const grid = $('zGrid');
+  // Karten nur anlegen/entfernen, nicht neu bauen (sonst verliert das Feld beim Tippen den Fokus)
+  const da = new Set([...grid.querySelectorAll('.zk[data-zid]')].map(e => +e.dataset.zid));
+  const soll = S.ziele.map(z => z.id);
+  grid.querySelectorAll('.zk[data-zid]').forEach(e => { if (!soll.includes(+e.dataset.zid) && !e.classList.contains('weg')) e.remove(); });
+  S.ziele.forEach(z => {
+    if (da.has(z.id)) return;
+    const w = document.createElement('div'); w.innerHTML = karteHTML(z); const el = w.firstElementChild;
+    if (SEEN.has('ziele')) el.classList.add('neu');
+    const add = grid.querySelector('.zk-add, .picker');
+    grid.insertBefore(el, add);
+    el.querySelectorAll('input[data-k]').forEach(i => { i.value = i.dataset.k === 'titel' ? (z.titel || '') : feldWert(i); });
+  });
+  if (!grid.querySelector('.zk-add')) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'zk-add'; b.innerHTML = svgI('plus') + 'Ziel hinzufügen'; grid.appendChild(b);
+  }
+  grid.querySelector('.zk-add').hidden = Object.keys(TYP).every(k => S.ziele.some(z => z.typ === k)) || !!grid.querySelector('.picker');
+  const byId = new Map(C.liste.map(x => [x.z.id, x]));
+  S.ziele.forEach(z => {
+    const el = grid.querySelector(`.zk[data-zid="${z.id}"]`), x = byId.get(z.id); if (!el || !x) return;
+    const seg = el.querySelector('[data-muss]');
+    seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', (b.dataset.v === '1') === !!z.muss));
+    requestAnimationFrame(() => segPill(seg));
+    tween(el.querySelector('[data-rate]'), x.rate, fE);
+    const t = TYP[z.typ];
+    if (x.rente) {
+      const r = x.rente;
+      el.querySelector('[data-meta]').innerHTML = `<span class="tag acc">Altersvorsorge · 7 %</span><span>Lücke <b>${fE(r.luecke)}</b> ab ${r.beginnJahr}</span><span>heute ${fE(r.lueckeHeute)} Kaufkraft</span>`;
+      el.querySelector('[data-calc]').innerHTML = `Gesetzliche Rente geschätzt ${fE(r.grvNom)} · Kapital nötig <b>${fK(r.kapital)}</b> · <a class="link" href="./" target="_blank" rel="noopener">genau rechnen</a>`;
+    } else {
+      el.querySelector('[data-meta]').innerHTML = `<span class="tag${x.topf === 'Depot' ? ' acc' : ''}">${x.topf} · ${dez1.format(x.zins * 100)} %</span><span><b>${fK(x.ziel)}</b> in ${x.jahr}</span>${x.ersp >= 1 ? `<span>davon gespart ${fE(x.ersp)}</span>` : ''}`;
+      el.querySelector('[data-calc]').innerHTML = z.typ === 'wohnung' ? `Eigenkapital und Nebenkosten ${Math.round(A.ekQuote * 100)} % · <b>${fK(x.heute)}</b> heute` : z.typ === 'kind' ? `bis zum 18. Geburtstag · ${x.jahr}` : z.typ === 'vermoegen' ? `in ${Math.round(x.jahre)} Jahren · ${x.jahr}` : '';
+    }
+    el.querySelector('[data-calc]').hidden = !el.querySelector('[data-calc]').innerHTML;
+    // Balken: wie viel vom Ziel das Ersparte (mit Zinsen) schon trägt
+    const anteil = x.rente ? (x.rente.kapital0 > 0 ? 1 - x.rente.kapital / x.rente.kapital0 : 0) : (x.ziel > 0 ? Math.min(1, x.ersp * Math.pow(1 + mz(x.zins), x.n) / x.ziel) : 0);
+    el.querySelector('[data-bar]').hidden = anteil < 0.005;
+    el.querySelector('[data-bar] i').style.width = (anteil * 100).toFixed(1) + '%';
+  });
+  const anz = S.ziele.length;
+  tween($('zSum'), Math.ceil(C.summe), fE);
+  $('zSumS').textContent = anz === 1 ? 'im Monat für dein Ziel' : `im Monat für ${anz} Ziele, alle pünktlich`;
+}
+$('zGrid').addEventListener('click', e => {
+  const weg = e.target.closest('[data-weg]');
+  if (weg) {
+    const id = +weg.dataset.weg, el = weg.closest('.zk');
+    el.classList.add('weg');
+    setTimeout(() => { S.ziele = S.ziele.filter(z => z.id !== id); el.remove(); render(); }, 260);
+    return;
+  }
+  const seg = e.target.closest('[data-muss] button');
+  if (seg) { const z = S.ziele.find(x => x.id === +seg.parentElement.dataset.muss); z.muss = seg.dataset.v === '1'; render(); return; }
+  if (e.target.closest('.zk-add')) {
+    const pk = document.createElement('div'); pk.className = 'panel picker zk neu';
+    pk.innerHTML = `<div class="pk-h"><h3>Ziel hinzufügen</h3><button class="zk-x" type="button" data-zu aria-label="Schließen">${svgI('x')}</button></div><div class="tiles">${tilesHTML(true)}</div>`;
+    $('zGrid').insertBefore(pk, $('zGrid').querySelector('.zk-add')); render();
+    pk.querySelector('.tile')?.focus({ preventScroll: true });
+    return;
+  }
+  if (e.target.closest('[data-zu]')) { e.target.closest('.picker').remove(); render(); return; }
+  const tile = e.target.closest('.picker .tile');
+  if (tile) { neuesZiel(tile.dataset.typ); tile.closest('.picker').remove(); render(); $('tiles')._ok = false; renderFragen(); }
+});
+
+/* --- Zeitstrahl-Grafik (gemeinsam für Zeitstrahl und Plan) --- */
+function chartGeo(box, Tw, ms) {
+  const W = box.clientWidth || 600, handy = W < 520;
+  const rows = ms.rows, top = 10 + rows * 34, H = (handy ? 230 : 320) + top, bot = 26;
+  const x = t => Math.min(W, t / Tw * W);
+  return { W, H, top, bot, handy, x, plotH: H - top - bot };
+}
+// Meilensteine oben: Name und Jahr, Zeilen so verteilt, dass sich nichts überlappt
+function meilensteine(C, planZiel, W, handy, T, mv = 1) {
+  const items = [];
+  C.liste.forEach((x, i) => {
+    const s = C.plan.g[i], plan = planZiel && mv >= 0.5;   // Jahr und Farbe wechseln erst, wenn der Punkt halb drüben ist
+    let m = plan ? s.fertig : x.n; const offen = plan && !x.rente && m == null, spaet = plan && !x.rente && (offen || s.fertig > x.n + 0.5);
+    if (x.rente) m = x.n;
+    if (offen) m = T;                                   // nicht erreichbar: steht rechts am Rand
+    const aus = m > T + 0.5;
+    const label = (handy ? kurz(x.z) : name(x.z));
+    const jahr = x.rente ? (plan && s.anteil < 0.995 ? `${Math.round(s.anteil * 100)} %` : String(x.jahr)) : (offen ? 'offen' : String(JAHR + Math.round(m / 12)));
+    const mz = planZiel ? (x.rente ? x.n : s.fertig == null ? T : s.fertig) : x.n;
+    items.push({ i, x0: Math.min(x.n, T) / T * W, xm: Math.min(mz, T) / T * W, aus: planZiel ? mz > T + 0.5 : aus, label, jahr, spaet, rente: x.rente, z: x.z });
+  });
+  const sorted = items.filter(it => !it.aus).sort((a, b) => Math.min(a.xm, a.x0) - Math.min(b.xm, b.x0)), ends = [];
+  sorted.forEach(it => {
+    const w = Math.max(it.label.length, it.jahr.length) * (handy ? 6.6 : 7.2) + 14;
+    let left = it.xm - w / 2; if (left < 0) left = 0; if (left + w > W) left = W - w;
+    it.lx = left + w / 2; it.w = w; it.anchor = 'middle';
+    const von = Math.max(0, Math.min(left, it.x0 - w / 2)), bis = Math.max(left + w, Math.min(W, it.x0 + w / 2));
+    let r = 0; while (ends[r] != null && ends[r] > von - 6) r++;
+    ends[r] = bis; it.row = r;
+  });
+  return { items, rows: Math.max(1, ends.length) };
+}
+function stapel(series) {
+  const n = series.length, T = series[0] ? series[0].length : 0, cum = [];
+  let acc = new Array(T).fill(0);
+  for (let i = 0; i < n; i++) { const top = acc.map((a, t) => a + series[i][t]); cum.push([acc, top]); acc = top; }
+  return { cum, total: acc };
+}
+function stufenPfad(g, unten, oben, y, Tw) {
+  const T = Math.min(oben.length, Math.ceil(Tw)); let d = '';
+  for (let t = 0; t < T; t++) d += (t ? 'L' : 'M') + g.x(t).toFixed(1) + ',' + y(oben[t]).toFixed(1) + 'L' + g.x(t + 1).toFixed(1) + ',' + y(oben[t]).toFixed(1);
+  for (let t = T - 1; t >= 0; t--) d += 'L' + g.x(t + 1).toFixed(1) + ',' + y(unten[t]).toFixed(1) + 'L' + g.x(t).toFixed(1) + ',' + y(unten[t]).toFixed(1);
+  return d + 'Z';
+}
+function zeichne(box, C, series, opt) {
+  const Tw = opt.T, T = Math.min(C.T, Math.ceil(Tw)), B = C.B;
+  const ms = meilensteine(C, opt.plan, box.clientWidth || 600, (box.clientWidth || 600) < 520, Tw, opt.msMove ?? 1);
+  const g = chartGeo(box, Tw, ms);
+  const { cum, total } = stapel(series);
+  const maxY = opt.maxY;
+  const y = v => g.top + g.plotH - Math.min(v, maxY * 1.08) / maxY * g.plotH;
+  const k = `${g.W}|${g.H}|${series.length}`;
+  let svg = box.querySelector('svg');
+  if (!svg || svg._k !== k) {
+    box.innerHTML = `<svg viewBox="0 0 ${g.W} ${g.H}" style="height:${g.H}px" role="img"><defs><pattern id="zHatch${opt.id}" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(135)"><rect width="7" height="7" fill="var(--surface)" opacity=".5"/><rect width="1.8" height="7" fill="var(--gap)" opacity=".7"/></pattern></defs>
+      <g class="ax"></g><g class="bands"></g><path class="frei" d=""/><text class="frei-t"></text><path class="over" style="fill:url(#zHatch${opt.id})" d=""/><path class="over-l" d=""/><line class="bud"/><text class="bud-t"></text><g class="ms"></g><text class="rente-t"></text></svg>`;
+    svg = box.querySelector('svg'); svg._k = k;
+    svg.querySelector('.bands').innerHTML = series.map((_, i) => `<path class="band" data-i="${i}"/>`).join('');
+  }
+  svg.setAttribute('aria-label', opt.aria || 'Zeitstrahl');
+  // Jahre unten
+  const jahre = Math.floor(Tw / 12), schritt = jahre <= 6 ? 1 : jahre <= 12 ? 2 : jahre <= 25 ? 5 : 10;
+  let ax = `<line class="axis" x1="0" x2="${g.W}" y1="${y(0)}" y2="${y(0)}"/>`;
+  for (let j = 0; j <= jahre; j += schritt) { const xx = g.x(j * 12); if (xx > g.W - 18 && j) continue; ax += `<text class="yr" x="${xx + (j ? 0 : 0)}" y="${g.H - 6}" text-anchor="${j ? 'middle' : 'start'}">${j ? JAHR + j : 'heute'}</text>`; }
+  svg.querySelector('.ax').innerHTML = ax;
+  // Bänder
+  svg.querySelectorAll('.band').forEach((p, i) => {
+    const x = C.liste[i]; if (!x) return;
+    p.setAttribute('d', stufenPfad(g, cum[i][0], cum[i][1], y, Tw)); p.style.fill = farbe(x.z);
+    p.classList.toggle('on', SEL === x.z.id);
+  });
+  box.classList.toggle('sel', SEL != null && C.liste.some(x => x.z.id === SEL));
+  // Budget
+  const bud = svg.querySelector('.bud'), by = y(B);
+  bud.setAttribute('x1', 0); bud.setAttribute('x2', g.W * (opt.budK ?? 1)); bud.setAttribute('y1', by); bud.setAttribute('y2', by);
+  const bt = svg.querySelector('.bud-t'); bt.setAttribute('x', g.W); bt.setAttribute('y', by - 7); bt.setAttribute('text-anchor', 'end'); bt.textContent = `Budget ${fE(B)}`;
+  bt.style.opacity = opt.budK == null || opt.budK >= 1 ? 1 : 0;
+  // Über dem Budget: rot schraffiert mit Rand
+  const ov = svg.querySelector('.over'), ol = svg.querySelector('.over-l');
+  if (opt.over) {
+    const oben = total, unten = total.map(v => Math.min(v, B));
+    ov.setAttribute('d', total.some(v => v > B + 0.5) ? stufenPfad(g, unten, oben, y, Tw) : '');
+    let d = ''; for (let t = 0; t < T; t++) if (total[t] > B + 0.5) d += `M${g.x(t).toFixed(1)},${y(total[t]).toFixed(1)}L${g.x(t + 1).toFixed(1)},${y(total[t]).toFixed(1)}`;
+    ol.setAttribute('d', d); ov.style.opacity = ol.style.opacity = opt.overK ?? 1;
+  } else { ov.setAttribute('d', ''); ol.setAttribute('d', ''); }
+  // Frei: was vom Budget übrig bleibt
+  const fr = svg.querySelector('.frei'), ft = svg.querySelector('.frei-t');
+  if (opt.frei) {
+    const unten = total.map(v => Math.min(v, B)), oben = total.map(() => B);
+    fr.setAttribute('d', stufenPfad(g, unten, oben, y, Tw)); fr.style.opacity = opt.freiK ?? 1;
+    // Beschriftung dort, wo am meisten frei ist (am Ende des Fensters)
+    const t = T - 1, frei = B - Math.min(total[t], B);
+    if (frei > maxY * 0.07 && frei >= 1) { ft.setAttribute('x', g.W - 8); ft.setAttribute('y', (y(B) + y(total[t])) / 2 + 4); ft.setAttribute('text-anchor', 'end'); ft.textContent = `frei ${fE(frei)}`; ft.style.opacity = opt.freiK ?? 1; }
+    else ft.textContent = '';
+  } else { fr.setAttribute('d', ''); ft.textContent = ''; }
+  // Rente läuft über das Fenster hinaus
+  const rt = svg.querySelector('.rente-t'), ri = C.liste.findIndex(x => x.rente);
+  if (ri >= 0 && C.liste[ri].n > Tw && series[ri][T - 1] > 0) {
+    const mid = (cum[ri][0][T - 1] + cum[ri][1][T - 1]) / 2;
+    rt.setAttribute('x', g.W - 6); rt.setAttribute('y', y(mid) + 4); rt.setAttribute('text-anchor', 'end'); rt.textContent = `Rente bis ${C.liste[ri].jahr} →`;
+    rt.style.opacity = (cum[ri][1][T - 1] - cum[ri][0][T - 1]) > maxY * 0.06 ? 1 : 0;
+  } else rt.textContent = '';
+  // Meilensteine
+  const msK = opt.msK ?? 1, msG = svg.querySelector('.ms');
+  let h = '';
+  ms.items.forEach(it => {
+    if (it.aus) return;
+    const xm = it.x0 + (it.xm - it.x0) * (opt.msMove ?? 1), lx = it.lx + (it.xm - it.lx) * 0, ry = 8 + it.row * 34;
+    const dotY = g.top - 4, op = clamp((msK * ms.items.length - it.i), 0, 1);
+    const moved = opt.plan && Math.abs(it.xm - it.x0) > 2 && !it.rente;
+    h += `<g style="opacity:${op}" class="m" data-i="${it.i}">`;
+    h += `<line class="ms-l" x1="${xm}" x2="${xm}" y1="${dotY}" y2="${y(0)}"/>`;
+    if (moved) h += `<circle class="ms-alt" cx="${it.x0}" cy="${dotY}" r="3.5"/><path class="ms-pf" d="M${it.x0 + 6},${dotY} L${Math.max(it.x0 + 6, xm - 7)},${dotY}"/>`;
+    h += `<circle class="ms-d" cx="${xm}" cy="${dotY}" r="5" style="fill:${farbe(it.z)}"/>`;
+    const lxx = clamp(lx + (xm - it.xm), it.w / 2, g.W - it.w / 2);
+    h += `<text class="ms-n" x="${lxx}" y="${ry + 4}" text-anchor="middle">${esc(it.label)}</text><text class="ms-y${it.spaet ? ' spaet' : ''}" x="${lxx}" y="${ry + 19}" text-anchor="middle">${it.jahr}</text></g>`;
+  });
+  msG.innerHTML = h;
+  return { g, y, total };
+}
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+let SEL = null;
+function waehle(id) { SEL = SEL === id ? null : id; render(); }
+['chZeit', 'chPlan'].forEach(id => $(id).addEventListener('click', e => {
+  const b = e.target.closest('.band, .m'); if (!b) { if (SEL != null) waehle(SEL); return; }
+  const x = render.C.liste[+b.dataset.i]; if (x) waehle(x.z.id);
+}));
+
+/* --- Seite: Zeitstrahl --- */
+const ZS = { k: 1 };   // Fortschritt der Aufbau-Geschichte (0..1), danach 1
+function renderZeit(C) {
+  const k = ZS.k, n = C.liste.length;
+  // Aufbau: Budgetlinie zeichnet sich, dann stapeln sich die Ziele nacheinander, zuletzt erscheint die Lücke
+  const bandK = i => easeO(clamp((k * (n + 2) - 0.6 - i * 0.7) / 1.1, 0, 1));
+  const series = C.dem.map((d, i) => k >= 1 ? d : d.map(v => v * bandK(i)));
+  zeichne($('chZeit'), C, series, { id: 'Z', T: C.Tz, maxY: C.yZ, over: true, overK: k >= 1 ? 1 : clamp((k - 0.85) / 0.15, 0, 1), budK: k >= 1 ? 1 : clamp(k * 5, 0, 1), msK: k >= 1 ? 1 : clamp(k * 1.1, 0, 1), aria: 'Sparraten aller Ziele über die Zeit, im Vergleich zum Budget' });
+  const maxOver = Math.max(0, ...C.over), letzte = C.over.reduce((a, v, t) => v > 0.5 ? t : a, -1);
+  const freiMin = Math.max(0, C.B - Math.max(...C.demSum));
+  if (maxOver > 0.5) {
+    $('tHeroK').textContent = 'Fehlt im Monat'; $('tHero').className = 'big ink-gap';
+    if (!ZS.intro) tween($('tHero'), maxOver, fE);
+    $('tHeroS').textContent = letzte >= 0 ? `wenn alles pünktlich sein soll · bis ${JAHR + Math.floor((letzte + 1) / 12)}` : '';
+  } else {
+    $('tHeroK').textContent = 'Passt ins Budget'; $('tHero').className = 'big ink-ok';
+    if (!ZS.intro) tween($('tHero'), freiMin, v => '+' + fE(v));
+    $('tHeroS').textContent = 'bleiben im Monat frei, auch wenn alles pünktlich ist';
+  }
+  // Zeilen: wann die Last sinkt
+  const stufen = []; let prev = null;
+  for (let t = 0; t < C.T; t++) { const v = Math.round(C.demSum[t]); if (v !== prev) { stufen.push({ t, v }); prev = v; } }
+  $('tRows').innerHTML = stufen.slice(0, 6).map((s, i) => {
+    const bis = stufen[i + 1] ? JAHR + Math.floor(stufen[i + 1].t / 12) : null;
+    const ueber = s.v > C.B + 0.5;
+    return `<div class="rw" style="cursor:default"><span class="nm">${i ? `ab ${JAHR + Math.floor(s.t / 12)}` : 'ab heute'}<small>${bis ? `bis ${bis}` : 'danach'}</small></span><span class="v"><b class="${ueber ? 'ink-gap' : ''}">${fE(s.v)}</b><small>${ueber ? `${fE(s.v - C.B)} über Budget` : s.v > 0 ? `${fE(C.B - s.v)} frei` : 'alles erreicht'}</small></span></div>`;
+  }).join('');
+}
+
+/* --- Seite: Plan --- */
+const PS = { k: 1 };
+function renderPlan(C) {
+  const k = PS.k;
+  // Übergang: aus „alles pünktlich“ sinken die Ziele unter die Budgetlinie und rücken nach hinten
+  // erst sinken die Ziele unter die Budgetlinie und rücken nach hinten, dann zoomt die Ansicht aufs Budget
+  const e = easeIO(clamp(k / 0.6, 0, 1)), z = easeIO(clamp((k - 0.45) / 0.55, 0, 1));
+  const series = C.pl.map((p, i) => k >= 1 ? p : p.map((v, t) => C.dem[i][t] + (v - C.dem[i][t]) * e));
+  zeichne($('chPlan'), C, series, { id: 'P', T: C.Tz + (C.Tp - C.Tz) * z, maxY: C.yZ + (C.yP - C.yZ) * z, plan: true, frei: true, freiK: k >= 1 ? 1 : clamp((k - 0.75) / 0.25, 0, 1), over: k < 1, overK: 1 - e, msMove: e, aria: 'Plan: Sparraten der Ziele über die Zeit, innerhalb des Budgets' });
+  const g = C.plan.g, puenktlich = g.filter(s => s.x.rente ? (s.anteil ?? 1) >= 0.995 : s.fertig != null && s.fertig <= s.x.n + 0.5).length, n = g.length;
+  if (!PS.intro) { $('pHero').textContent = puenktlich === n ? (n === 1 ? 'Dein Ziel' : `Alle ${n}`) : `${puenktlich} von ${n}`; }
+  $('pHero').className = 'big' + (puenktlich === n ? ' ink-ok' : '');
+  $('pHeroS').textContent = puenktlich === n ? (n === 1 ? 'kommt pünktlich' : 'Ziele kommen pünktlich') : 'Zielen kommen pünktlich, der Rest etwas später';
+  $('pRows').innerHTML = g.map((s, i) => {
+    const x = s.x, z = x.z;
+    let wann, sub;
+    if (x.rente) { const a = s.anteil ?? 1; wann = a >= 0.995 ? `${x.jahr}` : `${Math.round(a * 100)} %`; sub = a >= 0.995 ? 'Lücke geschlossen' : 'der Lücke gedeckt'; }
+    else if (s.fertig == null) { wann = 'offen'; sub = 'passt nicht ins Budget'; }
+    else { const j = JAHR + Math.round(s.fertig / 12), spaet = s.fertig - x.n; wann = String(j); sub = spaet > 6 ? `statt ${x.jahr} · ${Math.round(spaet / 12) || 1} J. später` : spaet > 0.5 ? `statt ${x.jahr} · ${Math.round(spaet)} Mon. später` : 'pünktlich'; }
+    const spaetCls = (!x.rente && (s.fertig == null || s.fertig > x.n + 0.5)) || (x.rente && (s.anteil ?? 1) < 0.995) ? 'ink-gap' : '';
+    // wie auf den Karten aufgerundet
+    const ab = s.pay.findIndex(v => v > 0.5), rate = ab < 0 ? '' : ab === 0 ? `${fE(Math.ceil(s.pay[0] - 1e-6))} mtl.` : `ab ${JAHR + Math.floor(ab / 12)}`;
+    return `<button type="button" class="rw${SEL === z.id ? ' on' : ''}" data-sel="${z.id}"><i class="dot" style="background:${farbe(z)}"></i><span class="nm">${esc(name(z))}<small>${x.topf}${rate ? ' · ' + rate : ''}</small></span><span class="v"><b class="${spaetCls}">${wann}</b><small>${sub}</small></span></button>`;
+  }).join('');
+  // Schnellknopf: Budget, mit dem alles pünktlich ist
+  const brauch = Math.ceil(Math.max(...C.demSum, 0));
+  $('pQuick').innerHTML = brauch > C.B + 0.5 ? `<button class="quick" type="button" data-bud="${brauch}">Alles pünktlich <b>${fE(brauch)}</b></button>` : (S.budget != null && S.budget !== vorschlagBudget() ? `<button class="quick" type="button" data-bud="">Vorschlag <b>${fE(vorschlagBudget())}</b></button>` : '');
+}
+$('pRows').addEventListener('click', e => { const b = e.target.closest('[data-sel]'); if (b) waehle(+b.dataset.sel); });
+$('pQuick').addEventListener('click', e => { const b = e.target.closest('[data-bud]'); if (!b) return; S.budget = b.dataset.bud === '' ? null : +b.dataset.bud; render(); });
+
+/* ===== Erster Auftritt einer Seite: einmal die Geschichte, danach ruhig ===== */
+function betrete(p) {
+  if (SEEN.has(p)) return;
+  SEEN.add(p);
+  const C = render.C;
+  if (p === 'ziele') {
+    // Karten kommen gestaffelt, die Summe zählt hoch
+    $('zGrid').querySelectorAll('.zk').forEach((el, i) => el.animate([{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }], { duration: 480, delay: 60 + i * 60, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'backwards' }));
+    $('zGrid').querySelectorAll('[data-rate]').forEach((el, i) => { const v = el._v; zaehle(el, v, fE, 900, 200 + i * 60); });
+    zaehle($('zSum'), Math.ceil(C.summe), fE, 1000, 250);
+  }
+  if (p === 'zeit') {
+    ZS.k = 0; ZS.intro = true; $('tHero').textContent = '–'; renderZeit(C);
+    const n = C.liste.length, dur = Math.min(4200, 900 + n * 520);
+    animiere(dur, k => { ZS.k = k; renderZeit(render.C); }, () => {
+      ZS.k = 1; renderZeit(render.C);
+      const C2 = render.C, maxOver = Math.max(0, ...C2.over);
+      zaehle($('tHero'), maxOver > 0.5 ? maxOver : Math.max(0, C2.B - Math.max(...C2.demSum)), maxOver > 0.5 ? fE : v => '+' + fE(v), 800);
+      setTimeout(() => { ZS.intro = false; }, 820);
+    });
+  }
+  if (p === 'plan') {
+    PS.k = 0; PS.intro = true; $('pHero').textContent = '–'; renderPlan(C);
+    setTimeout(() => animiere(1700, k => { PS.k = k; renderPlan(render.C); }, () => { PS.k = 1; PS.intro = false; renderPlan(render.C); }), 250);
+  }
+}
+
+/* ===== Zurücksetzen ===== */
+$('reset').addEventListener('click', () => location.reload());
+
+/* ===== Startseite: feine Linien mit Meilensteinen, zeichnen sich einmal ===== */
+const LAND = { raf: 0 };
+function zeichneLand() {
+  const cv = $('landCv'), dpr = Math.min(2, devicePixelRatio || 1), W = cv.clientWidth, H = cv.clientHeight;
+  if (!W) return;
+  cv.width = W * dpr; cv.height = H * dpr;
+  const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const css = getComputedStyle(document.documentElement), acc = css.getPropertyValue('--accent').trim(), grau = css.getPropertyValue('--fg-3').trim();
+  let s = 11; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+  const linien = Array.from({ length: 22 }, (_, i) => {
+    const acct = i % 6 === 1, y0 = H * (0.9 + rnd() * 0.06), x0 = W * (0.28 + rnd() * 0.06), steig = 0.35 + rnd() * 0.55;
+    const pts = []; for (let j = 0; j <= 80; j++) { const u = j / 80; pts.push([x0 + (W * 1.02 - x0) * u, y0 - (Math.exp(2.2 * u) - 1) / (Math.exp(2.2) - 1) * H * steig * (0.95 + 0.1 * Math.sin(u * 6 + i))]); }
+    const ms = [0.35 + rnd() * 0.15, 0.62 + rnd() * 0.15].filter(() => acct || rnd() < 0.35);
+    return { pts, acct, ms };
+  });
+  const t0 = performance.now();
+  const frame = now => {
+    const k = easeO(Math.min(1, (now - t0) / 2600));
+    ctx.clearRect(0, 0, W, H);
+    linien.forEach(l => {
+      const m = Math.max(2, Math.round(l.pts.length * k));
+      ctx.beginPath(); l.pts.slice(0, m).forEach(([x, y], j) => j ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+      ctx.strokeStyle = l.acct ? acc : grau; ctx.globalAlpha = l.acct ? 0.55 : 0.16; ctx.lineWidth = l.acct ? 1.3 : 1; ctx.stroke();
+      l.ms.forEach(u => {
+        if (k < u) return; const p = l.pts[Math.round(u * 80)], a = Math.min(1, (k - u) / 0.12);
+        ctx.globalAlpha = (l.acct ? 0.9 : 0.35) * a; ctx.fillStyle = l.acct ? acc : grau;
+        ctx.beginPath(); ctx.arc(p[0], p[1], (l.acct ? 3.2 : 2.4) * (0.6 + 0.4 * a), 0, 7); ctx.fill();
+      });
+    });
+    ctx.globalAlpha = 1;
+    if (k < 1) LAND.raf = requestAnimationFrame(frame);
+  };
+  cancelAnimationFrame(LAND.raf); LAND.raf = requestAnimationFrame(frame);
+}
+function stopLand() { cancelAnimationFrame(LAND.raf); }
+zeichneLand();
+document.fonts?.ready.then(() => { navPill(); });
+addEventListener('resize', () => { if (!S.started) zeichneLand(); clearTimeout(render._rs); render._rs = setTimeout(() => { render(); navPill(); document.querySelectorAll('.seg').forEach(segPill); }, 120); });
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => { if (!S.started) zeichneLand(); });
+
+render();
+</script>
+</body>
+</html>

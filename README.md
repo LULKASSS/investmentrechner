@@ -6,6 +6,8 @@ Wie groß wird die Rentenlücke, was kostet es, sie zu schließen, und in welche
 
 Modellrechnung mit Werten 2026, keine Zusage und keine Anlageberatung.
 
+**Versuch: Ziele-Planer** (`ziele.html`) – Notgroschen, Auto, Wohnung, Rente und mehr: was jedes Ziel im Monat kostet, wann es eng wird und wie alles ins Budget passt.
+
 ## Mac-App
 
 ```bash
