@@ -1,7 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
-<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#232329"/><stop offset="1" stop-color="#0B0B0F"/></linearGradient></defs>
+<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A2B2F"/><stop offset="1" stop-color="#17181A"/></linearGradient></defs>
 <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#g)"/>
-<rect x="262" y="560" width="120" height="200" rx="26" fill="#45454F"/>
-<rect x="452" y="440" width="120" height="320" rx="26" fill="#A78BFA" opacity=".55"/>
-<rect x="642" y="264" width="120" height="496" rx="26" fill="#A78BFA"/>
+<g transform="translate(100 100) scale(8.24)">
+<g fill="none" stroke="#E8E2D8" stroke-width="5"><circle cx="50" cy="52.5" r="27.5"/><circle cx="50" cy="61.5" r="18.5"/></g>
+<circle cx="50" cy="70" r="10" fill="#C97B4A"/>
+</g>
 </svg>
