@@ -204,13 +204,16 @@ input{font:inherit}
 .sc-frame{position:absolute;left:0;right:0;bottom:0;border-radius:14px 14px 0 0;background:var(--surface-2);box-shadow:inset 0 0 0 1.5px var(--line-2)}
 .sc-seg{position:absolute;left:0;right:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;text-align:center;overflow:hidden;font-size:13px;line-height:1.25;padding:0 6px}
 .sc-seg b{font-weight:500;display:block;white-space:nowrap}
-.sc-seg span{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+/* Beträge stehen in der Rechnung daneben, die Säulen zeigen nur Form und Namen */
+.sc-seg span,#scNeedV,#scInfl,#scYears{display:none}
+.sc-bar::after{content:"Wunsch";position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;font-size:13px;font-weight:500;color:var(--bg)}
 .sc-seg.top{border-radius:14px 14px 0 0}
 .sc-seg.grv{background:var(--c-grv);color:var(--fg)}
 .sc-seg.best{background:var(--c-best);color:var(--fg-2);box-shadow:0 -2px 0 var(--surface)}
 .sc-seg.gap{background:repeating-linear-gradient(135deg,var(--gap-soft) 0 7px,transparent 7px 14px);box-shadow:inset 0 0 0 1.5px var(--gap);border-radius:14px 14px 0 0;color:var(--gap)}
 .sc-seg.gap span{font-size:clamp(18px,2.2vw,26px);letter-spacing:-.02em}
 .sc-seg.gap b,.sc-seg.gap span{background:var(--surface);padding:0 6px;border-radius:6px}
+.sc-seg.gap b{font-size:15px;font-weight:600;padding:2px 12px;border-radius:999px}
 .sc-val{position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:600;font-size:17px;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
 .sc-mid{position:absolute;left:38%;right:38%;display:grid;justify-items:center;gap:4px;text-align:center;font-size:13px;color:var(--fg-2)}
 .sc-mid svg{width:100%;max-width:120px;height:34px;color:var(--fg-3);overflow:visible}
@@ -761,7 +764,7 @@ body.ld-open{overflow:hidden}
 .q-pad{padding:26px 28px 22px;display:grid;gap:22px;opacity:0;transform:translateY(10px);transition:opacity .25s var(--ease),transform .35s var(--ease)}
 .q.open .q-pad{opacity:1;transform:none;transition-delay:.05s}
 .q-pad > .eyebrow{margin-bottom:-14px;color:var(--accent-ink)}
-.q-h{font-size:clamp(26px,3.4vw,38px);line-height:1.08;letter-spacing:-.04em}
+.q-note:empty{display:none}
 .q-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
 .q-tl{display:grid;grid-template-columns:minmax(0,1fr) 130px;gap:28px;align-items:end}
 .q-foot{display:flex;justify-content:space-between;align-items:center;gap:14px;padding-top:18px;border-top:1px solid var(--line);flex-wrap:wrap}
@@ -907,7 +910,6 @@ body.ld-open{overflow:hidden}
   .q{border-radius:18px}
   .q-pad{padding:20px 18px 18px;gap:18px}
   .q-pad > .eyebrow{margin-bottom:-12px}
-  .q-h{font-size:clamp(24px,6.6vw,28px)}
   .q-row{padding-inline:18px;gap:12px}
   .q-k{width:78px;font-size:10.5px}
   .q-v{font-size:14px}
@@ -1215,27 +1217,21 @@ body.started .qs{padding-top:92px}
   .qs{padding-top:16px;gap:8px}
   body:not(.started){padding-bottom:16px}
   .q-pad{position:relative;gap:12px;padding:18px 26px 14px}
-  #q0 .q-foot,#q1 .q-foot,#q2 .q-foot{border-top:0;padding-top:0;margin-top:-12px;min-height:0}
+  /* ohne Frage-Überschriften: Felder links, „Weiter“ rechts auf Höhe der Felder */
+  .q-pad{grid-template-columns:minmax(0,1fr) auto;column-gap:16px}
+  .q-pad > *{grid-column:1}
+  .q-pad > .q-foot{grid-column:2;grid-row:1;align-self:start;border-top:0;padding-top:0;margin-top:29px}
+  #q2 .q-pad > .q-foot{margin-top:0}
+  #q2 .q-pad > .seg{justify-self:start;width:280px}
+  .q-pad:has(.q-next.gone){grid-template-columns:minmax(0,1fr)}
+  .q-pad:has(.q-next.gone) > .q-foot{display:none}
   #q0 .q-foot .hint,#q2 .q-foot .hint{display:none}
   .dsk{display:inline}
   .cmp{gap:6px}
-  #q0 .q-h,#q1 .q-h,#q2 .q-h{padding-right:110px}
-  .q-pad > .q-foot .q-next{position:absolute;top:15px;right:26px;padding:8px 18px;font-size:14px;transition:opacity .25s var(--ease),transform .3s var(--ease),visibility 0s}
-  .q-pad > .q-foot .q-next.gone{opacity:0;transform:scale(.92);visibility:hidden;pointer-events:none;transition:opacity .25s var(--ease),transform .3s var(--ease),visibility 0s .3s}
   .tl{padding:24px 0 42px}
-  #q3 .q-pad{grid-template-columns:minmax(0,1fr) auto;column-gap:16px}
-  #q3 .q-h{grid-column:1/-1}
-  #q3 .q-foot{border-top:0;padding-top:0;align-self:start;margin-top:29px}
   #goH{display:none}
 }
-@media (min-width:1100px){
-  #q2 .q-pad > .seg{position:absolute;top:13px;right:122px;width:280px}
-  #q2 .q-h{padding-right:420px}
-  #q2 .q-pad > .seg{transition:right .35s var(--ease) .1s}
-  #q2 .q-pad:has(.q-next.gone) > .seg{right:26px}
-}
 
-.q-h{font-size:clamp(22px,2.4vw,28px)}
 #qFull{font-size:12.5px;white-space:nowrap}
 #qFull.on{color:var(--fg-3);text-decoration:none;cursor:default}
 .split-row .quick{margin-top:4px}
@@ -1286,18 +1282,16 @@ body.started .qs{padding-top:92px}
       <li class="q" id="q0">
         <div class="q-sum"><button class="q-row" type="button" data-q="0"><span class="q-k">Du</span><span class="q-v" id="sum0"></span><span class="q-e">ändern</span></button></div>
         <div class="q-body"><div class="q-in"><div class="q-pad">
-          <h2 class="q-h">Wie alt bist du?</h2>
           <div class="q-two">
             <label class="mini" for="alter"><span class="mini-l">Alter</span><span class="mini-in"><input id="alter" inputmode="numeric" autocomplete="off"><i>J.</i></span></label>
             <label class="mini" for="einstieg"><span class="mini-l">Jobstart mit <em class="dsk mini-h">nach der Ausbildung</em></span><span class="mini-in"><input id="einstieg" inputmode="numeric" autocomplete="off"><i>J.</i></span></label>
           </div>
-          <div class="q-foot"><span class="hint">Jobstart nach der Ausbildung</span><button class="primary q-next" type="button" data-q="0">Weiter</button></div>
+          <div class="q-foot"><button class="primary q-next" type="button" data-q="0">Weiter</button></div>
         </div></div></div>
       </li>
       <li class="q" id="q1">
         <div class="q-sum"><button class="q-row" type="button" data-q="1"><span class="q-k">Rente</span><span class="q-v" id="sum1"></span><span class="q-e">ändern</span></button></div>
         <div class="q-body"><div class="q-in"><div class="q-pad">
-          <h2 class="q-h">Wann soll deine Rente beginnen?</h2>
           <div class="q-two">
             <label class="mini" for="beginn"><span class="mini-l">Rente mit</span><span class="mini-in"><input id="beginn" inputmode="numeric" autocomplete="off"><i>J.</i></span></label>
             <label class="mini" for="bisAlter"><span class="mini-l">Planen bis</span><span class="mini-in"><input id="bisAlter" inputmode="numeric" autocomplete="off"><i>J.</i></span></label>
@@ -1309,13 +1303,13 @@ body.started .qs{padding-top:92px}
             <div class="tl-m" id="tlM1"><b id="tlY1"></b><span id="tlS1"></span></div>
             <div class="tl-m e" id="tlM2"><b id="tlY2"></b><span id="tlS2"></span></div>
           </div>
-          <div class="q-foot"><span class="hint" id="beginnH"></span><button class="primary q-next" type="button" data-q="1">Weiter</button></div>
+          <p class="hint q-note" id="beginnH"></p>
+          <div class="q-foot"><button class="primary q-next" type="button" data-q="1">Weiter</button></div>
         </div></div></div>
       </li>
       <li class="q" id="q2">
         <div class="q-sum"><button class="q-row" type="button" data-q="2"><span class="q-k">Einkommen</span><span class="q-v" id="sum2"></span><span class="q-e">ändern</span></button></div>
         <div class="q-body"><div class="q-in"><div class="q-pad">
-          <h2 class="q-h">Was verdienst du, und was brauchst du später?</h2>
           <div class="seg" id="status"><span class="pill"></span><button type="button" data-v="ang">Angestellt</button><button type="button" data-v="selbst">Selbstständig</button></div>
           <div class="q-three">
             <div class="q-inc">
@@ -1349,7 +1343,6 @@ body.started .qs{padding-top:92px}
       <li class="q" id="q3">
         <div class="q-sum"><button class="q-row" type="button" data-q="3"><span class="q-k">Vorhanden</span><span class="q-v" id="sum3"></span><span class="q-e">ändern</span></button></div>
         <div class="q-body"><div class="q-in"><div class="q-pad">
-          <h2 class="q-h">Was hast du schon für die Rente?</h2>
           <div class="q-two">
             <div class="ctl">
               <div class="ctl-row"><label for="bestand">Rente aus Verträgen</label><span class="hint">mtl.</span></div>
@@ -2740,10 +2733,11 @@ function paintStage() {
   $('syBgL').style.strokeDasharray = '1'; $('syBgL').style.strokeDashoffset = String(1 - fi);
   $('syBgA').style.clipPath = `inset(0 ${((1 - fi) * 100).toFixed(1)}% 0 0)`;
   const H = $('scPlot').clientHeight || 300;
-  const M = Math.max(d.need, d.Nt, d.W, 1) * 1.14, px = v => v / M * H;
+  const M = Math.max(d.need, d.Nt, d.W, 1) * 1.04, px = v => v / M * H;
   $('scNetto').style.height = px(d.Nt) + 'px';
   $('scWunsch').style.height = px(d.W) + 'px';
-  $('scWunschV').innerHTML = `${fE(d.W)}<small>von ${fE(d.Nt)} netto</small>`; $('scWunschV').style.bottom = `${px(Math.max(d.W, d.Nt)) + 8}px`;
+  // Wunsch steht rechts in der Rechnung, Netto nur hier
+  $('scWunschV').innerHTML = `<small>Netto heute</small>${fE(d.Nt)}`; $('scWunschV').style.bottom = `${px(Math.max(d.W, d.Nt)) + 8}px`;
   const top = d.W + (d.need - d.W) * fi;
   $('scFrame').style.height = px(top) + 'px';
   $('scNeed').style.opacity = 0.25 + 0.75 * fi;
@@ -2831,8 +2825,10 @@ function drawCov(r, T, I, vals, tot, sicher, mindest, ex) {
       const ex = side === 'r' ? lx - 6 : lx + 6;
       const nu = !RING.prevLabs || !RING.prevLabs.has(a.id) ? ' new' : '';
       labs += `<polyline class="r-lead${nu}" points="${a.px.toFixed(1)},${a.py.toFixed(1)} ${ex},${a.y.toFixed(1)} ${(side === 'r' ? lx - 2 : lx + 2)},${a.y.toFixed(1)}"/>`;
-      labs += `<text class="r-name${nu}" x="${lx}" y="${(a.y - 3).toFixed(1)}" text-anchor="${anchor}">${small ? kurz(a.id) : name(a.id)}</text>`;
-      labs += `<text class="r-val${a.id === 'hOpen' ? ' open' : ''}${nu}" x="${lx}" y="${(a.y + 13).toFixed(1)}" text-anchor="${anchor}">${fE(a.v)}</text>`;
+      // Betrag nur, wo er sonst nirgends steht: Bausteine zeigt die Pille darunter, „offen“ die Ringmitte
+      const mitWert = ['hGrv', 'hVer', 'hErs'].includes(a.id);
+      labs += `<text class="r-name${nu}" x="${lx}" y="${(a.y + (mitWert ? -3 : 4)).toFixed(1)}" text-anchor="${anchor}">${small ? kurz(a.id) : name(a.id)}</text>`;
+      if (mitWert) labs += `<text class="r-val${nu}" x="${lx}" y="${(a.y + 13).toFixed(1)}" text-anchor="${anchor}">${fE(a.v)}</text>`;
     });
   });
   if ($('ringLabs')._html !== (seen ? labs.replace(/ new/g, '') : '')) { $('ringLabs')._html = seen ? labs.replace(/ new/g, '') : ''; $('ringLabs').innerHTML = seen ? labs : ''; }

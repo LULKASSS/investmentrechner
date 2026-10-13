@@ -36,3 +36,5 @@ Gehört Lukas, Sprache in App, Code-Kommentaren und Commits: **Deutsch**.
 - Felder und Chips gefüllt statt umrandet, keine Mono-Versalien mehr als Etiketten.
 - Weg: große Zahl über der Kurve (Kapital, Wertzuwachs als Chip). Maus/Finger auf der Kurve zeigt dort den Wert je Alter, die Zahl wächst beim ersten Zeichnen mit der Linie.
 - Wenig Text: nichts doppelt zeigen (Sparrate und Renditen nur rechts, nicht nochmal in der Kurve).
+- Datenaufnahme ohne Frage-Überschriften: die Feldnamen reichen, am PC steht „Weiter“ rechts auf Höhe der Felder.
+- Lücke: Beträge nur in der Rechnung rechts, die Säulen zeigen Form und Namen (Ausnahme: Netto heute, steht sonst nirgends). Lösung: Ring zeigt Beträge nur bei gesetzlicher Rente, Verträgen, Erspartem; Bausteine stehen in der Pille, „offen“ in der Ringmitte, Antippen zeigt jeden Betrag.
