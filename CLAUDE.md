@@ -29,3 +29,10 @@ Gehört Lukas, Sprache in App, Code-Kommentaren und Commits: **Deutsch**.
 - Einmalzahlung = „Erspartes“ aus den Daten (ein Wert, `S.ersp`). Mit Erspartem ist sie vorausgewählt; abwählen bleibt abgewählt, auch wenn man das Ersparte später ändert.
 - Kapital wird überall gleich formatiert (`fK`: unter 1 Mio. auf 100 € genau), in App und PDF.
 - Annahme (von Lukas zu prüfen): Einmalzahlung im Depot mit demselben Netto-Faktor wie die Depot-Sparrate; die Vorabpauschale auf den Einmalbetrag ist nicht eigens gerechnet.
+
+## Bewegung und Look (Stand 13.10.2026, angelehnt an Trade Republic)
+- Zahlen rollen statt zu zählen: `tween()` baut jede Ziffer als Band 0–9 (`odo()`), die echte Zahl bleibt als Text im Element (Tests, Kopieren). Eurozeichen in großen Zahlen kleiner.
+- Feder-Kurve `--spring` (knapp 4 % Nachschwingen) für alles, was auftaucht oder gleitet: Umschalter, Chips, Wert-Blase, Karten beim Seitenwechsel (leicht versetzt), neue Spalten in der Lösungs-Pille. Antippbares gibt beim Drücken nach (`scale(.96)`).
+- Felder und Chips gefüllt statt umrandet, keine Mono-Versalien mehr als Etiketten.
+- Weg: große Zahl über der Kurve (Kapital, Wertzuwachs als Chip). Maus/Finger auf der Kurve zeigt dort den Wert je Alter, die Zahl wächst beim ersten Zeichnen mit der Linie.
+- Wenig Text: nichts doppelt zeigen (Sparrate und Renditen nur rechts, nicht nochmal in der Kurve).
