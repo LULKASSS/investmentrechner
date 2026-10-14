@@ -124,8 +124,9 @@ input{font:inherit}
 .range input:active::-webkit-slider-thumb{transform:scale(1.15);box-shadow:0 0 0 7px var(--accent-soft)}
 .range input:focus-visible{outline:none}
 .range input:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 4px var(--accent-soft),0 0 0 1px var(--accent)}
-.range .tick{position:absolute;left:calc(10px + (100% - 20px) * var(--t) / 100%);top:24px;transform:translateX(-50%);font-style:normal;font-size:11.5px;font-weight:500;color:var(--fg-3);white-space:nowrap;padding-top:7px;pointer-events:none}
-.range .tick::before{content:"";position:absolute;left:50%;top:0;width:1.5px;height:5px;border-radius:1px;background:var(--line-2)}
+/* Vergleichsmarke am Regler: Strich an der Stelle des Werts, Text endet rechts am Strich */
+.range .tick{position:absolute;left:calc(10px + (100% - 20px) * var(--t) / 100%);top:24px;transform:translateX(calc(-100% + 12px));font-style:normal;font-size:11.5px;font-weight:500;color:var(--fg-3);white-space:nowrap;padding-top:7px;pointer-events:none}
+.range .tick::before{content:"";position:absolute;right:11px;top:0;width:1.5px;height:5px;border-radius:1px;background:var(--line-2)}
 .range:has(.tick){margin-bottom:22px}
 .bubble{position:absolute;bottom:28px;left:var(--p,50%);transform:translate(-50%,6px) scale(.8);transform-origin:50% 100%;background:var(--fg);color:var(--bg);font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;pointer-events:none;opacity:0;transition:opacity .2s,transform .45s var(--spring);white-space:nowrap;font-variant-numeric:tabular-nums}
 .range:has(input:active) .bubble,.range:has(input:focus-visible) .bubble{opacity:1;transform:translate(-50%,0) scale(1)}
@@ -1030,7 +1031,7 @@ body.started .qs{padding-top:92px}
         </div>
         <div class="ctl">
           <div class="ctl-row"><label for="anspar">Rendite beim Sparen</label><span class="val" id="ansparV"></span></div>
-          <div class="range"><input type="range" id="anspar" min="0" max="10" step="0.5"><span class="bubble"></span><i class="tick" style="--t:90%" title="MSCI World 06/2011–05/2026: rund 9 % pro Jahr">MSCI World</i></div>
+          <div class="range"><input type="range" id="anspar" min="0" max="10" step="0.5"><span class="bubble"></span><i class="tick" id="msciTick"></i></div>
         </div>
         <div class="ctl">
           <div class="ctl-row"><label for="entn">Rendite in der Rente</label><span class="val" id="entnV"></span></div>
@@ -1233,6 +1234,7 @@ body.started .qs{padding-top:92px}
 <script>
 /* ===== Rechenkern (Werte 2026) ===== */
 const K = {
+  msci: { pa: 0.09, von: '06/2011', bis: '05/2026' },  // MSCI World Ø pro Jahr über 15 Jahre: Wert aus der früheren Fassung des Rechners, nicht neu geprüft – gegen aktuelles Factsheet halten
   rentenwert: 42.52,          // € je Entgeltpunkt ab 01.07.2026
   durchschnitt: 51944,        // vorl. Durchschnittsentgelt 2026
   bbgRV: 8450,                // BBG RV/AV mtl. 2026
@@ -1690,9 +1692,9 @@ function buildPdf(Doc, D) {
       fc(C.s2); doc.roundedRect(sx, yy + 2.5, sw, 1, 0.5, 0.5, 'F');
       fc(C.acc); doc.roundedRect(sx, yy + 2.5, sw * Math.min(1, f), 1, 0.5, 0.5, 'F');
       fc(C.white); dc(C.line2); doc.setLineWidth(0.25); doc.circle(sx + sw * Math.min(1, f), yy + 3, 1.5, 'FD');
-      if (tick != null) { dc(C.line2); doc.setLineWidth(0.3); doc.line(sx + sw * tick, yy + 5.2, sx + sw * tick, yy + 6.6); font(5.5, 'r', C.fg3); txt('MSCI World', sx + sw * tick, yy + 9.2, { align: 'center' }); }
+      if (tick != null) { dc(C.line2); doc.setLineWidth(0.3); doc.line(sx + sw * tick, yy + 5.2, sx + sw * tick, yy + 6.6); font(5.5, 'r', C.fg3); txt(`z. B. MSCI World Ø ${new Intl.NumberFormat('de-DE', { maximumFractionDigits: 1 }).format(K.msci.pa * 100)} % p. a. (15 Jahre)`, sx + sw * tick + 1.2, yy + 9.2, { align: 'right' }); }
     };
-    regler('Rendite beim Sparen', fP(p.anspar), p.anspar / 0.10, c2 + 33, 0.9);
+    regler('Rendite beim Sparen', fP(p.anspar), p.anspar / 0.10, c2 + 33, K.msci.pa / 0.10);
     regler('Rendite in der Rente', fP(p.entnahme), p.entnahme / 0.08, c2 + 52);
     hline(sx, sx + sw, c2 + 62);
     font(7, 'r', C.ink); txt('Daraus nimmst du dir im Monat', sx, c2 + 70);
@@ -3096,6 +3098,7 @@ function betreten() {
   setTimeout(fertig, 1000);
 }
 $('ldGo').addEventListener('click', betreten);
+{ const m = K.msci, t = $('msciTick'); t.textContent = `z. B. MSCI World Ø ${new Intl.NumberFormat('de-DE', { maximumFractionDigits: 1 }).format(m.pa * 100)} % p. a. (15 Jahre)`; t.title = `MSCI World ${m.von}–${m.bis}: rund ${pct1.format(m.pa * 100)} % pro Jahr`; t.style.setProperty('--t', m.pa / 0.10 * 100 + '%'); }
 zeigeStart();
 
 /* Neue Fassung auf GitHub Pages? Handy-Homescreen und Browser halten die Seite sonst im Speicher.
