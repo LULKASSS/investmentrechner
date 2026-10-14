@@ -194,37 +194,7 @@ input{font:inherit}
 .panel{background:var(--surface);border-radius:var(--r);padding:22px;box-shadow:var(--shadow)}
 
 
-.st-chart{position:relative;height:min(64svh,520px);display:grid;grid-template-rows:1fr auto;gap:12px}
-.sc-plot{position:relative;border-bottom:1px solid var(--line-2)}
-.sc-col{position:absolute;bottom:0;width:30%;max-width:190px;display:flex;flex-direction:column;justify-content:flex-end}
-.sc-col.l{left:6%} .sc-col.rr{right:6%}
-.sc-ghost{position:absolute;left:0;right:0;bottom:0;border:1.5px dashed var(--line-2);border-bottom:0;border-radius:14px 14px 0 0}
-.sc-val small{display:block;font-size:12px;font-weight:400;color:var(--fg-3);letter-spacing:0;text-align:center}
-.sc-bar{position:absolute;left:14%;right:14%;bottom:0;background:var(--c-today);border-radius:12px 12px 0 0}
-.sc-frame{position:absolute;left:0;right:0;bottom:0;border-radius:14px 14px 0 0;background:var(--surface-2);box-shadow:inset 0 0 0 1.5px var(--line-2)}
-.sc-seg{position:absolute;left:0;right:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;text-align:center;overflow:hidden;font-size:13px;line-height:1.25;padding:0 6px}
-.sc-seg b{font-weight:500;display:block;white-space:nowrap}
 /* Beträge stehen in der Rechnung daneben, die Säulen zeigen nur Form und Namen */
-.sc-seg span,#scNeedV,#scInfl,#scYears{display:none}
-.sc-bar::after{content:"Wunsch";position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;font-size:13px;font-weight:500;color:var(--bg)}
-.sc-seg.top{border-radius:14px 14px 0 0}
-.sc-seg.grv{background:var(--c-grv);color:var(--fg)}
-.sc-seg.best{background:var(--c-best);color:var(--fg-2);box-shadow:0 -2px 0 var(--surface)}
-.sc-seg.gap{background:repeating-linear-gradient(135deg,var(--gap-soft) 0 7px,transparent 7px 14px);box-shadow:inset 0 0 0 1.5px var(--gap);border-radius:14px 14px 0 0;color:var(--gap)}
-.sc-seg.gap span{font-size:clamp(18px,2.2vw,26px);letter-spacing:-.02em}
-.sc-seg.gap b,.sc-seg.gap span{background:var(--surface);padding:0 6px;border-radius:6px}
-.sc-seg.gap b{font-size:15px;font-weight:600;padding:2px 12px;border-radius:999px}
-.sc-val{position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:600;font-size:17px;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
-.sc-mid{position:absolute;left:38%;right:38%;display:grid;justify-items:center;gap:4px;text-align:center;font-size:13px;color:var(--fg-2)}
-.sc-mid svg{width:100%;max-width:120px;height:34px;color:var(--fg-3);overflow:visible}
-.sc-mid b{font-weight:600;color:var(--fg);font-size:15px;font-variant-numeric:tabular-nums}
-.sc-mid .yr{font-variant-numeric:tabular-nums}
-.sc-x{display:grid;grid-template-columns:1fr 1fr;position:relative}
-.sc-x div{position:absolute;width:30%;max-width:190px;display:grid;justify-items:center;gap:1px;text-align:center}
-.sc-x div:first-child{left:6%} .sc-x div:last-child{right:6%}
-.sc-x .t{font-weight:600;font-size:13px}
-.sc-x .u{font-size:12px;color:var(--fg-3);font-variant-numeric:tabular-nums}
-.sc-x{height:38px}
 
 .after{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:20px;margin-top:40px;align-items:stretch}
 .kpis{display:grid;grid-template-columns:1fr 1fr;gap:0;background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
@@ -239,6 +209,73 @@ input{font:inherit}
 @keyframes flash{0%{background:var(--gap-soft)}100%{background:transparent}}
 .adjust{display:grid;gap:18px}
 .grv-head{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+/* ===== Lücke: eine Karte als Überblick, füllt den Bildschirm =====
+   oben das Ergebnis (Lücke, Kapital), in der Mitte zwei Säulen Heute → Mit 67 mit den Beträgen daran,
+   unten nur die zwei Werte, die man hier korrigiert. Einstellungen kommen erst auf den nächsten Seiten. */
+.gchart{position:relative;display:flex;flex-direction:column;gap:14px;padding:24px 26px 18px;overflow:hidden;min-height:calc(100svh - 252px)}
+.gap-hero{position:relative;z-index:2;display:flex;flex-wrap:wrap;gap:12px 48px}
+.gh{display:grid;gap:2px;justify-items:start;transition:opacity .3s}
+.gh .k{font-size:13px;font-weight:500;color:var(--fg-3)}
+.gh > b{font-size:clamp(32px,3.6vw,44px);font-weight:600;letter-spacing:-.04em;line-height:1.15}
+.gh .s{font-size:12.5px;font-weight:600;padding:2px 10px;border-radius:999px;background:var(--surface-2);color:var(--fg-2);font-variant-numeric:tabular-nums;margin-top:2px}
+.gh .s:empty{display:none}
+.gh.gap > b{color:var(--gap)}
+.gh.gap .s{background:var(--gap-soft);color:var(--gap-ink)}
+.gh.gap.zero > b{color:var(--ok)}
+.gh.gap.zero .s{background:var(--ok-soft);color:var(--ok-ink)}
+.gh.warte{opacity:0;transform:scale(.94)}
+.gh.auf{animation:popIn .6s var(--spring)}
+.st-chart{position:relative;z-index:1;flex:1;min-height:300px;display:grid;grid-template-rows:1fr auto;gap:10px}
+.sy-bg{position:absolute;left:-26px;right:-26px;bottom:0;height:60%;width:calc(100% + 52px);z-index:0;pointer-events:none;opacity:.4}
+.sc-plot{position:relative;border-bottom:1px solid var(--line-2)}
+.sc-col{position:absolute;bottom:0;width:28%;max-width:220px;display:flex;flex-direction:column;justify-content:flex-end}
+.sc-col.l{left:8%} .sc-col.rr{right:8%}
+.sc-ghost{position:absolute;left:0;right:0;bottom:0;border:1.5px dashed var(--line-2);border-bottom:0;border-radius:14px 14px 0 0}
+.sc-bar{position:absolute;left:12%;right:12%;bottom:0;background:var(--c-today);color:var(--bg);border-radius:12px 12px 0 0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;overflow:hidden;font-size:13px;line-height:1.25}
+.sc-frame{position:absolute;left:0;right:0;bottom:0;border-radius:14px 14px 0 0;background:var(--surface-2);box-shadow:inset 0 0 0 1.5px var(--line-2)}
+.sc-seg{position:absolute;left:0;right:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;text-align:center;overflow:hidden;font-size:13px;line-height:1.25;padding:0 6px}
+:is(.sc-seg,.sc-bar) b{font-weight:500;white-space:nowrap}
+:is(.sc-seg,.sc-bar) span{font-weight:600;font-size:16px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sc-seg.one{flex-direction:row;gap:6px}
+.sc-seg.top{border-radius:14px 14px 0 0}
+.sc-seg.grv{background:var(--c-grv);color:var(--fg)}
+.sc-seg.best{background:var(--c-best);color:var(--fg-2);box-shadow:0 -2px 0 var(--surface)}
+.sc-seg.ers{background:var(--c-ers);color:var(--fg-2);box-shadow:0 -2px 0 var(--surface)}
+.sc-seg.gap{background:repeating-linear-gradient(135deg,var(--gap-soft) 0 7px,transparent 7px 14px);box-shadow:inset 0 0 0 1.5px var(--gap);border-radius:14px 14px 0 0;color:var(--gap)}
+.sc-seg.gap b{background:var(--surface);font-size:15px;font-weight:600;padding:2px 12px;border-radius:999px}
+.sc-val{position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:600;font-size:18px;font-variant-numeric:tabular-nums;letter-spacing:-.01em;text-align:center}
+.sc-val small{display:block;font-size:12px;font-weight:400;color:var(--fg-3);letter-spacing:0}
+.sc-mid{position:absolute;left:38%;right:38%;display:grid;justify-items:center}
+.sc-mid svg{width:100%;max-width:120px;height:34px;color:var(--fg-3);overflow:visible}
+.sc-x{position:relative;height:38px}
+.sc-x div{position:absolute;width:28%;max-width:220px;display:grid;justify-items:center;gap:1px;text-align:center}
+.sc-x div:first-child{left:8%} .sc-x div:last-child{right:8%}
+.sc-x .t{font-weight:600;font-size:13px}
+.sc-x .u{font-size:12px;color:var(--fg-3);font-variant-numeric:tabular-nums}
+#stChart.live :is(.sc-bar,.sc-ghost,.sc-frame,.sc-seg,.sc-val){transition:height .7s var(--ease),bottom .7s var(--ease),opacity .4s}
+.gap-set{position:relative;z-index:2;display:flex;flex-wrap:wrap;align-items:center;gap:10px 28px;padding-top:14px;border-top:1px solid var(--line)}
+.gs{display:flex;align-items:center;gap:12px;min-width:0}
+.gs > label[for="infl"]{font-size:13px;color:var(--fg-3);font-weight:500}
+.gs .range{width:160px}
+.bf{display:flex;align-items:center;gap:10px;background:var(--surface-2);border:1px solid transparent;border-radius:999px;padding:6px 10px 6px 14px;cursor:text;transition:box-shadow .3s var(--ease),background .25s,border-color .25s}
+.bf:hover{background:var(--surface-3)}
+.bf:focus-within{background:var(--surface);border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.bf > span:first-child{font-size:13px;color:var(--fg-3);white-space:nowrap}
+.bf .in-row input{font-size:16px;width:7.5ch;font-weight:600}
+.bridge{flex-basis:100%;font-size:13px;color:var(--fg-2)}
+.bridge b{color:var(--gap-ink);font-weight:600}
+@media (max-width:640px){
+  .gchart{padding:18px 14px 14px;gap:10px;min-height:calc(100svh - 150px)}
+  .gap-hero{gap:10px 24px}
+  .gh > b{font-size:30px}
+  .sy-bg{left:-14px;right:-14px;width:calc(100% + 28px);opacity:.3}
+  .sc-col,.sc-x div{width:36%}
+  .sc-col.l,.sc-x div:first-child{left:3%} .sc-col.rr,.sc-x div:last-child{right:3%}
+  .sc-seg,.sc-bar{font-size:11.5px} :is(.sc-seg,.sc-bar) span{font-size:14px}
+  .sc-val{font-size:15px}
+  .gs{width:100%} .gs .range{flex:1;width:auto}
+  .bf{flex:1;min-width:0} .bf > span:first-child{white-space:normal;line-height:1.25}
+}
 .badge{font-size:11.5px;padding:2px 9px;border-radius:999px;background:var(--surface-2);color:var(--fg-2)}
 .badge.man{background:var(--accent-soft);color:var(--accent-ink)}
 .flow2{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:10px;align-items:stretch}
@@ -251,10 +288,6 @@ label.fcell.box:focus-within{box-shadow:0 0 0 2px var(--accent)}
 .in-row .unit{color:var(--fg-3)}
 .fout{font-size:20px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .farrow{align-self:center;color:var(--fg-3)}
-.infl-row{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding-top:16px;border-top:1px solid var(--line)}
-.infl-row label{font-weight:500;font-size:14px;white-space:nowrap}
-.bridge{font-size:13.5px;color:var(--fg-2)}
-.bridge b{color:var(--gap-ink);font-weight:600}
 .kpi-note{font-size:12.5px;color:var(--fg-3);padding:0 22px 18px;grid-column:1/-1}
 
 /* 2 · Sparrate */
@@ -474,20 +507,12 @@ label.fcell.box:focus-within{box-shadow:0 0 0 2px var(--accent)}
   .mini-l{font-size:13px}
   input,select,textarea{font-size:16px!important}
   #results > section{padding-block:56px 4px}
-  .sc-col{width:34%} .sc-col.l{left:3%} .sc-col.rr{right:3%}
-  .sc-x div{width:34%} .sc-x div:first-child{left:3%} .sc-x div:last-child{right:3%}
-  .sc-mid{left:37%;right:37%;font-size:11.5px}
-  .sc-mid b{font-size:13px}
-  .sc-val{font-size:15px}
-  .sc-seg{font-size:11.5px}
   .after{margin-top:24px}
   .kpi{padding:16px}
   .kpi .v{font-size:23px}
   .flow2{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:6px}
   .fcell.box{padding:8px 10px}
   .in-row input,.fout{font-size:17px}
-  .infl-row{grid-template-columns:1fr auto;row-gap:6px}
-  .infl-row .range{grid-column:1/-1;grid-row:2}
   .statement{margin-bottom:22px}
   .statement p{font-size:14.5px}
   .cost{padding:22px 14px 16px}
@@ -543,7 +568,6 @@ body.ld-open{overflow:hidden}
 
 
 @media (max-width:640px){
-  .st-chart{height:100%}
 }
 
 
@@ -576,7 +600,7 @@ body.ld-open{overflow:hidden}
   .cov-plot{height:290px}
 }
 
-.hseg.one,.sc-seg.one{flex-direction:row;gap:6px}
+.hseg.one{flex-direction:row;gap:6px}
 
 /* 1 · Lücke: links laufen drei Karten durch, rechts bleibt die Grafik stehen und verwandelt sich */
 .sy-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);column-gap:56px}
@@ -590,8 +614,6 @@ body.ld-open{overflow:hidden}
 .sy-card h2 em.neg{color:var(--gap)} .sy-card h2 em.pos{color:var(--ok)}
 .sy-card p{color:var(--fg-2);font-size:16px;max-width:42ch}
 .sy-card .link{justify-self:start;margin-top:4px}
-#stChart .sc-bar,#stChart .sc-frame,#stChart .sc-seg{transition:box-shadow .3s}
-.sc-seg.one{flex-direction:row;gap:6px}
 
 /* 3 · Töpfe: die Säule ist ein Gefäß, das sich von unten füllt; was fehlt, bleibt leer */
 .cov-col{background:var(--surface-2);border-radius:16px;padding:0;overflow:hidden;box-shadow:inset 0 0 0 1px var(--line)}
@@ -617,7 +639,6 @@ body.ld-open{overflow:hidden}
   .sy-card:last-child{margin-bottom:4svh}
   .sy-card h2{font-size:clamp(24px,6.8vw,30px)}
   .sy-card p{font-size:14.5px}
-  .st-chart{height:100%}
   .cov-plot{--colw:52%}
   .cov-x{grid-template-columns:52% 1fr}
 }
@@ -637,9 +658,6 @@ body.ld-open{overflow:hidden}
 
 /* Lücke: ruhiger Entwicklungsgraph hinter der stehenden Grafik */
 .sy-sticky{overflow:visible}
-.sy-bg{position:absolute;left:0;right:0;top:22%;height:70%;width:100%;z-index:0;pointer-events:none;opacity:.45}
-@media (max-width:640px){.sy-bg{opacity:.3;top:30%;height:62%}}
-.sy-sticky > .st-chart{position:relative;z-index:1}
 @media (max-width:640px){
   .topbar{background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none}
   .sy-sticky{top:calc(var(--tb) - 1px);height:38svh;padding-block:8px 10px}
@@ -653,24 +671,12 @@ body.ld-open{overflow:hidden}
 .kpis.big .kpi{padding:24px 26px}
 .kpis.big .kpi .k{font-size:14px}
 .kpis.big .kpi .v{font-size:clamp(34px,5vw,56px);letter-spacing:-.045em}
-.gap-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:20px;align-items:start}
-.gchart{position:relative;padding:26px 22px 14px;overflow:hidden}
-.gchart .st-chart{position:relative;z-index:1;height:420px}
-.gchart .sy-bg{top:24%;height:64%;opacity:.45}
-.gap-grid .adjust{display:grid;gap:18px}
-.gap-grid .flow2{grid-template-columns:minmax(0,1fr)}
-.gap-grid .farrow{display:none}
 .gap-note{grid-column:1/-1;padding-left:4px}
-#stChart.live .sc-bar,#stChart.live .sc-ghost,#stChart.live .sc-frame,#stChart.live .sc-seg,#stChart.live .sc-val{transition:height .7s var(--ease),bottom .7s var(--ease),opacity .4s}
 #luecke{padding-top:56px}
-@media (max-width:980px){ .gap-grid{grid-template-columns:minmax(0,1fr)} .gap-grid .flow2{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)} .gap-grid .farrow{display:block} }
 @media (max-width:640px){
   .kpis.big .kpi{padding:16px}
   .kpis.big .kpi .k{font-size:12.5px}
   .kpis.big .kpi .v{font-size:clamp(24px,7.4vw,32px)}
-  .gchart{padding:18px 12px 10px}
-  .gchart .st-chart{height:300px}
-  .gchart .sy-bg{opacity:.3}
 }
 
 /* Kopfzeile nur noch mit Lücke, Fortschritt und Vorschlag */
@@ -804,42 +810,10 @@ body.ld-open{overflow:hidden}
 .statement > .eyebrow,.chap-top .eyebrow{color:var(--accent-ink)}
 .replay{width:26px;height:26px;border-radius:50%;border:1px solid var(--line-2);background:var(--surface);color:var(--fg-3);cursor:pointer;font-size:14px;line-height:1;display:grid;place-items:center;transition:color .2s,border-color .2s,transform .4s var(--ease)}
 .replay:hover{color:var(--fg);border-color:var(--fg-3);transform:rotate(-90deg)}
-#beatH{max-width:24ch;min-height:2.2em}
-#beatH.swap{animation:beatIn .35s var(--ease)}
 @keyframes beatIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
 /* 1 · Rechnung neben der Grafik: die passende Zeile leuchtet mit */
-.gap-grid{align-items:stretch}
-.calc{padding:6px 22px 14px;display:grid;align-content:start}
-.cr{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;align-items:baseline;padding:13px 0 13px 14px;border-top:1px solid var(--line);transition:opacity .5s var(--ease)}
-.cr:first-child{border-top:0}
-.cr::before{content:"";position:absolute;left:0;top:15px;width:3px;height:18px;border-radius:2px;background:transparent;transition:background .3s}
-.cr.cur::before{background:var(--accent)}
-.calc.play .cr{opacity:.3}
-.calc.play .cr.on{opacity:1}
-.cr .k{font-size:14px;color:var(--fg-2);display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-width:0}
-.cr > b{font-size:19px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
-.cr .s{grid-column:1/-1;font-size:12.5px;color:var(--fg-3);font-variant-numeric:tabular-nums}
-.cr-ctl{grid-column:1/-1;margin-top:10px}
-.cr .infl-row{padding-top:0;border-top:0;grid-template-columns:auto 1fr auto;gap:14px}
-.cr .infl-row label{font-size:13px;color:var(--fg-3);font-weight:400}
 /* Ergebnis der Rechnung steht groß oben in der Grafik: Lücke und Kapital, wie die Zahl über der Weg-Kurve */
-.gap-hero{position:relative;z-index:2;display:flex;flex-wrap:wrap;gap:12px 40px;margin:0 2px 8px}
-.gh{display:grid;gap:2px;justify-items:start}
-.gh .k{font-size:13px;font-weight:500;color:var(--fg-3)}
-.gh > b{font-size:clamp(30px,3.4vw,40px);font-weight:600;letter-spacing:-.04em;line-height:1.15}
-.gh .s{font-size:12.5px;font-weight:600;padding:2px 10px;border-radius:999px;background:var(--surface-2);color:var(--fg-2);font-variant-numeric:tabular-nums;margin-top:2px}
-.gh .s:empty{display:none}
-.gh.gap > b{color:var(--gap)}
-.gh.gap .s{background:var(--gap-soft);color:var(--gap-ink)}
-.gh.gap.zero > b{color:var(--ok)}
-.gh.gap.zero .s{background:var(--ok-soft);color:var(--ok-ink)}
-.brief{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.bf{display:flex;align-items:center;gap:10px;background:var(--surface-2);border-radius:var(--r-s);padding:7px 12px;cursor:text;transition:box-shadow .2s}
-.bf:focus-within{box-shadow:0 0 0 2px var(--accent)}
-.bf > span:first-child{font-size:12.5px;color:var(--fg-3);white-space:nowrap}
-.bf .in-row input{font-size:16px;width:7ch}
-.calc .bridge{padding:12px 0 0 14px;border-top:1px solid var(--line)}
 
 /* 2 · Weg dorthin: Sparplan wächst bis zum nötigen Kapital, danach Entnahme */
 .path{padding:22px 22px 16px}
@@ -928,9 +902,6 @@ body.ld-open{overflow:hidden}
   .tl-m b{font-size:14px}
   .cmp-r{grid-template-columns:96px minmax(0,1fr) 70px;gap:10px;font-size:12.5px}
   .cmp-k em{display:none}
-  #beatH{min-height:3.3em;max-width:none}
-  .calc{padding:4px 16px 12px}
-  .cr > b{font-size:17px}
   .path{padding:16px 12px 14px}
   .later{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 8px}
   .later-k{grid-column:1/-1}
@@ -955,37 +926,26 @@ body.ld-open{overflow:hidden}
 @keyframes pgInL{from{opacity:0;transform:translateX(-20px)}}
 @keyframes pgOutL{to{opacity:0;transform:translateX(-12px) scale(.99)}}
 @keyframes pgOutR{to{opacity:0;transform:translateX(12px) scale(.99)}}
-:is(.page.in-r,.page.in-l) .panel:not(.gchart){animation:riseIn .6s var(--spring) backwards}
-/* beim Überblenden mit wandernder Linie nur die Karten ohne Linie, sonst stimmt das Ziel der Linie nicht */
-.page.in-f :is(.calc,.assume,.sol-ctl,.sol-bonus,.sol-pill,.bblock){animation:riseIn .6s var(--spring) backwards}
-.page :is(.gap-grid,.grid-b,.sol,.side,#pots,.bonus-grid) > :nth-child(2){animation-delay:.07s}
-.page :is(.gap-grid,.grid-b,.sol,.side,#pots,.bonus-grid) > :nth-child(3){animation-delay:.14s}
+:is(.page.in-r,.page.in-l) .panel{animation:riseIn .6s var(--spring) backwards}
+.page :is(.grid-b,.sol,.side,#pots,.bonus-grid) > :nth-child(2){animation-delay:.07s}
+.page :is(.grid-b,.sol,.side,#pots,.bonus-grid) > :nth-child(3){animation-delay:.14s}
 .page .side .panel:nth-child(2){animation-delay:.12s}
 .page #solPill{animation-delay:.18s}
-/* Übergang Lücke → Weg → Lösung: die Linie wandert mit und verwandelt sich */
-.page.in-f{animation:pgInF .6s var(--ease)}
 @keyframes pgInF{from{opacity:0}}
-.page.out-f{animation:pgOutF .6s var(--ease) forwards}
-@keyframes pgOutF{to{opacity:0}}
-/* Überschriften stehen beim Überblenden an derselben Stelle: alte geht schnell, neue kommt danach */
-.page.out-f .mod-h{animation:pgOutF .15s ease forwards}
-.page.in-f .mod-h{animation:pgInF .35s var(--ease) .15s backwards}
-.morph{position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:25;overflow:visible}
-.morph-src{opacity:0!important;transition:none!important}
+/* Weiterblättern: alte Seite leert sich, leere Hüllen wachsen aus ihren Karten an den Platz der neuen Karten (teilen()) */
+.page.leert > *{opacity:0;transition:opacity .15s ease}
+.page.in-s .mod-h{animation:pgInF .35s var(--ease) .1s backwards}
+.split-fx{position:fixed;inset:0;pointer-events:none;z-index:25}
+.split-h{position:fixed;background:var(--surface);box-shadow:var(--shadow)}
+.split-ziel{visibility:hidden}
+.split-auf > *{animation:pgInF .4s var(--ease)}
 #pathSvg,#ringSvg{transition:opacity .4s var(--ease)}
-.morphing #pathSvg{opacity:0;transition:none}
-.morph #mZins{fill:url(#mGradZ)}
-.ring.lab-in .r-labs,.ring.lab-in #ringMin,.ring.lab-in #ringZiel,.path-plot.lab-in #pLabs,.path-plot.lab-in #pLabsIn,.path-plot.lab-in #pTarget,.path-plot.lab-in #pAvg,.path-plot.lab-in #pRb{animation:labIn .5s ease}
 .ring .ring-c{transition:opacity .4s var(--ease)}
 #results > section.page{padding-block:92px 8px}
 #luecke{padding-top:92px}
 body.started .qs{padding-top:92px}
 .pnav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:36px;padding-top:20px;border-top:1px solid var(--line)}
 .pnav .primary{padding:12px 22px;font-size:15px}
-.gchart{display:flex;flex-direction:column}
-.gchart .st-chart{flex:1;min-height:420px;height:auto}
-.gchart .sy-bg{top:auto;bottom:64px;height:58%}
-@media (max-width:640px){ .gchart .st-chart{min-height:300px} .gchart .sy-bg{bottom:60px;height:52%} }
 .pnav > span:first-child{flex:1}
 .tb-in{justify-content:space-between}
 .foot{margin-top:28px}
@@ -1000,7 +960,6 @@ body.started .qs{padding-top:92px}
 .q-k{width:110px}
 
 /* Kapitel 1: Verträge und Erspartes getrennt */
-.sc-seg.ers{background:var(--c-ers);color:var(--fg-2);box-shadow:0 -2px 0 var(--surface)}
 .r-ver{stroke:var(--c-best)} .r-ers{stroke:var(--c-ers)}
 
 /* Einmalzahlung: eingestellt unter „Dazu als Bonus“, Ergebnis als eigene Spalte in der Lösungs-Pille */
@@ -1018,7 +977,6 @@ body.started .qs{padding-top:92px}
 @media (max-width:640px){
   .einm-set{grid-template-columns:minmax(0,1fr)}
 }
-.cr .badge{font-variant-numeric:tabular-nums}
 
 /* Kapitel 2: Entwicklungsgraph, Flächen nur angedeutet */
 .p-ein{fill:var(--accent);opacity:.24}
@@ -1181,9 +1139,6 @@ body.started .qs{padding-top:92px}
 .pnav{justify-content:center;border-top:0;margin-top:36px;padding-top:0}
 .pnav .primary{min-width:min(100%,340px);padding:16px 36px;font-size:16px;text-align:center}
 #intakeNav{margin-top:24px}
-.gchart.wartet{opacity:0;transform:scale(.96);pointer-events:none}
-.gchart.auf{animation:popIn .7s var(--spring)}
-.gchart .st-chart{min-height:360px}
 .big-rate{padding-bottom:2px}
 .sp-lbl{font-size:13px!important;color:var(--fg-3)!important;font-weight:400!important}
 #sparBox{height:64px}
@@ -1194,7 +1149,6 @@ body.started .qs{padding-top:92px}
   #results > section.page,#luecke{padding-top:76px}
   .mod-h{font-size:26px;margin-bottom:14px}
   .pnav .primary{width:100%}
-  .gchart .st-chart{min-height:240px}
   #sparBox{height:58px}
   #sparBox input{font-size:30px!important}
 }
@@ -1202,8 +1156,7 @@ body.started .qs{padding-top:92px}
   .pnav{position:fixed;z-index:25;right:max(24px,calc((100vw - 1120px) / 2));bottom:24px;margin:0;justify-content:flex-end}
   .pnav .primary{min-width:0;padding:14px 28px;font-size:15.5px;box-shadow:0 10px 30px -8px rgba(0,0,0,.35)}
   .page.in-r .pnav,.page.in-l .pnav{animation:pnIn .25s ease .34s backwards}
-  .page.in-f .pnav{animation:pnIn .3s ease .3s backwards}
-  .page.out-f .pnav{opacity:0}
+  .page.in-s .pnav{animation:pnIn .3s ease .7s backwards}
   #results{padding-bottom:72px}
   body.started #intake{padding-bottom:96px}
 }
@@ -1238,9 +1191,6 @@ body.started .qs{padding-top:92px}
   body.started{padding-bottom:0}
   #results{min-height:100svh;display:flex;flex-direction:column;padding-bottom:40px}
   #results > .foot{margin-top:auto;padding-top:28px;max-width:calc(100% - 300px)}
-  .gchart .st-chart{min-height:clamp(320px,calc(100svh - 430px),540px)}
-  .calc{align-content:start}
-  .gap-grid{align-items:start}  /* Rechnung so hoch wie ihr Inhalt, nicht auf Grafikhöhe gezogen */
   .assume{align-content:space-between}
 }
 @media (max-width:640px){
@@ -1364,48 +1314,38 @@ body.started .qs{padding-top:92px}
   <div id="results" hidden>
   <!-- 1 · Lücke: spielt beim ersten Mal als Geschichte ab, ein Satz je Schritt -->
   <section id="luecke" class="chap page" hidden>
-    <h2 class="mod-h">Deine Lücke</h2><span id="beatH" hidden></span>
-    <div class="gap-grid">
-      <div class="panel calc" id="calc">
-        <div class="cr" data-b="heute"><span class="k">Wunschrente heute</span><b id="cW"></b></div>
-        <div class="cr" data-b="infl"><span class="k" id="cBk"></span><b id="cB"></b>
-          <div class="cr-ctl infl-row"><label for="infl">Inflation</label><div class="range"><input type="range" id="infl" min="0" max="5" step="0.1"><span class="bubble"></span></div><span class="val" id="inflV"></span></div>
-        </div>
-        <div class="cr" data-b="grv"><span class="k">− Gesetzliche Rente <span class="badge" id="grvBadge">Schätzung</span></span><b id="grvOut"></b>
-          <div class="cr-ctl brief"><label class="bf" for="grvB"><span>Brutto lt. Renteninfo</span><span class="in-row"><input id="grvB" inputmode="decimal" autocomplete="off"><span class="unit">€</span></span></label><button class="link" type="button" id="grvReset" hidden>zurück zur Schätzung</button></div>
-        </div>
-        <div class="cr" data-b="ver" id="crVer"><span class="k">− Verträge</span><b id="cVer"></b></div>
-        <div class="cr" data-b="ers" id="crErs"><span class="k">− Erspartes <span class="badge" id="cErsB"></span></span><b id="cErs"></b></div>
-        <p class="bridge" id="bridge" hidden></p>
+    <h2 class="mod-h">Deine Lücke</h2>
+    <!-- Eine Karte als Überblick: oben das Ergebnis, darunter die Säulen mit den Beträgen, unten nur die zwei Werte, die man hier korrigiert -->
+    <div class="panel gchart" id="gapCard">
+      <div class="gap-hero">
+        <div class="gh gap" id="kpiGap"><span class="k" id="kGapK">Lücke im Monat</span><b id="kGap"></b><span class="s" id="kGapS"></span></div>
+        <div class="gh" id="kpiKap"><span class="k">Kapital dafür nötig</span><b id="kKap"></b><span class="s" id="kKapS"></span></div>
       </div>
-      <div class="panel gchart">
-        <div class="gap-hero">
-          <div class="gh gap" id="kpiGap"><span class="k" id="kGapK">Lücke im Monat</span><b id="kGap"></b><span class="s" id="kGapS"></span></div>
-          <div class="gh"><span class="k">Kapital dafür nötig</span><b id="kKap"></b><span class="s" id="kKapS"></span></div>
+      <div class="st-chart" id="stChart" role="img" aria-label="Bedarf heute und zu Rentenbeginn, gedeckt durch gesetzliche Rente und Vorhandenes, Rest ist die Lücke">
+        <div class="sc-plot" id="scPlot">
+          <svg class="sy-bg" id="syBg" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="syBgF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".16"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs><path id="syBgA" fill="url(#syBgF)"/><path id="syBgL" fill="none" stroke="var(--accent)" stroke-width="2" vector-effect="non-scaling-stroke" pathLength="1"/></svg>
+          <div class="sc-col l" id="scToday">
+            <div class="sc-ghost" id="scNetto"></div>
+            <div class="sc-bar" id="scWunsch"><b>Wunsch</b><span id="scWunschB"></span></div>
+            <span class="sc-val" id="scWunschV"></span>
+          </div>
+          <div class="sc-mid" id="scMid">
+            <svg viewBox="0 0 120 34" fill="none" aria-hidden="true"><path id="scArrow" d="M4 30 C 40 30, 74 24, 112 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" pathLength="1"/><path id="scHead" d="M102 4.5 L112.5 5.5 L108 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="sc-col rr" id="scNeed">
+            <div class="sc-frame" id="scFrame"></div>
+            <div class="sc-seg grv" id="scGrv"><b>Gesetzl. Rente</b><span id="scGrvV"></span></div>
+            <div class="sc-seg best" id="scVer"><b>Verträge</b><span id="scVerV"></span></div><div class="sc-seg ers" id="scErs"><b>Erspartes</b><span id="scErsV"></span></div>
+            <div class="sc-seg gap" id="scGap"><b>Lücke</b></div>
+            <span class="sc-val" id="scNeedV"></span>
+          </div>
         </div>
-        <svg class="sy-bg" id="syBg" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="syBgF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".16"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs><path id="syBgA" fill="url(#syBgF)"/><path id="syBgL" fill="none" stroke="var(--accent)" stroke-width="2" vector-effect="non-scaling-stroke" pathLength="1"/></svg>
-        <div class="st-chart" id="stChart" role="img" aria-label="Bedarf heute und zu Rentenbeginn, gedeckt durch gesetzliche Rente und Vorhandenes, Rest ist die Lücke">
-          <div class="sc-plot" id="scPlot">
-            <div class="sc-col l" id="scToday">
-              <div class="sc-ghost" id="scNetto"></div>
-              <div class="sc-bar" id="scWunsch"></div>
-              <span class="sc-val" id="scWunschV"></span>
-            </div>
-            <div class="sc-mid" id="scMid">
-              <b id="scInfl"></b>
-              <svg viewBox="0 0 120 34" fill="none" aria-hidden="true"><path id="scArrow" d="M4 30 C 40 30, 74 24, 112 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" pathLength="1"/><path id="scHead" d="M102 4.5 L112.5 5.5 L108 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <span class="yr" id="scYears"></span>
-            </div>
-            <div class="sc-col rr" id="scNeed">
-              <div class="sc-frame" id="scFrame"></div>
-              <div class="sc-seg grv" id="scGrv"><b>Gesetzl. Rente</b><span id="scGrvV"></span></div>
-              <div class="sc-seg best" id="scVer"><b>Verträge</b><span id="scVerV"></span></div><div class="sc-seg ers" id="scErs"><b>Erspartes</b><span id="scErsV"></span></div>
-              <div class="sc-seg gap" id="scGap"><b>Lücke</b><span id="scGapV"></span></div>
-              <span class="sc-val" id="scNeedV"></span>
-            </div>
-          </div>
-          <div class="sc-x"><div><span class="t">Heute</span><span class="u" id="scX0"></span></div><div><span class="t" id="scX1t"></span><span class="u" id="scX1"></span></div></div>
-          </div>
+        <div class="sc-x"><div><span class="t">Heute</span><span class="u" id="scX0"></span></div><div><span class="t" id="scX1t"></span><span class="u" id="scX1"></span></div></div>
+      </div>
+      <div class="gap-set">
+        <div class="gs"><label for="infl">Inflation</label><div class="range"><input type="range" id="infl" min="0" max="5" step="0.1"><span class="bubble"></span></div><span class="val" id="inflV"></span></div>
+        <div class="gs"><label class="bf" for="grvB"><span>Gesetzl. Rente laut Renteninfo, brutto</span><span class="in-row"><input id="grvB" inputmode="decimal" autocomplete="off"><span class="unit">€</span></span></label><span class="badge" id="grvBadge">Schätzung</span><button class="link" type="button" id="grvReset" hidden>zurück zur Schätzung</button></div>
+        <p class="bridge" id="bridge" hidden></p>
       </div>
     </div>
     <div class="pnav"><button class="primary" type="button" data-go="warten">Weiter: Dein Weg</button></div>
@@ -2512,7 +2452,7 @@ function render() {
   renderIntake(r, mindest, sicher);
   if (!S.started) return;
 
-  /* 1 · Lücke: Rechnung neben der Grafik, beim ersten Mal als Geschichte abgespielt */
+  /* 1 · Lücke: eine Karte, beim ersten Mal baut sich die Grafik auf und das Ergebnis rollt oben herein */
   buildStage(r);
   const ruhig = !PLAY.on && !PLAY.pending;
   if (ruhig) { tween($('kGap'), r.luecke, fE); tween($('kKap'), r.kapital, fK); }
@@ -2522,21 +2462,14 @@ function render() {
   if (render._gap != null && Math.abs(render._gap - r.luecke) > 1 && ruhig && !countUp) pulse($('kpiGap'), 'flash');
   render._gap = r.luecke;
   $('kKapS').textContent = `mit ${S.rentenbeginn}`;
-  tween($('cW'), S.bedarf, fE);
-  $('cBk').textContent = `Bedarf mit ${r.start} (${r.startJahr})`;
-  tween($('cB'), r.bedarfNom, fE);
   setRange('infl', S.inflation * 100, v => pct1.format(v) + ' %'); $('inflV').textContent = pct1.format(S.inflation * 100) + ' %';
   const auto = S.grvMode === 'auto';
   setMoney('grvB', auto ? r.grvBriefB : S.grvWert);
   $('grvBadge').textContent = auto ? 'Schätzung' : 'aus Renteninfo';
   $('grvBadge').classList.toggle('man', !auto); $('grvReset').hidden = auto;
-  tween($('grvOut'), r.grvNom, fE);
-  $('crVer').hidden = r.vertraege < 0.5; tween($('cVer'), r.vertraege, fE);
-  $('crErs').hidden = r.erspLS < 0.5; tween($('cErs'), r.erspLS, fE);
-  $('cErsB').textContent = S.ersp > 0 ? `aus ${fE(S.ersp)}` : '';
   $('bridge').hidden = !(r.bruecke > 0);
   if (r.bruecke > 0) $('bridge').innerHTML = `Gesetzliche Rente frühestens ab ${r.start}. Bis dahin fehlen <b>${fE(r.lueckeBruecke)}</b> im Monat.`;
-  if (!PLAY.on) setBeat(PLAY.pending ? 'heute' : null);
+  if (PLAY.pending) heroVerbergen();
 
   /* 2 · Weg dorthin */
   const rates = r.raten.map(x => ({ ...x, rate: x.rate == null || !isFinite(x.rate) ? x.rate : Math.ceil(x.rate) })), base = rates[0].rate;
@@ -2653,13 +2586,12 @@ const clamp01 = x => Math.max(0, Math.min(1, x));
 const easeOut = x => 1 - Math.pow(1 - clamp01(x), 3);
 const smooth = x => { x = clamp01(x); return x * x * (3 - 2 * x); };
 const statisch = () => false;
-const BEATS = ['heute', 'infl', 'grv', 'ver', 'ers', 'gap', 'kap'];
 function beatPlan(d) {
-  const b = [{ k: 'heute', d: 0.67 }, { k: 'infl', d: 0.92 }];
-  if (d.covered > 0.5) b.push({ k: 'grv', d: 0.71 });
-  if (d.ver > 0.5) b.push({ k: 'ver', d: 0.67 });
-  if (d.ers > 0.5) b.push({ k: 'ers', d: 0.67 });
-  b.push({ k: 'gap', d: 0.8 }, { k: 'kap', d: 0.58 });
+  const b = [{ k: 'heute', d: 0.5 }, { k: 'infl', d: 0.85 }];
+  if (d.covered > 0.5) b.push({ k: 'grv', d: 0.7 });
+  if (d.ver > 0.5) b.push({ k: 'ver', d: 0.55 });
+  if (d.ers > 0.5) b.push({ k: 'ers', d: 0.55 });
+  b.push({ k: 'gap', d: 0.8 }, { k: 'kap', d: 0.5 });
   let t = 0; b.forEach(x => { x.t0 = t; t += x.d; });
   return b;
 }
@@ -2673,57 +2605,38 @@ function buildStage(r) {
   paintStage();
 }
 const fOf = k => { if (ST.t >= 90) return 1; const b = ST.beats.find(x => x.k === k); return b ? smooth((ST.t - b.t0) / (b.d * 0.75)) : 1; };
-function beatText(k) {
-  const d = ST.d; if (!d) return '';
-  if (k === 'heute') return `Heute brauchst du <em>${fE(d.W)}</em> im Monat.`;
-  if (k === 'infl') return `Mit ${d.start} sind das <em>${fE(d.B)}</em>.`;
-  if (k === 'grv') return `Die gesetzliche Rente bringt <em>${fE(d.covered)}</em>.`;
-  if (k === 'ver') return `Deine Verträge bringen <em>${fE(d.ver)}</em>.`;
-  if (k === 'ers') return `Dein Erspartes bringt <em>${fE(d.ers)}</em>.`;
-  return d.gap > 0.5 ? `Es fehlen <em class="neg">${fE(d.gap)}</em> im Monat.` : 'Deine Rente reicht für deinen <em class="pos">Bedarf</em>.';
-}
-// k = aktueller Schritt; null = fertig erzählt
-function setBeat(k, swap) {
-  const h = $('beatH'), html = k == null || k === 'gap' || k === 'kap' ? beatText('gap') : '';
-  if (h._html !== html) { h._html = html; h.innerHTML = html; if (swap) pulse(h, 'swap'); }
-  const idx = k == null ? 99 : BEATS.indexOf(k);
-  $('calc').classList.toggle('play', k != null);
-  document.querySelectorAll('#calc .cr').forEach(row => {
-    const i = BEATS.indexOf(row.dataset.b);
-    row.classList.toggle('on', i <= idx); row.classList.toggle('cur', k != null && row.dataset.b === k);
-  });
-}
 const PLAY = { on: false, pending: false, raf: 0, last: null };
 function play() {
   cancelAnimationFrame(PLAY.raf);
   if (!ST.d || !S.started) return;
   PLAY.pending = false; PLAY.on = true; PLAY.last = null; onScroll();
-  graphZeigen(null);  // erst erzählt die Rechnung, die Grafik kommt danach
   $('stChart').classList.remove('live');
+  heroVerbergen();
   $('kGap')._v = 0; $('kGap').textContent = '–'; $('kKap')._v = 0; $('kKap').textContent = '–';
-  const t0 = performance.now() + 540;
+  const t0 = performance.now() + 350;
   const step = now => {
     ST.t = (now - t0) / 1000;
     paintStage();
     const B = ST.beats, cur = B.filter(x => x.t0 <= ST.t).pop() || B[0];
     if (cur.k !== PLAY.last) {
-      PLAY.last = cur.k; setBeat(cur.k, cur.k !== 'kap');
-      // die Rechnung ist durch: Grafik ploppt auf, oben rollt die Lücke hoch, danach das Kapital
-      if (cur.k === 'gap') { graphZeigen(true); tween($('kGap'), ST.r.luecke, fE, 700); }
-      if (cur.k === 'kap') tween($('kKap'), ST.r.kapital, fK, 600);
+      PLAY.last = cur.k;
+      // die Säulen stehen: oben ploppt die Lücke auf und rollt hoch, danach das Kapital
+      if (cur.k === 'gap') { heroZeigen('kpiGap'); tween($('kGap'), ST.r.luecke, fE, 700); }
+      if (cur.k === 'kap') { heroZeigen('kpiKap'); tween($('kKap'), ST.r.kapital, fK, 700); }
     }
     const end = B[B.length - 1];
     if (ST.t < end.t0 + end.d) PLAY.raf = requestAnimationFrame(step);
-    else { PLAY.on = false; ST.t = 99; paintStage(); $('stChart').classList.add('live'); setBeat(null); render(); onScroll(); graphZeigen(true); }
+    else { PLAY.on = false; ST.t = 99; paintStage(); $('stChart').classList.add('live'); heroZeigen(); render(); onScroll(); }
   };
   PLAY.raf = requestAnimationFrame(step);
 }
-// Lücke-Grafik: null = noch verborgen, true = ploppt jetzt auf, false = einfach da
-function graphZeigen(pop) {
-  const g = document.querySelector('.gchart');
-  if (pop && !g.classList.contains('wartet')) return;
-  g.classList.toggle('wartet', pop === null); g.classList.remove('auf');
-  if (pop) { void g.offsetWidth; g.classList.add('auf'); }
+// Ergebnis oben in der Karte: während des Aufbaus verborgen, dann ploppt es auf
+function heroVerbergen() { ['kpiGap', 'kpiKap'].forEach(id => $(id).classList.add('warte')); }
+function heroZeigen(id) {
+  (id ? [id] : ['kpiGap', 'kpiKap']).forEach(x => {
+    const el = $(x); if (!el.classList.contains('warte')) return;
+    el.classList.remove('warte'); el.classList.add('auf'); setTimeout(() => el.classList.remove('auf'), 700);
+  });
 }
 function stopPlay() { cancelAnimationFrame(PLAY.raf); PLAY.on = false; PLAY.pending = false; ST.t = 99; }
 function bgGraph() {
@@ -2736,27 +2649,24 @@ function bgGraph() {
 }
 function paintStage() {
   const d = ST.d; if (!d || !S.started) return;
-  // Reihenfolge: Inflation hebt den Bedarf, die Rente füllt, Vorhandenes kommt dazu, die Lücke erscheint
-  // Die Lücke kommt erst, wenn sie rechts in der Rechnung aufleuchtet
-  const fi = 1, fg = 1, fv = 1, fe = 1, fq = fOf('gap');
+  // Reihenfolge: Wunsch steht, Inflation hebt den Bedarf, die Rente füllt, Vorhandenes kommt dazu, die Lücke bleibt
+  const fw = fOf('heute'), fi = fOf('infl'), fg = fOf('grv'), fv = fOf('ver'), fe = fOf('ers'), fq = fOf('gap');
   bgGraph();
   $('syBgL').style.strokeDasharray = '1'; $('syBgL').style.strokeDashoffset = String(1 - fi);
   $('syBgA').style.clipPath = `inset(0 ${((1 - fi) * 100).toFixed(1)}% 0 0)`;
-  const H = $('scPlot').clientHeight || 300;
-  const M = Math.max(d.need, d.Nt, d.W, 1) * 1.04, px = v => v / M * H;
+  // oben Platz für die Beschriftung über der höchsten Säule lassen
+  const H = Math.max(120, ($('scPlot').clientHeight || 300) - 52);
+  const M = Math.max(d.need, d.Nt, d.W, 1), px = v => v / M * H;
   $('scNetto').style.height = px(d.Nt) + 'px';
-  $('scWunsch').style.height = px(d.W) + 'px';
-  // Wunsch steht rechts in der Rechnung, Netto nur hier
+  $('scWunsch').style.height = px(d.W * easeOut(fw)) + 'px'; $('scWunschB').textContent = fE(d.W);
   $('scWunschV').innerHTML = `<small>Netto heute</small>${fE(d.Nt)}`; $('scWunschV').style.bottom = `${px(Math.max(d.W, d.Nt)) + 8}px`;
   const top = d.W + (d.need - d.W) * fi;
   $('scFrame').style.height = px(top) + 'px';
   $('scNeed').style.opacity = 0.25 + 0.75 * fi;
-  $('scNeedV').textContent = fE(d.W + (d.B - d.W) * fi);
+  $('scNeedV').innerHTML = `<small>Bedarf mit ${d.start}</small>${fE(d.W + (d.B - d.W) * fi)}`;
   $('scNeedV').style.bottom = `${px(top) + 8}px`;
   $('scArrow').style.strokeDasharray = '1'; $('scArrow').style.strokeDashoffset = String(1 - fi);
   $('scHead').style.opacity = fi > 0.92 ? 1 : 0;
-  $('scInfl').textContent = '+' + pct1.format(S.inflation * 100) + ' % p. a.';
-  $('scYears').textContent = String(Math.round(K.jahr + d.nS * fi));
   $('scMid').style.bottom = `${px(Math.max(d.W, top) * 0.5)}px`;
   const seg = (el, b, h, show) => { el.style.bottom = px(b) + 'px'; el.style.height = px(h) + 'px'; el.style.opacity = show ? 1 : 0; };
   seg($('scGrv'), 0, d.covered * fg, fg > 0);
@@ -2764,11 +2674,11 @@ function paintStage() {
   seg($('scErs'), d.covered + d.ver, d.ers * fe, fe > 0 && d.ers > 0.5);
   seg($('scGap'), d.covered + d.best, d.gap * easeOut(fq), fq > 0 && d.gap > 0.5);
   $('scGap').style.opacity = fq;
-  $('scGrvV').textContent = fE(d.covered * fg); $('scVerV').textContent = fE(d.ver * fv); $('scErsV').textContent = fE(d.ers * fe); $('scGapV').textContent = fE(d.gap);
+  $('scGrvV').textContent = fE(d.covered * fg); $('scVerV').textContent = fE(d.ver * fv); $('scErsV').textContent = fE(d.ers * fe);
   const topSeg = [['scGap', d.gap > 0.5 && fq > 0], ['scErs', d.ers > 0.5 && fe > 0], ['scVer', d.ver > 0.5 && fv > 0], ['scGrv', fg > 0]].find(x => x[1]);
   ['scGrv', 'scVer', 'scErs', 'scGap'].forEach(id => $(id).classList.toggle('top', !!topSeg && topSeg[0] === id));
   [['scGrv', d.covered * fg], ['scVer', d.ver * fv], ['scErs', d.ers * fe], ['scGap', d.gap * easeOut(fq)]].forEach(([id, v]) => {
-    const h = px(v), el = $(id); el.children[0].hidden = h < 22; el.children[1].hidden = h < 18; el.classList.toggle('one', h < 40);
+    const h = px(v), el = $(id); el.children[0].hidden = h < 22; if (el.children[1]) el.children[1].hidden = h < 18; el.classList.toggle('one', h < 40);
   });
   $('scX0').textContent = String(K.jahr);
   $('scX1t').textContent = `Mit ${d.start}`; $('scX1').textContent = String(d.startJahr);
@@ -3133,153 +3043,61 @@ function betrete(p) {
     st.forEach((s, i) => setTimeout(() => { RING.k = s; render(); }, 210 + i * 750));
   }
 }
-/* ===== Übergang: die Hintergrundkurve der Lücke wird zum Weg, die Weg-Linie rollt sich zum Ring ===== */
-const MORPH = { raf: 0, on: false };
-const easeIO = x => { x = clamp01(x); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
-const imSchirm = (svg, pts) => { const m = svg.getScreenCTM(); return m ? pts.map(([x, y]) => [m.a * x + m.c * y + m.e, m.b * x + m.d * y + m.f]) : null; };
-// gleichmäßig über x verteilt neu abtasten, damit beide Kurven gleich viele Punkte haben
-function abtasten(pts, n) {
-  const x0 = pts[0][0], x1 = pts[pts.length - 1][0], out = []; let j = 1;
-  for (let i = 0; i < n; i++) {
-    const x = x0 + (x1 - x0) * i / (n - 1);
-    while (j < pts.length - 1 && pts[j][0] < x) j++;
-    const a = pts[j - 1], b = pts[j], t = b[0] === a[0] ? 0 : clamp01((x - a[0]) / (b[0] - a[0]));
-    out.push([x, a[1] + (b[1] - a[1]) * t]);
-  }
-  return out;
+/* ===== Übergang nach vorn: die Karten der alten Seite teilen sich in die Karten der neuen =====
+   Lücke (eine Karte) → Weg (Einstellungen, Kurve) → Lösung (Ring, Sparrate, Bonus, Pille).
+   Leere Hüllen wachsen von der alten Karte an den Platz der neuen, dann blendet der Inhalt ein. */
+const TEILEN = { luecke: 'warten', warten: 'toepfe' };
+const sichtbarePanels = sec => [...sec.querySelectorAll('.panel')].filter(el => el.offsetParent && el.getBoundingClientRect().height > 4);
+// aus welcher alten Karte kommt eine neue? Einstellungen aus Einstellungen, Grafiken aus Grafiken
+function quelleFuer(von, ziel, quellen) {
+  if (von === 'warten') return quellen[ziel.matches('.sol-ctl,.sol-bonus') ? 'assume' : 'path'] || quellen.path;
+  return quellen.karte;
 }
-// Punkt auf einer Kurve an Stelle x (Kurve nach x sortiert)
-function yBei(pts, x) {
-  if (x <= pts[0][0]) return pts[0][1];
-  for (let j = 1; j < pts.length; j++) if (pts[j][0] >= x) { const a = pts[j - 1], b = pts[j], t = b[0] === a[0] ? 0 : (x - a[0]) / (b[0] - a[0]); return a[1] + (b[1] - a[1]) * t; }
-  return pts[pts.length - 1][1];
-}
-const MN = 220;
-// Weg-Grafik in Bildschirmkoordinaten: Linie, eingezahlt-Kante, Grundlinie, Übergang Sparen/Rente
-function wegGeo() {
-  const d = PATH.d, c = PATH.cur, svg = $('pathSvg'); if (!d || !c || !svg.getBoundingClientRect().width) return null;
-  const G = d.G, L = G.xs.sp.length - 1;
-  const sc = imSchirm(svg, [...G.xs.sp.map((x, i) => [x, c.tot[i]]), ...G.xs.rp.map((x, i) => [x, c.out[i]])]);
-  const ein = imSchirm(svg, G.xs.sp.map((x, i) => [x, c.ein[i]])), ref = imSchirm(svg, [[G.xs.sp[L], G.y0]]);
-  if (!sc || !ein) return null;
-  const line = abtasten(sc, MN), xr = ref[0][0], base = ref[0][1];
-  let k = line.findIndex(p => p[0] > xr + 0.01); if (k < 1) k = MN;
-  return { line, ein: line.map((p, i) => i < k ? yBei(ein, p[0]) : null), base, k, w: 2.25 };
-}
-function quelleLinie(page) {
-  if (page === 'luecke') {
-    const svg = $('syBg'), rc = svg.getBoundingClientRect(); if (!rc.width) return null;
-    const pts = []; for (let i = 0; i <= 60; i++) { const u = i / 60; pts.push([u * 1000, 600 - (Math.exp(2.1 * u) - 1) / (Math.exp(2.1) - 1) * 470]); }
-    const sc = imSchirm(svg, [...pts, [0, 600]]); if (!sc) return null;
-    return { line: abtasten(sc.slice(0, -1), MN), base: sc[sc.length - 1][1], w: 2, op: parseFloat(getComputedStyle(svg).opacity) || 0.45 };
-  }
-  return null;
-}
-function morphEbene() {
-  let svg = $('morphSvg');
-  if (!svg) {
-    svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.id = 'morphSvg'; svg.setAttribute('class', 'morph'); svg.setAttribute('aria-hidden', 'true');
-    svg.innerHTML = '<defs><linearGradient id="mGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".2"/><stop offset="1" stop-color="var(--accent)" stop-opacity=".03"/></linearGradient><linearGradient id="mGradZ" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".16"/><stop offset="1" stop-color="var(--accent)" stop-opacity=".04"/></linearGradient></defs>'
-      + '<path id="mArea" fill="url(#mGrad)"/><path id="mEin" class="p-ein"/><path id="mZins" class="p-zins"/><path id="mOut" class="p-out"/>'
-      + '<path id="mLine" fill="none" style="stroke:var(--accent)" stroke-linejoin="round" stroke-linecap="round"/><g id="mSegs"></g>';
-    document.body.appendChild(svg);
-  }
-  svg.setAttribute('viewBox', `0 0 ${innerWidth} ${innerHeight}`); svg.style.opacity = 1;
-  ['mArea', 'mEin', 'mZins', 'mOut', 'mLine'].forEach(id => { $(id).setAttribute('d', ''); $(id).style.opacity = ''; $(id).style.fillOpacity = ''; });
-  $('mSegs').innerHTML = '';
-  return svg;
-}
-const pStr = pts => pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' L');
-const flaeche = (top, bot) => top.length < 2 ? '' : 'M' + pStr(top) + ' L' + pStr(bot.slice().reverse()) + ' Z';
-// Flächen hängen an der Linie: f = 0 nur Linie, f = 1 volle Weg-Flächen
-function wegFlaechen(pts, k, dEin, dBase, f) {
-  const ein = pts.map((p, i) => [p[0], p[1] + (dEin[i] || 0) * f]), base = pts.map((p, i) => [p[0], p[1] + dBase[i] * f]);
-  $('mZins').setAttribute('d', flaeche(pts.slice(0, k), ein.slice(0, k)));
-  $('mEin').setAttribute('d', flaeche(ein.slice(0, k), base.slice(0, k)));
-  $('mOut').setAttribute('d', flaeche(pts.slice(k - 1), base.slice(k - 1)));
-}
-function morphEnde(done) {
-  MORPH.on = false; done && done();
-  requestAnimationFrame(() => { const s = $('morphSvg'); if (s) s.style.opacity = 0; });
-}
-// Lücke → Weg: die Kurve wandert, die Flächen wachsen aus ihr heraus
-function morphLueckeWeg(A, B, done) {
-  morphEbene(); MORPH.on = true; cancelAnimationFrame(MORPH.raf);
-  const a = A.line, b = B.line, k = B.k;
-  const dEin = b.map((p, i) => i < k ? B.ein[i] - p[1] : 0), dBase = b.map(p => B.base - p[1]);
-  const t0 = performance.now(), dur = 1150;
-  const step = now => {
-    const raw = Math.min(1, (now - t0) / dur), e = easeIO(raw), g = easeIO(clamp01((raw - 0.2) / 0.8));
-    const pts = a.map((p, i) => [p[0] + (b[i][0] - p[0]) * e, p[1] + (b[i][1] - p[1]) * e]);
-    const d = 'M' + pStr(pts);
-    $('mLine').setAttribute('d', d); $('mLine').setAttribute('stroke-width', (A.w + (B.w - A.w) * e).toFixed(2)); $('mLine').style.opacity = A.op + (1 - A.op) * e;
-    const base = A.base + (B.base - A.base) * e;
-    $('mArea').setAttribute('d', d + ` L${pts[MN - 1][0].toFixed(1)},${base.toFixed(1)} L${pts[0][0].toFixed(1)},${base.toFixed(1)} Z`); $('mArea').style.opacity = 1 - clamp01(raw * 1.6);
-    wegFlaechen(pts, k, dEin, dBase, g);
-    if (raw < 1) MORPH.raf = requestAnimationFrame(step); else morphEnde(done);
-  };
-  MORPH.raf = requestAnimationFrame(step);
-}
-// Weg → Lösung: Flächen ziehen sich in die Linie, die Linie streckt sich, rollt sich zum Ring und färbt sich in die Ring-Teile
-function zeigeEcht(box, svg) {
-  // SVG-Elemente haben kein offsetWidth: getBoundingClientRect erzwingt den Stil, damit nichts überblendet
-  svg.style.transition = 'none'; box.classList.remove('morphing'); svg.getBoundingClientRect(); getComputedStyle(svg).opacity;
-  requestAnimationFrame(() => { svg.style.transition = ''; });
-  box.classList.add('lab-in'); setTimeout(() => box.classList.remove('lab-in'), 700);
-}
-// Ziel vorbereiten (Grafik versteckt), Linie hinüberwandern lassen, dann die echte Grafik zeigen
-function morphen(p, quelle) {
-  if (p === 'warten') {
-    const neu = !SEEN.has('warten'); SEEN.add('warten');
-    if (neu) { PATH.shown = true; $('phV')._v = 0; }
-    $('pathPlot').classList.add('morphing'); render();
-    if (neu) { const r = $('pClipR'); if (r) r.setAttribute('width', (PATH.d ? PATH.d.x1 : 2000) + 12); $('pTarget') && $('pTarget').classList.add('on'); }
-    const ziel = wegGeo();
-    if (!ziel) { $('pathPlot').classList.remove('morphing'); return false; }
-    morphLueckeWeg(quelle, ziel, () => zeigeEcht($('pathPlot'), $('pathSvg')));
-    return true;
-  }
-  return false;
-}
-function ringFolge(start) {
-  const c = compute(), st = [1, ...(c.r.bestand >= 0.5 ? [2] : []), ...(c.r.luecke >= 0.5 ? [3] : []), 4];
-  st.forEach((s, i) => setTimeout(() => { RING.k = s; render(); }, start + i * 750));
+function teilen(von, nach) {
+  const q = von === 'luecke' ? { karte: $('gapCard').getBoundingClientRect() } : { assume: document.querySelector('#warten .assume').getBoundingClientRect(), path: $('pathPanel').getBoundingClientRect() };
+  const alt = $(von), neu = $(nach);
+  alt.classList.add('leert');
+  clearTimeout(go._t); clearTimeout(go._t2);
+  go._t = setTimeout(() => {
+    alt.hidden = true; alt.classList.remove('leert', 'in-r', 'in-l', 'in-s');
+    neu.classList.remove('out-l', 'out-r', 'in-r', 'in-l'); neu.hidden = false; $('results').hidden = false;
+    scrollTo({ top: 0, behavior: 'auto' });
+    render(); navPill();
+    const ziele = sichtbarePanels(neu), spring = getComputedStyle(document.documentElement).getPropertyValue('--spring').trim() || 'cubic-bezier(.22,1,.36,1)';
+    const fx = document.createElement('div'); fx.className = 'split-fx'; document.body.appendChild(fx);
+    neu.classList.add('in-s');
+    ziele.forEach((z, i) => {
+      const r = z.getBoundingClientRect(), a = quelleFuer(von, z, q), cs = getComputedStyle(z);
+      z.classList.add('split-ziel');
+      const h = document.createElement('div'); h.className = 'split-h'; h.style.borderRadius = cs.borderRadius; fx.appendChild(h);
+      const box = b => ({ left: b.left + 'px', top: b.top + 'px', width: b.width + 'px', height: b.height + 'px' });
+      Object.assign(h.style, box(r));
+      h.animate([box(a), box(r)], { duration: 640, delay: i * 45, easing: spring, fill: 'backwards' });
+    });
+    const dauer = 640 + ziele.length * 45;
+    go._t2 = setTimeout(() => {
+      fx.remove();
+      ziele.forEach(z => { z.classList.remove('split-ziel'); z.classList.add('split-auf'); setTimeout(() => z.classList.remove('split-auf'), 450); });
+      betrete(nach);
+    }, dauer);
+  }, 150);
 }
 function go(p) {
   if (p === PAGE || !PAGES.includes(p) || (!S.started && p !== 'intake')) return;
   const from = $(PAGE), to = $(p), dir = PAGES.indexOf(p) > PAGES.indexOf(PAGE) ? 1 : -1;
-  // nur noch ein wandernder Übergang: die Hintergrundkurve der Lücke wird zur Kurve vom Weg
-  const quelle = PAGE === 'luecke' && p === 'warten' ? quelleLinie(PAGE) : null;
-  if (quelle) $('syBg').classList.add('morph-src');
+  const vorher = PAGE;
   PAGE = p; navPill();
-  if (PLAY.on && p !== 'luecke') { stopPlay(); paintStage(); setBeat(null); $('stChart').classList.add('live'); graphZeigen(false); }
+  if (PLAY.on && p !== 'luecke') { stopPlay(); paintStage(); $('stChart').classList.add('live'); heroZeigen(); }
+  document.querySelector('.split-fx')?.remove(); document.querySelectorAll('.split-ziel').forEach(z => z.classList.remove('split-ziel'));
+  if (TEILEN[vorher] === p) { teilen(vorher, p); return; }
   clearTimeout(go._t); clearTimeout(go._t2);
-  if (quelle) {
-    // Überblenden ohne Lücke: die alte Seite bleibt an ihrem Platz stehen und blendet aus, die neue blendet gleichzeitig ein
-    const rc = from.getBoundingClientRect();
-    PAGES.forEach(x => { if (x !== p && x !== from.id) $(x).hidden = true; });
-    Object.assign(from.style, { position: 'fixed', top: rc.top + 'px', left: rc.left + 'px', width: rc.width + 'px', zIndex: 4, pointerEvents: 'none', margin: 0 });
-    from.classList.remove('in-r', 'in-l', 'in-f'); from.classList.add('out-f');
-    $('results').hidden = false;
-    to.classList.remove('out-l', 'out-r', 'out-f', 'in-r', 'in-l'); to.hidden = false; void to.offsetWidth; to.classList.add('in-f');
-    scrollTo({ top: 0, behavior: 'auto' });
-    if (!morphen(p, quelle)) { render(); betrete(p); }
-    navPill();
-    go._t2 = setTimeout(() => {
-      from.hidden = true; from.classList.remove('out-f'); from.removeAttribute('style'); $('qs').style.paddingTop = '';
-      $('syBg').classList.remove('morph-src'); $('pathSvg').classList.remove('morph-src');
-    }, 620);
-    return;
-  }
-  from.classList.remove('in-r', 'in-l', 'in-f'); from.classList.add(dir > 0 ? 'out-l' : 'out-r');
+  from.classList.remove('in-r', 'in-l', 'in-s'); from.classList.add(dir > 0 ? 'out-l' : 'out-r');
   go._t = setTimeout(() => {
-    PAGES.forEach(x => { if (x !== p) { $(x).hidden = true; $(x).classList.remove('out-l', 'out-r', 'out-f', 'in-r', 'in-l', 'in-f'); $(x).removeAttribute('style'); } });
+    PAGES.forEach(x => { if (x !== p) { $(x).hidden = true; $(x).classList.remove('out-l', 'out-r', 'in-r', 'in-l', 'in-s', 'leert'); $(x).removeAttribute('style'); } });
     $('qs').style.paddingTop = '';
     $('results').hidden = p === 'intake';
-    to.hidden = false; void to.offsetWidth; to.classList.add(quelle ? 'in-f' : dir > 0 ? 'in-r' : 'in-l');
+    to.hidden = false; void to.offsetWidth; to.classList.add(dir > 0 ? 'in-r' : 'in-l');
     scrollTo({ top: 0, behavior: 'auto' });
-    $('syBg').classList.remove('morph-src'); $('pathSvg').classList.remove('morph-src');
-    if (quelle && morphen(p, quelle)) { navPill(); return; }
     render(); navPill();
     betrete(p);
   }, 165);
@@ -3471,7 +3289,7 @@ $('splitAuto').addEventListener('click', () => { S.mindestHeute = null; render()
 $('reset').addEventListener('click', () => {
   S = structuredClone(DEF); render._gap = null; $('results').hidden = true; $('topbar').hidden = true; SEEN.clear(); QSEEN.clear(); QSEEN.add(0); $('ring')._shown = false;
   stopPlay(); RING.k = 4; PATH.k = null; PATH.cur = null; PATH.shown = false; cancelAnimationFrame(PATH.raf); cancelAnimationFrame(TL.raf); TL.p = 0; $('tl').classList.remove('live'); ['cmpNv', 'cmpWv', 'cmpMv'].forEach(id => $(id)._v = undefined);
-  PAGE = 'intake'; ['luecke', 'warten', 'toepfe'].forEach(x => { $(x).hidden = true; $(x).classList.remove('in-r', 'in-l', 'in-f', 'out-l', 'out-r', 'out-f'); $(x).removeAttribute('style'); }); $('intake').hidden = false;
+  PAGE = 'intake'; ['luecke', 'warten', 'toepfe'].forEach(x => { $(x).hidden = true; $(x).classList.remove('in-r', 'in-l', 'in-s', 'out-l', 'out-r', 'leert'); $(x).removeAttribute('style'); }); $('intake').hidden = false;
   render(); window.scrollTo({ top: 0, behavior: 'auto' }); zeigeStart();
 });
 addEventListener('resize', () => { onScroll(); render(); if (S.started) navPill(); setSeg('status', S.status); setSeg('ums', S.ums); setSeg('einmZiel', S.einmZiel); });
