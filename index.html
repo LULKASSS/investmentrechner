@@ -1692,7 +1692,7 @@ function buildPdf(Doc, D) {
       fc(C.s2); doc.roundedRect(sx, yy + 2.5, sw, 1, 0.5, 0.5, 'F');
       fc(C.acc); doc.roundedRect(sx, yy + 2.5, sw * Math.min(1, f), 1, 0.5, 0.5, 'F');
       fc(C.white); dc(C.line2); doc.setLineWidth(0.25); doc.circle(sx + sw * Math.min(1, f), yy + 3, 1.5, 'FD');
-      if (tick != null) { dc(C.line2); doc.setLineWidth(0.3); doc.line(sx + sw * tick, yy + 5.2, sx + sw * tick, yy + 6.6); font(5.5, 'r', C.fg3); txt(`z. B. MSCI World Ø ${new Intl.NumberFormat('de-DE', { maximumFractionDigits: 1 }).format(K.msci.pa * 100)} % p. a. (15 Jahre)`, sx + sw * tick + 1.2, yy + 9.2, { align: 'right' }); }
+      if (tick != null) { dc(C.line2); doc.setLineWidth(0.3); doc.line(sx + sw * tick, yy + 5.2, sx + sw * tick, yy + 6.6); font(5.5, 'r', C.fg3); txt(`z. B. MSCI World ca. ${new Intl.NumberFormat('de-DE', { maximumFractionDigits: 1 }).format(K.msci.pa * 100)} % p. a. (Ø 15 Jahre)`, sx + sw * tick + 1.2, yy + 9.2, { align: 'right' }); }
     };
     regler('Rendite beim Sparen', fP(p.anspar), p.anspar / 0.10, c2 + 33, K.msci.pa / 0.10);
     regler('Rendite in der Rente', fP(p.entnahme), p.entnahme / 0.08, c2 + 52);
@@ -3098,7 +3098,7 @@ function betreten() {
   setTimeout(fertig, 1000);
 }
 $('ldGo').addEventListener('click', betreten);
-{ const m = K.msci, t = $('msciTick'); t.textContent = `z. B. MSCI World Ø ${new Intl.NumberFormat('de-DE', { maximumFractionDigits: 1 }).format(m.pa * 100)} % p. a. (15 Jahre)`; t.title = `MSCI World ${m.von}–${m.bis}: rund ${pct1.format(m.pa * 100)} % pro Jahr`; t.style.setProperty('--t', m.pa / 0.10 * 100 + '%'); }
+{ const m = K.msci, t = $('msciTick'); t.textContent = `z. B. MSCI World ca. ${new Intl.NumberFormat('de-DE', { maximumFractionDigits: 1 }).format(m.pa * 100)} % p. a. (Ø 15 Jahre)`; t.title = `MSCI World ${m.von}–${m.bis}: rund ${pct1.format(m.pa * 100)} % pro Jahr`; t.style.setProperty('--t', m.pa / 0.10 * 100 + '%'); }
 zeigeStart();
 
 /* Neue Fassung auf GitHub Pages? Handy-Homescreen und Browser halten die Seite sonst im Speicher.
