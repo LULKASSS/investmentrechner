@@ -258,7 +258,7 @@ label.fcell.box:focus-within{box-shadow:0 0 0 2px var(--accent)}
 .kpi-note{font-size:12.5px;color:var(--fg-3);padding:0 22px 18px;grid-column:1/-1}
 
 /* 2 · Sparrate */
-.grid-b{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:stretch}
+.grid-b{display:grid;grid-template-columns:320px minmax(0,1fr);gap:20px;align-items:stretch}
 .cost{padding:30px 26px 20px}
 .cbars{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;height:240px;align-items:end}
 .cb{height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px}
@@ -653,7 +653,7 @@ body.ld-open{overflow:hidden}
 .kpis.big .kpi{padding:24px 26px}
 .kpis.big .kpi .k{font-size:14px}
 .kpis.big .kpi .v{font-size:clamp(34px,5vw,56px);letter-spacing:-.045em}
-.gap-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:20px;align-items:start}
+.gap-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:20px;align-items:start}
 .gchart{position:relative;padding:26px 22px 14px;overflow:hidden}
 .gchart .st-chart{position:relative;z-index:1;height:420px}
 .gchart .sy-bg{top:24%;height:64%;opacity:.45}
@@ -823,11 +823,17 @@ body.ld-open{overflow:hidden}
 .cr-ctl{grid-column:1/-1;margin-top:10px}
 .cr .infl-row{padding-top:0;border-top:0;grid-template-columns:auto 1fr auto;gap:14px}
 .cr .infl-row label{font-size:13px;color:var(--fg-3);font-weight:400}
-.cr.big .k{color:var(--fg);font-weight:500}
-.cr.big > b{font-size:clamp(26px,3vw,36px);letter-spacing:-.04em;line-height:1.1}
-.cr.gap > b{color:var(--gap)}
-.cr.gap.zero > b{color:var(--ok)}
-.cr.big + .cr.big{border-top:1px solid var(--line)}
+/* Ergebnis der Rechnung steht groß oben in der Grafik: Lücke und Kapital, wie die Zahl über der Weg-Kurve */
+.gap-hero{position:relative;z-index:2;display:flex;flex-wrap:wrap;gap:12px 40px;margin:0 2px 8px}
+.gh{display:grid;gap:2px;justify-items:start}
+.gh .k{font-size:13px;font-weight:500;color:var(--fg-3)}
+.gh > b{font-size:clamp(30px,3.4vw,40px);font-weight:600;letter-spacing:-.04em;line-height:1.15}
+.gh .s{font-size:12.5px;font-weight:600;padding:2px 10px;border-radius:999px;background:var(--surface-2);color:var(--fg-2);font-variant-numeric:tabular-nums;margin-top:2px}
+.gh .s:empty{display:none}
+.gh.gap > b{color:var(--gap)}
+.gh.gap .s{background:var(--gap-soft);color:var(--gap-ink)}
+.gh.gap.zero > b{color:var(--ok)}
+.gh.gap.zero .s{background:var(--ok-soft);color:var(--ok-ink)}
 .brief{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .bf{display:flex;align-items:center;gap:10px;background:var(--surface-2);border-radius:var(--r-s);padding:7px 12px;cursor:text;transition:box-shadow .2s}
 .bf:focus-within{box-shadow:0 0 0 2px var(--accent)}
@@ -841,7 +847,7 @@ body.ld-open{overflow:hidden}
 /* Kopf der Kurve wie im Depot einer Trading-App: große Zahl, darunter die Veränderung; beim Abtasten läuft beides mit */
 .path-hero{display:grid;gap:2px;margin:2px 2px 6px}
 /* Eurozeichen in großen Zahlen kleiner, wie in Banking-Apps */
-:is(.ph-v,.cr.big > b,.take-v b,.rate > span) :is(.cur,.oc:has(+ .cur)){font-size:.6em;font-weight:500}
+:is(.ph-v,.gh > b,.take-v b,.rate > span) :is(.cur,.oc:has(+ .cur)){font-size:.6em;font-weight:500}
 #potDep:not([hidden]),#potEinm:not([hidden]),#potSum:not([hidden]),#potImm:not([hidden]),#minPill:not([hidden]){animation:popIn .55s var(--spring) backwards}
 .ph-k{font-size:13px;font-weight:500;color:var(--fg-3);font-variant-numeric:tabular-nums}
 .ph-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
@@ -925,7 +931,6 @@ body.ld-open{overflow:hidden}
   #beatH{min-height:3.3em;max-width:none}
   .calc{padding:4px 16px 12px}
   .cr > b{font-size:17px}
-  .cr.big > b{font-size:24px}
   .path{padding:16px 12px 14px}
   .later{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 8px}
   .later-k{grid-column:1/-1}
@@ -950,7 +955,7 @@ body.ld-open{overflow:hidden}
 @keyframes pgInL{from{opacity:0;transform:translateX(-20px)}}
 @keyframes pgOutL{to{opacity:0;transform:translateX(-12px) scale(.99)}}
 @keyframes pgOutR{to{opacity:0;transform:translateX(12px) scale(.99)}}
-:is(.page.in-r,.page.in-l) .panel:not(.fadein){animation:riseIn .6s var(--spring) backwards}
+:is(.page.in-r,.page.in-l) .panel:not(.gchart){animation:riseIn .6s var(--spring) backwards}
 /* beim Überblenden mit wandernder Linie nur die Karten ohne Linie, sonst stimmt das Ziel der Linie nicht */
 .page.in-f :is(.calc,.assume,.sol-ctl,.sol-bonus,.sol-pill,.bblock){animation:riseIn .6s var(--spring) backwards}
 .page :is(.gap-grid,.grid-b,.sol,.side,#pots,.bonus-grid) > :nth-child(2){animation-delay:.07s}
@@ -967,14 +972,8 @@ body.ld-open{overflow:hidden}
 .page.in-f .mod-h{animation:pgInF .35s var(--ease) .15s backwards}
 .morph{position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:25;overflow:visible}
 .morph-src{opacity:0!important;transition:none!important}
-.morph-boxes{position:fixed;inset:0;pointer-events:none;z-index:25}
-.morph-boxes .mb{position:fixed;border:1.5px solid transparent;border-bottom-width:0;box-sizing:border-box}
-.m-ziel{visibility:hidden}
-.m-in > *{animation:labIn .4s ease}
 #pathSvg,#ringSvg{transition:opacity .4s var(--ease)}
-.morphing #pathSvg,.ring.morphing #ringSvg{opacity:0;transition:none}
-.ring.morphing .ring-c{opacity:0;transition:none}
-.ring.morphing .r-seg{transition:none}
+.morphing #pathSvg{opacity:0;transition:none}
 .morph #mZins{fill:url(#mGradZ)}
 .ring.lab-in .r-labs,.ring.lab-in #ringMin,.ring.lab-in #ringZiel,.path-plot.lab-in #pLabs,.path-plot.lab-in #pLabsIn,.path-plot.lab-in #pTarget,.path-plot.lab-in #pAvg,.path-plot.lab-in #pRb{animation:labIn .5s ease}
 .ring .ring-c{transition:opacity .4s var(--ease)}
@@ -1182,8 +1181,8 @@ body.started .qs{padding-top:92px}
 .pnav{justify-content:center;border-top:0;margin-top:36px;padding-top:0}
 .pnav .primary{min-width:min(100%,340px);padding:16px 36px;font-size:16px;text-align:center}
 #intakeNav{margin-top:24px}
-.gchart.fadein{animation:gIn .58s var(--ease)}
-@keyframes gIn{from{opacity:0;transform:translateY(10px)}}
+.gchart.wartet{opacity:0;transform:scale(.96);pointer-events:none}
+.gchart.auf{animation:popIn .7s var(--spring)}
 .gchart .st-chart{min-height:360px}
 .big-rate{padding-bottom:2px}
 .sp-lbl{font-size:13px!important;color:var(--fg-3)!important;font-weight:400!important}
@@ -1239,8 +1238,9 @@ body.started .qs{padding-top:92px}
   body.started{padding-bottom:0}
   #results{min-height:100svh;display:flex;flex-direction:column;padding-bottom:40px}
   #results > .foot{margin-top:auto;padding-top:28px;max-width:calc(100% - 300px)}
-  .gchart .st-chart{min-height:clamp(360px,calc(100svh - 330px),620px)}
-  .calc{align-content:space-between}
+  .gchart .st-chart{min-height:clamp(320px,calc(100svh - 430px),540px)}
+  .calc{align-content:start}
+  .gap-grid{align-items:start}  /* Rechnung so hoch wie ihr Inhalt, nicht auf Grafikhöhe gezogen */
   .assume{align-content:space-between}
 }
 @media (max-width:640px){
@@ -1366,7 +1366,23 @@ body.started .qs{padding-top:92px}
   <section id="luecke" class="chap page" hidden>
     <h2 class="mod-h">Deine Lücke</h2><span id="beatH" hidden></span>
     <div class="gap-grid">
+      <div class="panel calc" id="calc">
+        <div class="cr" data-b="heute"><span class="k">Wunschrente heute</span><b id="cW"></b></div>
+        <div class="cr" data-b="infl"><span class="k" id="cBk"></span><b id="cB"></b>
+          <div class="cr-ctl infl-row"><label for="infl">Inflation</label><div class="range"><input type="range" id="infl" min="0" max="5" step="0.1"><span class="bubble"></span></div><span class="val" id="inflV"></span></div>
+        </div>
+        <div class="cr" data-b="grv"><span class="k">− Gesetzliche Rente <span class="badge" id="grvBadge">Schätzung</span></span><b id="grvOut"></b>
+          <div class="cr-ctl brief"><label class="bf" for="grvB"><span>Brutto lt. Renteninfo</span><span class="in-row"><input id="grvB" inputmode="decimal" autocomplete="off"><span class="unit">€</span></span></label><button class="link" type="button" id="grvReset" hidden>zurück zur Schätzung</button></div>
+        </div>
+        <div class="cr" data-b="ver" id="crVer"><span class="k">− Verträge</span><b id="cVer"></b></div>
+        <div class="cr" data-b="ers" id="crErs"><span class="k">− Erspartes <span class="badge" id="cErsB"></span></span><b id="cErs"></b></div>
+        <p class="bridge" id="bridge" hidden></p>
+      </div>
       <div class="panel gchart">
+        <div class="gap-hero">
+          <div class="gh gap" id="kpiGap"><span class="k" id="kGapK">Lücke im Monat</span><b id="kGap"></b><span class="s" id="kGapS"></span></div>
+          <div class="gh"><span class="k">Kapital dafür nötig</span><b id="kKap"></b><span class="s" id="kKapS"></span></div>
+        </div>
         <svg class="sy-bg" id="syBg" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="syBgF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".16"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs><path id="syBgA" fill="url(#syBgF)"/><path id="syBgL" fill="none" stroke="var(--accent)" stroke-width="2" vector-effect="non-scaling-stroke" pathLength="1"/></svg>
         <div class="st-chart" id="stChart" role="img" aria-label="Bedarf heute und zu Rentenbeginn, gedeckt durch gesetzliche Rente und Vorhandenes, Rest ist die Lücke">
           <div class="sc-plot" id="scPlot">
@@ -1391,20 +1407,6 @@ body.started .qs{padding-top:92px}
           <div class="sc-x"><div><span class="t">Heute</span><span class="u" id="scX0"></span></div><div><span class="t" id="scX1t"></span><span class="u" id="scX1"></span></div></div>
           </div>
       </div>
-      <div class="panel calc" id="calc">
-        <div class="cr" data-b="heute"><span class="k">Wunschrente heute</span><b id="cW"></b></div>
-        <div class="cr" data-b="infl"><span class="k" id="cBk"></span><b id="cB"></b>
-          <div class="cr-ctl infl-row"><label for="infl">Inflation</label><div class="range"><input type="range" id="infl" min="0" max="5" step="0.1"><span class="bubble"></span></div><span class="val" id="inflV"></span></div>
-        </div>
-        <div class="cr" data-b="grv"><span class="k">− Gesetzliche Rente <span class="badge" id="grvBadge">Schätzung</span></span><b id="grvOut"></b>
-          <div class="cr-ctl brief"><label class="bf" for="grvB"><span>Brutto lt. Renteninfo</span><span class="in-row"><input id="grvB" inputmode="decimal" autocomplete="off"><span class="unit">€</span></span></label><button class="link" type="button" id="grvReset" hidden>zurück zur Schätzung</button></div>
-        </div>
-        <div class="cr" data-b="ver" id="crVer"><span class="k">− Verträge</span><b id="cVer"></b></div>
-        <div class="cr" data-b="ers" id="crErs"><span class="k">− Erspartes <span class="badge" id="cErsB"></span></span><b id="cErs"></b></div>
-        <div class="cr big gap" data-b="gap" id="kpiGap"><span class="k" id="kGapK">= Lücke im Monat</span><b id="kGap"></b><span class="s" id="kGapS"></span></div>
-        <div class="cr big" data-b="kap"><span class="k">Kapital dafür nötig</span><b id="kKap"></b><span class="s" id="kKapS"></span></div>
-        <p class="bridge" id="bridge" hidden></p>
-      </div>
     </div>
     <div class="pnav"><button class="primary" type="button" data-go="warten">Weiter: Dein Weg</button></div>
   </section>
@@ -1413,16 +1415,6 @@ body.started .qs{padding-top:92px}
   <section id="warten" class="chap page" hidden>
     <h2 class="mod-h">Dein Weg</h2><span id="wartenH" hidden></span>
     <div class="grid-b">
-      <div class="panel path" id="pathPanel">
-        <div class="path-hero" aria-live="off"><span class="ph-k" id="phK"></span><div class="ph-row"><b class="ph-v" id="phV"></b><span class="ph-d" id="phD"></span></div></div>
-        <div class="path-plot grow-plot" id="pathPlot"><svg id="pathSvg" aria-hidden="true"></svg></div>
-        <div class="later">
-          <span class="later-k">Später anfangen</span>
-          <div class="lt"><span>In 1 Jahr</span><b id="cv1"></b><i id="cd1"></i></div>
-          <div class="lt"><span>In 3 Jahren</span><b id="cv2"></b><i id="cd2"></i></div>
-          <div class="lt"><span>In 5 Jahren</span><b id="cv3"></b><i id="cd3"></i></div>
-        </div>
-      </div>
       <div class="panel assume">
         <div class="ctl big-rate">
           <span class="lbl">Sparrate</span>
@@ -1440,6 +1432,16 @@ body.started .qs{padding-top:92px}
           <span class="lbl">Daraus nimmst du dir im Monat</span>
           <div class="take-v"><b id="takeV"></b><span id="takeS"></span></div>
           <span class="hint" id="takeH"></span>
+        </div>
+      </div>
+      <div class="panel path" id="pathPanel">
+        <div class="path-hero" aria-live="off"><span class="ph-k" id="phK"></span><div class="ph-row"><b class="ph-v" id="phV"></b><span class="ph-d" id="phD"></span></div></div>
+        <div class="path-plot grow-plot" id="pathPlot"><svg id="pathSvg" aria-hidden="true"></svg></div>
+        <div class="later">
+          <span class="later-k">Später anfangen</span>
+          <div class="lt"><span>In 1 Jahr</span><b id="cv1"></b><i id="cd1"></i></div>
+          <div class="lt"><span>In 3 Jahren</span><b id="cv2"></b><i id="cd2"></i></div>
+          <div class="lt"><span>In 5 Jahren</span><b id="cv3"></b><i id="cd3"></i></div>
         </div>
       </div>
     </div>
@@ -2515,7 +2517,7 @@ function render() {
   const ruhig = !PLAY.on && !PLAY.pending;
   if (ruhig) { tween($('kGap'), r.luecke, fE); tween($('kKap'), r.kapital, fK); }
   $('kpiGap').classList.toggle('zero', r.luecke < 1);
-  $('kGapK').textContent = r.bruecke > 0 ? `= Lücke im Monat ab ${r.start}` : '= Lücke im Monat';
+  $('kGapK').textContent = r.bruecke > 0 ? `Lücke im Monat ab ${r.start}` : 'Lücke im Monat';
   $('kGapS').textContent = r.luecke < 1 ? 'Rente reicht für den Bedarf' : `heute ${fE(r.lueckeHeute)} Kaufkraft`;
   if (render._gap != null && Math.abs(render._gap - r.luecke) > 1 && ruhig && !countUp) pulse($('kpiGap'), 'flash');
   render._gap = r.luecke;
@@ -2696,7 +2698,7 @@ function play() {
   cancelAnimationFrame(PLAY.raf);
   if (!ST.d || !S.started) return;
   PLAY.pending = false; PLAY.on = true; PLAY.last = null; onScroll();
-  if (!PLAY.ohneFade) pulse(document.querySelector('.gchart'), 'fadein'); PLAY.ohneFade = false;
+  graphZeigen(null);  // erst erzählt die Rechnung, die Grafik kommt danach
   $('stChart').classList.remove('live');
   $('kGap')._v = 0; $('kGap').textContent = '–'; $('kKap')._v = 0; $('kKap').textContent = '–';
   const t0 = performance.now() + 540;
@@ -2706,14 +2708,22 @@ function play() {
     const B = ST.beats, cur = B.filter(x => x.t0 <= ST.t).pop() || B[0];
     if (cur.k !== PLAY.last) {
       PLAY.last = cur.k; setBeat(cur.k, cur.k !== 'kap');
-      if (cur.k === 'gap') tween($('kGap'), ST.r.luecke, fE, 600);
+      // die Rechnung ist durch: Grafik ploppt auf, oben rollt die Lücke hoch, danach das Kapital
+      if (cur.k === 'gap') { graphZeigen(true); tween($('kGap'), ST.r.luecke, fE, 700); }
       if (cur.k === 'kap') tween($('kKap'), ST.r.kapital, fK, 600);
     }
     const end = B[B.length - 1];
     if (ST.t < end.t0 + end.d) PLAY.raf = requestAnimationFrame(step);
-    else { PLAY.on = false; ST.t = 99; paintStage(); $('stChart').classList.add('live'); setBeat(null); render(); onScroll(); }
+    else { PLAY.on = false; ST.t = 99; paintStage(); $('stChart').classList.add('live'); setBeat(null); render(); onScroll(); graphZeigen(true); }
   };
   PLAY.raf = requestAnimationFrame(step);
+}
+// Lücke-Grafik: null = noch verborgen, true = ploppt jetzt auf, false = einfach da
+function graphZeigen(pop) {
+  const g = document.querySelector('.gchart');
+  if (pop && !g.classList.contains('wartet')) return;
+  g.classList.toggle('wartet', pop === null); g.classList.remove('auf');
+  if (pop) { void g.offsetWidth; g.classList.add('auf'); }
 }
 function stopPlay() { cancelAnimationFrame(PLAY.raf); PLAY.on = false; PLAY.pending = false; ST.t = 99; }
 function bgGraph() {
@@ -3163,12 +3173,7 @@ function quelleLinie(page) {
     const sc = imSchirm(svg, [...pts, [0, 600]]); if (!sc) return null;
     return { line: abtasten(sc.slice(0, -1), MN), base: sc[sc.length - 1][1], w: 2, op: parseFloat(getComputedStyle(svg).opacity) || 0.45 };
   }
-  if (page === 'warten') return wegGeo();
   return null;
-}
-function ringGeo() {
-  const g = RING.geo, m = $('ringSvg').getScreenCTM(); if (!g || !m) return null;
-  return { ...g, X: g.cx * m.a + m.e, Y: g.cy * m.d + m.f, Rs: g.R * m.a, sws: g.sw * m.a, Cs: g.C * m.a, gaps: g.gap * m.a };
 }
 function morphEbene() {
   let svg = $('morphSvg');
@@ -3216,38 +3221,6 @@ function morphLueckeWeg(A, B, done) {
   MORPH.raf = requestAnimationFrame(step);
 }
 // Weg → Lösung: Flächen ziehen sich in die Linie, die Linie streckt sich, rollt sich zum Ring und färbt sich in die Ring-Teile
-function morphWegRing(A, Z, done) {
-  morphEbene(); MORPH.on = true; cancelAnimationFrame(MORPH.raf);
-  const a = A.line, k = A.k, n = a.length;
-  const dEin = a.map((p, i) => i < k ? A.ein[i] - p[1] : 0), dBase = a.map(p => A.base - p[1]);
-  const R = Z.Rs, cx = Z.X, yb = Z.Y + R, U = 2 * Math.PI * R;
-  const L0 = Math.min(U, innerWidth * 0.86, a[n - 1][0] - a[0][0]);
-  const aBei = u => { const x = u * (n - 1), i = Math.min(n - 2, Math.floor(x)), t = x - i; return [a[i][0] + (a[i + 1][0] - a[i][0]) * t, a[i][1] + (a[i + 1][1] - a[i][1]) * t]; };
-  // Teile im Ring laufen im Uhrzeigersinn ab oben; die Linie läuft andersherum, darum u = 1 − Anteil
-  const segs = Z.segs.map(sg => { const el = document.createElementNS('http://www.w3.org/2000/svg', 'path'); el.setAttribute('class', Z.cls[sg.id]); el.setAttribute('fill', 'none'); $('mSegs').appendChild(el); return { ...sg, el }; });
-  const t0 = performance.now(), dur = 1350;
-  const step = now => {
-    const raw = Math.min(1, (now - t0) / dur);
-    const wA = easeIO(clamp01(raw / 0.55)), ph = easeIO(clamp01((raw - 0.22) / 0.78)), phi = 2 * Math.PI * ph, Lc = L0 + (U - L0) * ph;
-    const bogen = u => { if (phi < 1e-4) return [cx - Lc / 2 + u * Lc, yb]; const r = Lc / phi, t = (u - 0.5) * phi; return [cx + r * Math.sin(t), yb - r + r * Math.cos(t)]; };
-    const at = u => { const p = aBei(u), q = bogen(u); return [p[0] + (q[0] - p[0]) * wA, p[1] + (q[1] - p[1]) * wA]; };
-    const pts = a.map((_, i) => at(i / (n - 1)));
-    const w = A.w + (Z.sws - A.w) * easeIO(clamp01((raw - 0.3) / 0.7)), cm = easeIO(clamp01((raw - 0.45) / 0.55));
-    $('mLine').setAttribute('d', 'M' + pStr(pts) + (raw >= 1 ? ' Z' : '')); $('mLine').setAttribute('stroke-width', w.toFixed(2)); $('mLine').style.opacity = 1 - cm;
-    $('mLine').setAttribute('stroke-linecap', cm > 0.5 ? 'butt' : 'round');
-    wegFlaechen(pts, k, dEin, dBase, 1 - wA);
-    const gu = Z.gaps / U / 2 * cm;
-    segs.forEach(sg => {
-      const u0 = 1 - sg.a1 + gu, u1 = 1 - sg.a0 - gu; if (u1 <= u0) { sg.el.setAttribute('d', ''); return; }
-      const m = Math.max(2, Math.ceil((u1 - u0) * 160)), ps = [];
-      for (let j = 0; j <= m; j++) ps.push(at(u0 + (u1 - u0) * j / m));
-      sg.el.setAttribute('d', 'M' + pStr(ps)); sg.el.setAttribute('stroke-width', w.toFixed(2)); sg.el.style.opacity = cm;
-    });
-    if (raw < 1) MORPH.raf = requestAnimationFrame(step); else morphEnde(done);
-  };
-  MORPH.raf = requestAnimationFrame(step);
-}
-// echte Grafik ohne Überblenden zeigen, nur Beschriftungen blenden ein
 function zeigeEcht(box, svg) {
   // SVG-Elemente haben kein offsetWidth: getBoundingClientRect erzwingt den Stil, damit nichts überblendet
   svg.style.transition = 'none'; box.classList.remove('morphing'); svg.getBoundingClientRect(); getComputedStyle(svg).opacity;
@@ -3266,70 +3239,22 @@ function morphen(p, quelle) {
     morphLueckeWeg(quelle, ziel, () => zeigeEcht($('pathPlot'), $('pathSvg')));
     return true;
   }
-  if (p === 'toepfe') {
-    // Ring steht nach dem Übergang gleich fertig da, ohne eigene Aufbau-Folge
-    SEEN.add('toepfe'); RING.k = 4; $('ring')._shown = true;
-    $('ring').classList.add('morphing'); render();
-    const ziel = ringGeo();
-    if (!ziel || !quelle.k) { zeigeEcht($('ring'), $('ringSvg')); return true; }
-    morphWegRing(quelle, ziel, () => zeigeEcht($('ring'), $('ringSvg')));
-    return true;
-  }
   return false;
 }
 function ringFolge(start) {
   const c = compute(), st = [1, ...(c.r.bestand >= 0.5 ? [2] : []), ...(c.r.luecke >= 0.5 ? [3] : []), 4];
   st.forEach((s, i) => setTimeout(() => { RING.k = s; render(); }, start + i * 750));
 }
-/* ===== Datenaufnahme → Lücke: die Balken und Felder fliegen in die erste Grafik ===== */
-const imBild = el => { if (!el) return null; const qq = el.closest('.q'); if (qq && !qq.classList.contains('open')) return null; const r = el.getBoundingClientRect(); return r.width > 2 && r.height > 0.5 && r.bottom > -40 && r.top < innerHeight + 40 ? r : null; };
-function datenQuellen() {
-  const q = [
-    { von: $('cmpN'), nach: 'scNetto' }, { von: $('cmpW'), nach: 'scWunsch' },
-    { von: document.querySelector('#tl .tl-bar'), nach: 'scPlot', linie: true },
-    { von: $('bestand').closest('.money'), nach: 'scVer' }
-  ].map(x => ({ ...x, r: imBild(x.von) })).filter(x => x.r);
-  if (!q.length) return null;
-  q.forEach(x => { const cs = getComputedStyle(x.von); x.bg = cs.backgroundColor; x.rad = cs.borderRadius; });
-  return q;
-}
-function datenZurueck(q) { (q || []).forEach(x => { x.von.style.visibility = ''; }); }
-function morphDaten(q) {
-  let box = $('morphBoxes'); if (!box) { box = document.createElement('div'); box.id = 'morphBoxes'; box.className = 'morph-boxes'; document.body.appendChild(box); }
-  box.innerHTML = '';
-  q.forEach(x => { x.von.style.visibility = 'hidden'; });
-  const ziele = [];
-  q.forEach((x, i) => {
-    const ziel = $(x.nach); if (!ziel || ziel.hidden || getComputedStyle(ziel).opacity === '0') return;
-    let r = ziel.getBoundingClientRect(); if (!r.width) return;
-    const zs = getComputedStyle(ziel);
-    if (x.linie) r = { left: r.left, top: r.bottom - 1, width: r.width, height: 1 };
-    if (!r.height) return;
-    const d = document.createElement('div'); d.className = 'mb'; box.appendChild(d);
-    const gestrichelt = x.nach === 'scNetto';
-    const end = x.linie ? { bg: getComputedStyle(ziel).borderBottomColor, rad: '0px' } : { bg: gestrichelt ? 'rgba(0,0,0,0)' : zs.backgroundColor, rad: zs.borderRadius };
-    if (!x.linie) { ziel.classList.add('m-ziel'); ziele.push(ziel); }
-    const a = { left: x.r.left + 'px', top: x.r.top + 'px', width: x.r.width + 'px', height: x.r.height + 'px', backgroundColor: x.bg, borderRadius: x.rad, borderColor: 'rgba(0,0,0,0)' };
-    const b = { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', backgroundColor: end.bg, borderRadius: end.rad, borderColor: gestrichelt ? getComputedStyle(ziel).borderTopColor : 'rgba(0,0,0,0)' };
-    if (gestrichelt) d.style.borderStyle = 'dashed';
-    Object.assign(d.style, b);
-    d.animate([a, b], { duration: 1000, delay: i * 70, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'backwards' });
-  });
-  setTimeout(() => {
-    ziele.forEach(z => { z.classList.remove('m-ziel'); z.classList.add('m-in'); setTimeout(() => z.classList.remove('m-in'), 500); });
-    box.innerHTML = '';
-  }, 1000 + q.length * 70 + 20);
-}
 function go(p) {
   if (p === PAGE || !PAGES.includes(p) || (!S.started && p !== 'intake')) return;
   const from = $(PAGE), to = $(p), dir = PAGES.indexOf(p) > PAGES.indexOf(PAGE) ? 1 : -1;
-  const quelle = (PAGE === 'luecke' && p === 'warten') || (PAGE === 'warten' && p === 'toepfe') ? quelleLinie(PAGE) : null;
-  if (quelle) (PAGE === 'luecke' ? $('syBg') : $('pathSvg')).classList.add('morph-src');
-  const daten = PAGE === 'intake' && p === 'luecke' ? (go._dq || datenQuellen()) : null; go._dq = null;
+  // nur noch ein wandernder Übergang: die Hintergrundkurve der Lücke wird zur Kurve vom Weg
+  const quelle = PAGE === 'luecke' && p === 'warten' ? quelleLinie(PAGE) : null;
+  if (quelle) $('syBg').classList.add('morph-src');
   PAGE = p; navPill();
-  if (PLAY.on && p !== 'luecke') { stopPlay(); paintStage(); setBeat(null); $('stChart').classList.add('live'); }
+  if (PLAY.on && p !== 'luecke') { stopPlay(); paintStage(); setBeat(null); $('stChart').classList.add('live'); graphZeigen(false); }
   clearTimeout(go._t); clearTimeout(go._t2);
-  if (quelle || daten) {
+  if (quelle) {
     // Überblenden ohne Lücke: die alte Seite bleibt an ihrem Platz stehen und blendet aus, die neue blendet gleichzeitig ein
     const rc = from.getBoundingClientRect();
     PAGES.forEach(x => { if (x !== p && x !== from.id) $(x).hidden = true; });
@@ -3338,11 +3263,10 @@ function go(p) {
     $('results').hidden = false;
     to.classList.remove('out-l', 'out-r', 'out-f', 'in-r', 'in-l'); to.hidden = false; void to.offsetWidth; to.classList.add('in-f');
     scrollTo({ top: 0, behavior: 'auto' });
-    if (daten) { PLAY.ohneFade = true; render(); betrete(p); morphDaten(daten); }
-    else if (!morphen(p, quelle)) { render(); betrete(p); }
+    if (!morphen(p, quelle)) { render(); betrete(p); }
     navPill();
     go._t2 = setTimeout(() => {
-      from.hidden = true; from.classList.remove('out-f'); from.removeAttribute('style'); datenZurueck(daten); $('qs').style.paddingTop = '';
+      from.hidden = true; from.classList.remove('out-f'); from.removeAttribute('style'); $('qs').style.paddingTop = '';
       $('syBg').classList.remove('morph-src'); $('pathSvg').classList.remove('morph-src');
     }, 620);
     return;
@@ -3350,6 +3274,7 @@ function go(p) {
   from.classList.remove('in-r', 'in-l', 'in-f'); from.classList.add(dir > 0 ? 'out-l' : 'out-r');
   go._t = setTimeout(() => {
     PAGES.forEach(x => { if (x !== p) { $(x).hidden = true; $(x).classList.remove('out-l', 'out-r', 'out-f', 'in-r', 'in-l', 'in-f'); $(x).removeAttribute('style'); } });
+    $('qs').style.paddingTop = '';
     $('results').hidden = p === 'intake';
     to.hidden = false; void to.offsetWidth; to.classList.add(quelle ? 'in-f' : dir > 0 ? 'in-r' : 'in-l');
     scrollTo({ top: 0, behavior: 'auto' });
@@ -3367,8 +3292,6 @@ document.addEventListener('click', e => {
 /* Start: Fragen klappen zusammen, dann erzählt Kapitel 1 seine Geschichte */
 const tbH = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--tb')) || 60;
 function start() {
-  // am Handy klappen die Fragen gleich zu: vorher merken, wo die Felder standen
-  go._dq = innerWidth <= 640 ? datenQuellen() : null;
   // Fragen bleiben stehen, wo sie sind, auch wenn oben die Leiste einfährt (sonst springt alles kurz nach unten)
   { const ip = $('intake'), rc = ip.getBoundingClientRect(); Object.assign(ip.style, { position: 'fixed', top: rc.top + 'px', left: rc.left + 'px', width: rc.width + 'px', zIndex: 4, margin: 0 }); $('qs').style.paddingTop = getComputedStyle($('qs')).paddingTop; }
   S.started = true; S.open.clear();
