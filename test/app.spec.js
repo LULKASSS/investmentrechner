@@ -144,3 +144,29 @@ test('Vorschlag-PDF mit allen Bausteinen @mobil', async ({ page }) => {
   await expect(page.locator('#vPages img')).toHaveCount(2, { timeout: 20_000 });
   expect(problems).toEqual([]);
 });
+
+test('Scrollen über die Weg-Kurve schaltet nicht ins Abtasten, Halten schon @mobil', async ({ page, context, browserName }) => {
+  test.skip(browserName !== 'chromium', 'Touch-Gesten über CDP');
+  await open(page);
+  await fragenBeantworten(page);
+  await page.click('#tbNav [data-go="warten"]');
+  await expect(page.locator('#phK')).toHaveText(/^Kapital mit/, { timeout: 10_000 });
+  await page.waitForTimeout(3000);
+  await page.evaluate(() => document.getElementById('pathPlot').scrollIntoView({ block: 'center' }));
+  const cdp = await context.newCDPSession(page);
+  const touch = (type, x, y) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y }] });
+  const box = await page.locator('#pathPlot').boundingBox(), x = box.x + box.width * 0.35, y = box.y + box.height * 0.5;
+  // Finger aufsetzen und gleich senkrecht wischen: Kopf bleibt beim Kapital
+  await touch('touchStart', x, y); await page.waitForTimeout(60);
+  await expect(page.locator('#phK')).toHaveText(/^Kapital mit/);
+  for (let i = 1; i <= 6; i++) await touch('touchMove', x, y - i * 15);
+  await touch('touchEnd');
+  await expect(page.locator('#phK')).toHaveText(/^Kapital mit/);
+  // kurz halten, dann ziehen: Kopf zeigt den Wert in diesem Alter
+  const b2 = await page.locator('#pathPlot').boundingBox(), y2 = b2.y + b2.height * 0.5;
+  await touch('touchStart', b2.x + b2.width * 0.3, y2); await page.waitForTimeout(400);
+  await touch('touchMove', b2.x + b2.width * 0.4, y2);
+  await expect(page.locator('#phK')).toHaveText(/^Mit \d+/);
+  await touch('touchEnd');
+  await expect(page.locator('#phK')).toHaveText(/^Kapital mit/);
+});

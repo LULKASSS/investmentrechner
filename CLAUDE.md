@@ -36,7 +36,7 @@ Gehört Lukas, Sprache in App, Code-Kommentaren und Commits: **Deutsch**.
 - Zahlen rollen statt zu zählen: `tween()` baut jede Ziffer als Band 0–9 (`odo()`), die echte Zahl bleibt als Text im Element (Tests, Kopieren). Eurozeichen in großen Zahlen kleiner.
 - Feder-Kurve `--spring` (knapp 4 % Nachschwingen) für alles, was auftaucht oder gleitet: Umschalter, Chips, Wert-Blase, Karten beim Seitenwechsel (leicht versetzt), neue Spalten in der Lösungs-Pille. Antippbares gibt beim Drücken nach (`scale(.96)`).
 - Felder und Chips gefüllt statt umrandet, keine Mono-Versalien mehr als Etiketten.
-- Weg: große Zahl über der Kurve (Kapital, Wertzuwachs als Chip). Maus/Finger auf der Kurve zeigt dort den Wert je Alter, die Zahl wächst beim ersten Zeichnen mit der Linie.
+- Weg: große Zahl über der Kurve (Kapital, Wertzuwachs als Chip). Maus über der Kurve, am Handy kurz halten oder seitlich wischen, zeigt den Wert je Alter (senkrecht wischen scrollt nur), die Zahl wächst beim ersten Zeichnen mit der Linie.
 - Wenig Text: nichts doppelt zeigen (Sparrate und Renditen nur rechts, nicht nochmal in der Kurve).
 - Datenaufnahme ohne Frage-Überschriften: die Feldnamen reichen, am PC steht „Weiter“ rechts auf Höhe der Felder.
 - Lücke: eine Karte als Überblick (`#gapCard`), füllt den Bildschirm. Oben Kapital (über der Säule Heute) und Lücke im Monat (über ihrer Säule Mit 67) groß, darunter die Säulen Heute → Mit 67 mit den Beträgen, unten nur Inflation und gesetzliche Rente laut Renteninfo (korrigierbar). Beim ersten Mal bauen sich die Säulen auf, dann ploppen Lücke und Kapital oben auf.

@@ -2583,9 +2583,29 @@ function kurveAbtasten(e) {
   PATH.scrub = true; pathHero(p);
   $('pathPlot').classList.add('hov');
 }
-$('pathPlot').addEventListener('pointermove', kurveAbtasten);
-$('pathPlot').addEventListener('pointerdown', kurveAbtasten);
-$('pathPlot').addEventListener('pointerleave', () => { $('pathPlot').classList.remove('hov'); PATH.scrub = false; pathHeroRuhe(); });
+function abtastenEnde() { clearTimeout(FINGER.t); FINGER.an = false; FINGER.id = null; $('pathPlot').classList.remove('hov'); PATH.scrub = false; pathHeroRuhe(); }
+// Maus: Abtasten beim Drüberfahren. Finger: erst nach kurzem Halten (0,25 s) oder seitlichem Wischen,
+// damit Scrollen über die Kurve hinweg einfach scrollt; solange abgetastet wird, scrollt die Seite nicht.
+const FINGER = { id: null, x: 0, y: 0, an: false, t: 0 };
+$('pathPlot').addEventListener('pointerdown', e => {
+  if (e.pointerType === 'mouse') { kurveAbtasten(e); return; }
+  Object.assign(FINGER, { id: e.pointerId, x: e.clientX, y: e.clientY, an: false });
+  clearTimeout(FINGER.t);
+  FINGER.t = setTimeout(() => { if (FINGER.id === e.pointerId) { FINGER.an = true; kurveAbtasten(FINGER.letztes || e); } }, 250);
+  FINGER.letztes = e;
+});
+$('pathPlot').addEventListener('pointermove', e => {
+  if (e.pointerType === 'mouse') { kurveAbtasten(e); return; }
+  if (e.pointerId !== FINGER.id) return;
+  FINGER.letztes = e;
+  if (FINGER.an) { kurveAbtasten(e); return; }
+  const dx = Math.abs(e.clientX - FINGER.x), dy = Math.abs(e.clientY - FINGER.y);
+  if (dy > 8 && dy > dx) { clearTimeout(FINGER.t); FINGER.id = null; return; }   // senkrecht: Seite scrollt
+  if (dx > 10 && dx > dy * 1.5) { clearTimeout(FINGER.t); FINGER.an = true; kurveAbtasten(e); }
+});
+$('pathPlot').addEventListener('touchmove', e => { if (FINGER.an) e.preventDefault(); }, { passive: false });
+['pointerup', 'pointercancel'].forEach(t => $('pathPlot').addEventListener(t, e => { if (e.pointerType !== 'mouse') abtastenEnde(); }));
+$('pathPlot').addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') abtastenEnde(); });
 /* Seiten und Fragen, die schon einmal zu sehen waren: ihr Auftritt läuft nur beim ersten Mal */
 const SEEN = new Set();
 const QSEEN = new Set([0]);
