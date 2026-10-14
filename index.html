@@ -213,8 +213,11 @@ input{font:inherit}
    oben das Ergebnis (Lücke, Kapital), in der Mitte zwei Säulen Heute → Mit 67 mit den Beträgen daran,
    unten nur die zwei Werte, die man hier korrigiert. Einstellungen kommen erst auf den nächsten Seiten. */
 .gchart{position:relative;display:flex;flex-direction:column;gap:14px;padding:24px 26px 18px;overflow:hidden;min-height:calc(100svh - 252px)}
-.gap-hero{position:relative;z-index:2;display:flex;flex-wrap:wrap;gap:12px 48px}
-.gh{display:grid;gap:2px;justify-items:start;transition:opacity .3s}
+/* Kapital steht über der Säule Heute, die Lücke über ihrer Säule Mit 67: gleiche Spalten wie .sc-col */
+.gap-hero{position:relative;z-index:2;display:grid;grid-template-columns:8% min(28%,220px) 1fr min(28%,220px) 8%}
+.gh{display:grid;gap:2px;justify-items:center;text-align:center;transition:opacity .3s}
+#kpiKap{grid-column:2}
+#kpiGap{grid-column:4}
 .gh .k{font-size:13px;font-weight:500;color:var(--fg-3)}
 .gh > b{font-size:clamp(32px,3.6vw,44px);font-weight:600;letter-spacing:-.04em;line-height:1.15}
 .gh .s{font-size:12.5px;font-weight:600;padding:2px 10px;border-radius:999px;background:var(--surface-2);color:var(--fg-2);font-variant-numeric:tabular-nums;margin-top:2px}
@@ -266,7 +269,9 @@ input{font:inherit}
 .bridge b{color:var(--gap-ink);font-weight:600}
 @media (max-width:640px){
   .gchart{padding:18px 14px 14px;gap:10px;min-height:calc(100svh - 150px)}
-  .gap-hero{gap:10px 24px}
+  .gap-hero{display:flex;justify-content:space-between;gap:10px 16px}
+  .gh{justify-items:start;text-align:left}
+  #kpiGap{justify-items:end;text-align:right}
   .gh > b{font-size:30px}
   .sy-bg{left:-14px;right:-14px;width:calc(100% + 28px);opacity:.3}
   .sc-col,.sc-x div{width:36%}
@@ -1318,8 +1323,8 @@ body.started .qs{padding-top:92px}
     <!-- Eine Karte als Überblick: oben das Ergebnis, darunter die Säulen mit den Beträgen, unten nur die zwei Werte, die man hier korrigiert -->
     <div class="panel gchart" id="gapCard">
       <div class="gap-hero">
-        <div class="gh gap" id="kpiGap"><span class="k" id="kGapK">Lücke im Monat</span><b id="kGap"></b><span class="s" id="kGapS"></span></div>
         <div class="gh" id="kpiKap"><span class="k">Kapital dafür nötig</span><b id="kKap"></b><span class="s" id="kKapS"></span></div>
+        <div class="gh gap" id="kpiGap"><span class="k" id="kGapK">Lücke im Monat</span><b id="kGap"></b><span class="s" id="kGapS"></span></div>
       </div>
       <div class="st-chart" id="stChart" role="img" aria-label="Bedarf heute und zu Rentenbeginn, gedeckt durch gesetzliche Rente und Vorhandenes, Rest ist die Lücke">
         <div class="sc-plot" id="scPlot">
@@ -1950,21 +1955,24 @@ function buildPdf(Doc, D) {
   const brueckeZ = r.bruecke > 0 ? 5 : 0;
   const c1 = y, c1h = 96 + brueckeZ;
   card(M, c1, CW, c1h);
+  // oben das Ergebnis: Kapital mittig über der Säule Heute, die Lücke mittig über ihrer Säule Mit 67
+  const xL = M + CW * 0.24, xR = M + CW * 0.76, bw = 40;
   {
-    const hx = M + 7, gapCol = r.luecke > 0.5 ? C.gap : C.ok;
-    font(7, 'r', C.fg3); txt(r.bruecke > 0 ? `Lücke im Monat ab ${r.start}` : 'Lücke im Monat', hx, c1 + 9);
-    const w1 = gross(fE(r.luecke), hx, c1 + 18.5, 22, gapCol);
-    const p1 = pill(r.luecke < 1 ? 'Rente reicht für den Bedarf' : `heute ${fE(r.lueckeHeute)} Kaufkraft`, hx, c1 + 25, { bg: r.luecke < 1 ? C.okS : C.gapS, c: gapCol });
-    const kx = hx + Math.max(w1, p1) + 16;
-    font(7, 'r', C.fg3); txt('Kapital dafür nötig', kx, c1 + 9);
-    gross(fK(r.kapital), kx, c1 + 18.5, 22);
-    pill(`mit ${p.rentenbeginn}`, kx, c1 + 25);
+    const gapCol = r.luecke > 0.5 ? C.gap : C.ok;
+    const mitte = (k, v, chip, x, col, chipO) => {
+      font(7, 'r', C.fg3); txt(k, x, c1 + 9, { align: 'center' });
+      font(22, 'sb'); const m = /^(.*?)( (?:Mio\. )?€)$/.exec(v), a = m ? m[1] : v, e = m ? m[2] : '';
+      const wa = tw(a); font(13.2, 'sb'); const we = tw(e);
+      gross(v, x - (wa + we) / 2, c1 + 18.5, 22, col);
+      font(6.5, 'sb'); pill(chip, x - (tw(chip) + 5) / 2, c1 + 25, chipO);
+    };
+    mitte('Kapital dafür nötig', fK(r.kapital), `mit ${p.rentenbeginn}`, xL, C.ink, {});
+    mitte(r.bruecke > 0 ? `Lücke im Monat ab ${r.start}` : 'Lücke im Monat', fE(r.luecke), r.luecke < 1 ? 'Rente reicht für den Bedarf' : `heute ${fE(r.lueckeHeute)} Kaufkraft`, xR, gapCol, { bg: r.luecke < 1 ? C.okS : C.gapS, c: gapCol });
   }
   // Säulen: Heute (Netto gestrichelt, Wunsch dunkel) → Mit 67 (Bedarf, gefüllt mit Rente und Vorhandenem, Rest Lücke)
   const base = c1 + 74, GH = 33;
   const need = Math.max(r.bedarfNom, r.grvNom + r.bestand, 1);
   const mx = Math.max(need, r.nettoHeute, p.bedarf, 1), hh = v => v / mx * GH;
-  const xL = M + CW * 0.24, xR = M + CW * 0.76, bw = 40;
   dc(C.line2); doc.setLineWidth(0.25); dash([0.9, 0.8]); doc.roundedRect(xL - bw / 2, base - hh(r.nettoHeute), bw, hh(r.nettoHeute) + 2, 2, 2, 'S'); dash();
   const hW = hh(p.bedarf);
   fc(C.today); doc.roundedRect(xL - bw * 0.36, base - hW, bw * 0.72, hW + 2, 1.8, 1.8, 'F');
