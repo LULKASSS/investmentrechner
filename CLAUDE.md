@@ -5,7 +5,7 @@ Gehört Lukas, Sprache in App, Code-Kommentaren und Commits: **Deutsch**.
 
 ## Aufbau
 - `index.html` – die ganze App (HTML, CSS, JS in einer Datei). Wird 1:1 von GitHub Pages ausgeliefert: https://lulkasss.github.io/investmentrechner/
-- `desktop/` – Mac-App (Electron): `main.js` lädt dieselbe `index.html` über `app://rechner/`. Kein Preload, keine Berechtigungen.
+- `desktop/` – Mac-App (Electron): `main.js` liefert die Seite über `app://rechner/` aus. Beim Start (und bei „Neu laden“, ⌘R) holt sie die aktuelle `index.html` von GitHub Pages und merkt sie sich, ohne Netz nimmt sie die gemerkte, beim ersten Mal die eingebaute. Neu bauen ist nur bei Änderungen an `desktop/` nötig. Kein Preload, keine Berechtigungen.
 - `scripts/check.mjs` – Fehlercheck ohne Browser (Syntax, doppelte IDs, Dokumente/Schlüssel im Repo).
 - `scripts/serve.mjs` – Dev-Server auf :5180.
 - `test/app.spec.js` – Browsertests (Mac-Fenster und iPhone). `test/kern.spec.js` – Rechenkern ohne Browser. `test/zufall.spec.js` – Zufallseingaben quer durch alle Seiten (`ZUFALL=40 npx playwright test zufall` für mehr Durchläufe). `test/desktop.spec.js` – Test der Mac-App.
