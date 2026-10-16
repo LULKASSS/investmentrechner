@@ -26,6 +26,13 @@ Gehört Lukas, Sprache in App, Code-Kommentaren und Commits: **Deutsch**.
 - Bis 10.10.2026 lebte der Rechner als Claude-Artifact (V37–V60, https://claude.ai/artifact/EtxDnY49AxpjHXw71zRfh4). Ab jetzt ist dieses Repo die Quelle; das Artifact wird nicht mehr gepflegt.
 - Offen vor dem öffentlichen Start: Impressum, Hinweis „Modellrechnung“ prominent, eigene Domain.
 
+## Übergabe aus der Finanzaufnahme (Stand 16.10.2026)
+- Die Finanzaufnahme (Repo `LULKASSS/finanzaufnahme`) öffnet den Rechner mit `#aufnahme=<base64url-JSON>`, Inhalt `{v:1, alter, status:'ang'|'selbst', netto|gewinn, ersp}`. Keine Namen, keine Bank, keine Einzelposten – beide Apps bleiben getrennt.
+- `ausAufnahme()` (Ende des UI-Scripts) liest das beim Laden und bei `hashchange`, prüft jede Zahl (Alter 18–69, Netto 0–50.000, Gewinn 0–100.000, Erspartes 0–10 Mio., `v` muss 1 sein) und übernimmt nur Gültiges in `S`. Danach entfernt `history.replaceState` den Hash. Die Startseite bleibt, die Felder sind vorausgefüllt. `bedarf` wird nicht gesetzt, den rechnet der Rechner selbst.
+- Solange eine Übergabe im Zustand steckt (`S.ausAufnahme`), lädt `aufUpdatePruefen()` nicht neu, sonst gingen die Zahlen verloren.
+- Tests: `test/app.spec.js`, Abschnitt „Übergabe aus der Finanzaufnahme“.
+- Offen, Lukas entscheidet: Überschuss laut Aufnahme als Hinweis auf der Sparraten-Seite (liegt nur als Vorher/Nachher-Fassung vor, nicht auf `main`).
+
 ## Bausteine der Lösung (Stand 10.10.2026)
 - Bonus-Bausteine (Depot, Einmalzahlung, Immobilie) werden unter „Dazu als Bonus“ angehakt und **direkt darunter** eingestellt (aufklappende `.split-wrap`). Ergebnis steht als **Spalte in der Lösungs-Pille** (`#solPill .sp-col`), „Zusammen“ rechnet alle Spalten zusammen. Ring, Spalten und „Zusammen“ zeigen dieselben Zahlen.
 - Einmalzahlung = „Erspartes“ aus den Daten (ein Wert, `S.ersp`). Mit Erspartem ist sie vorausgewählt; abwählen bleibt abgewählt, auch wenn man das Ersparte später ändert.

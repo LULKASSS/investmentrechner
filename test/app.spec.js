@@ -170,3 +170,60 @@ test('Scrollen über die Weg-Kurve schaltet nicht ins Abtasten, Halten schon @mo
   await touch('touchEnd');
   await expect(page.locator('#phK')).toHaveText(/^Kapital mit/);
 });
+
+/* Übergabe aus der Finanzaufnahme (#aufnahme=…): nur Zahlen, geprüft, Hash danach weg */
+const aufnahme = d => '/#aufnahme=' + Buffer.from(JSON.stringify(d)).toString('base64url');
+async function oeffneMit(page, url) {
+  const problems = [];
+  page.on('pageerror', e => problems.push('Fehler: ' + e.message));
+  page.on('console', m => { if (m.type() === 'error') problems.push('Konsole: ' + m.text()); });
+  await page.goto(url);
+  return problems;
+}
+
+test('Übergabe aus der Finanzaufnahme füllt die Felder vor, Startseite bleibt @mobil', async ({ page }) => {
+  const problems = await oeffneMit(page, aufnahme({ v: 1, alter: 35, status: 'ang', netto: 2850, ersp: 10700 }));
+  await expect(page.locator('#ldGo')).toBeVisible();
+  expect(await page.evaluate(() => location.hash)).toBe('');
+  await page.click('#ldGo');
+  await expect(page.locator('#alter')).toHaveValue('35');
+  await expect(page.locator('#netto')).toHaveValue('2.850');
+  await expect(page.locator('#ersp')).toHaveValue('10.700');
+  await expect(page.locator('#status [data-v="ang"]')).toHaveAttribute('aria-pressed', 'true');
+  // Bedarf rechnet der Rechner wie bisher selbst (90 % vom Netto, auf 50 aufgerundet)
+  await expect(page.locator('#bedarf')).toHaveValue('2.600');
+  expect(problems).toEqual([]);
+});
+
+test('Übergabe im schon offenen Tab (nur der Hash wechselt)', async ({ page }) => {
+  await open(page);
+  await page.goto(aufnahme({ v: 1, alter: 50, status: 'ang', netto: 3100, ersp: 0 }));
+  await expect.poll(() => page.evaluate(() => location.hash)).toBe('');
+  await page.click('#ldGo');
+  await expect(page.locator('#alter')).toHaveValue('50');
+  await expect(page.locator('#netto')).toHaveValue('3.100');
+});
+
+test('Übergabe: selbstständig mit Gewinn', async ({ page }) => {
+  await oeffneMit(page, aufnahme({ v: 1, alter: 41, status: 'selbst', gewinn: 4200, ersp: 0 }));
+  await page.click('#ldGo');
+  await expect(page.locator('#alter')).toHaveValue('41');
+  expect(await page.evaluate(() => [document.getElementById('gewinnCtl').hidden, document.getElementById('nettoCtl').hidden])).toEqual([false, true]);
+  await expect(page.locator('#gewinn')).toHaveValue('4.200');
+});
+
+test('Übergabe: unplausible oder kaputte Werte werden ignoriert', async ({ page }) => {
+  const problems = await oeffneMit(page, aufnahme({ v: 1, alter: 150, status: 'chef', netto: -5, ersp: '9999', name: 'Max Muster' }));
+  await page.click('#ldGo');
+  await expect(page.locator('#alter')).toHaveValue('32');
+  await expect(page.locator('#netto')).toHaveValue('');
+  await expect(page.locator('#ersp')).toHaveValue('');
+  expect(await page.locator('body').innerText()).not.toContain('Max Muster');
+  await page.goto('about:blank'); await page.goto('/#aufnahme=%%%kaputt');
+  await expect(page.locator('#ldGo')).toBeVisible();
+  expect(await page.evaluate(() => location.hash)).toBe('');
+  await page.goto('about:blank'); await page.goto(aufnahme({ v: 2, alter: 40 }));
+  await page.click('#ldGo');
+  await expect(page.locator('#alter')).toHaveValue('32');
+  expect(problems).toEqual([]);
+});

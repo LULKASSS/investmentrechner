@@ -3104,15 +3104,41 @@ zeigeStart();
 /* Neue Fassung auf GitHub Pages? Handy-Homescreen und Browser halten die Seite sonst im Speicher.
    Beim Öffnen und beim Zurückkehren in die App den Stand vergleichen; neu laden nur, solange noch keine Rechnung läuft. */
 async function aufUpdatePruefen() {
-  if (!/^https?:$/.test(location.protocol) || S.started) return;
+  if (!/^https?:$/.test(location.protocol) || S.started || S.ausAufnahme) return; // vorausgefüllte Übergabe nicht durch Neuladen verlieren
   try {
     const res = await fetch(location.pathname, { cache: 'no-store', method: 'HEAD' });
     const neu = Date.parse(res.headers.get('last-modified') || ''), geladen = Date.parse(document.lastModified);
     if (neu && geladen && neu > geladen + 1000 && !S.started) location.reload();
   } catch {}
 }
+ausAufnahme(); // vor der Update-Prüfung, damit ein Neuladen die Übergabe nicht verwirft
 aufUpdatePruefen();
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') aufUpdatePruefen(); });
+
+/* Übergabe aus der Finanzaufnahme: #aufnahme=<base64url-JSON> mit {v:1, alter, status, netto|gewinn, ersp}.
+   Nur diese Zahlen, keine Personendaten. Jede Zahl wird geprüft, Unplausibles bleibt beim Standard.
+   Danach verschwindet der Hash aus der Adresse; die Startseite bleibt, die Felder sind vorausgefüllt.
+   Den Bedarf setzt die Übergabe bewusst nicht, den rechnet der Rechner wie immer selbst. */
+function ausAufnahme() {
+  const m = /^#aufnahme=([A-Za-z0-9_-]{1,2000})$/.exec(location.hash);
+  if (!location.hash.startsWith('#aufnahme=')) return false;
+  history.replaceState(null, '', location.pathname + location.search);
+  let d = null;
+  try { const b = atob(m[1].replace(/-/g, '+').replace(/_/g, '/')); d = JSON.parse(new TextDecoder().decode(Uint8Array.from(b, c => c.charCodeAt(0)))); } catch {}
+  if (!d || typeof d !== 'object' || d.v !== 1) return false;
+  const zahl = (v, min, max) => typeof v === 'number' && isFinite(v) && v >= min && v <= max ? v : null;
+  const alter = zahl(d.alter, 18, 69);
+  if (alter != null) { S.alter = Math.round(alter); clampBeginn(); }
+  if (d.status === 'ang' || d.status === 'selbst') S.status = d.status;
+  const netto = zahl(d.netto, 0, 50000), gewinn = zahl(d.gewinn, 0, 100000), ersp = zahl(d.ersp, 0, 1e7);
+  if (netto != null) S.netto = Math.round(netto);
+  if (gewinn != null) S.gewinn = Math.round(gewinn);
+  if (ersp != null) S.ersp = Math.round(ersp);
+  S.ausAufnahme = true;
+  return true;
+}
+// falls der Rechner im selben Tab schon offen ist und nur der Hash wechselt
+addEventListener('hashchange', () => { if (!S.started && ausAufnahme()) render(); });
 
 render();
 })();
