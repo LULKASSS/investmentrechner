@@ -539,6 +539,7 @@ body.ld-open{overflow:hidden}
 .ph-d.up{background:var(--ok-soft);color:var(--ok-ink)}
 .ph-d.down{background:var(--gap-soft);color:var(--gap-ink)}
 .ph-d:empty{display:none}
+.ph-d.ph-ein{background:var(--accent-soft);color:var(--accent-ink)}
 .path-plot svg{display:block;width:100%;overflow:visible}
 .p-ein{fill:var(--accent-soft)}
 .p-zins{fill:var(--accent);opacity:.88}
@@ -658,6 +659,10 @@ body.started .qs{padding-top:92px}
 :root{--c-einm:#AD97F3}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--c-einm:#7660C8}}
 :root[data-theme="dark"]{--c-einm:#7660C8}
+/* Vergleichs-Sparrate: eigene warme Farbe, damit sie sich von Grau (Hilfslinien) und Lila (eigene Sparrate) abhebt */
+:root{--c-vgl:#DB7E1F;--c-vgl-ink:#A65A0E}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--c-vgl:#F0A04B;--c-vgl-ink:#F0A04B}}
+:root[data-theme="dark"]{--c-vgl:#F0A04B;--c-vgl-ink:#F0A04B}
 .r-einm{stroke:var(--c-einm)}
 .einm-set{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:center}
 .einm-set .seg button{font-size:13.5px;padding:8px 8px;white-space:nowrap}
@@ -824,11 +829,11 @@ body.started .qs{padding-top:92px}
 .sol-ctl > .ctl{gap:12px}
 /* Sparrate als Balken: gefüllt bis zur Sparrate, Marke „ganze Lücke“, ab der Marke grün.
    Mit Vergleich: bis zur Vergleichsrate blass, was die eigene Sparrate darüber hinaus bringt, kräftig. */
-.spar-r{height:auto;margin:26px 0 30px;--fill:var(--accent);--fa:var(--fill);--a:0%}
+.spar-r{height:auto;margin:26px 0 30px;--fill:var(--accent);--fa:var(--fill);--a:0%;--b:0%;--fv:color-mix(in srgb,var(--c-vgl) 40%,var(--surface-3))}
 .spar-r.zu{--fill:var(--ok)}
 .spar-r.mitv{--fa:color-mix(in srgb,var(--fill) 34%,var(--surface-3))}
 .spar-r input{height:30px;position:relative;z-index:1}
-.spar-r input::-webkit-slider-runnable-track{height:14px;border-radius:7px;background:linear-gradient(to right,var(--fa) 0 var(--a),var(--fill) var(--a) var(--p),var(--surface-3) var(--p) 100%);transition:background .3s}
+.spar-r input::-webkit-slider-runnable-track{height:14px;border-radius:7px;background:linear-gradient(to right,var(--fa) 0 var(--a),var(--fill) var(--a) var(--p),var(--fv) var(--p) max(var(--p),var(--b)),var(--surface-3) max(var(--p),var(--b)) 100%);transition:background .3s}
 .spar-r input::-moz-range-track{height:14px;border-radius:7px}
 .spar-r input::-moz-range-progress{height:14px;border-radius:7px;background:var(--fill)}
 .spar-r input::-webkit-slider-thumb{width:28px;height:28px;margin-top:-7px}
@@ -839,8 +844,8 @@ body.started .qs{padding-top:92px}
 .sr-mark.lm{top:32px;color:var(--accent-ink);pointer-events:auto;cursor:pointer}
 .sr-mark.lm::before{top:-30px;background:var(--fg)}
 .sr-mark.lm.on{color:var(--fg-2);cursor:default}
-.sr-mark.vm{bottom:32px;color:var(--fg-3)}
-.sr-mark.vm::before{bottom:-30px;background:var(--fg-3)}
+.sr-mark.vm{bottom:32px;color:var(--c-vgl-ink)}
+.sr-mark.vm::before{bottom:-30px;background:var(--c-vgl)}
 .vgl-fx{margin:0;font-size:15px;line-height:1.45;color:var(--fg-2)}
 .vgl-fx b{font-weight:600;color:var(--fg);font-variant-numeric:tabular-nums}
 .vgl-fx b.plus{color:var(--ok-ink)} .vgl-fx b.minus{color:var(--gap-ink)}
@@ -853,14 +858,11 @@ body.started .qs{padding-top:92px}
 .vgl-set label{font-weight:500;font-size:14px}
 .vgl-set .link{justify-self:end}
 .sol-path{margin-top:20px}
-.lp-vgl{fill:none;stroke:var(--fg-3);stroke-width:1.75;stroke-linejoin:round;stroke-linecap:round}
-.p-target .lp-vd{fill:var(--fg-3);stroke:var(--surface);stroke-width:2.5;animation:none}
-.lp-br{stroke:var(--ok);stroke-width:2;stroke-linecap:round;fill:none}
-.lp-br.down{stroke:var(--gap)}
-.p-lab.lp-vt{fill:var(--fg-2);stroke:var(--surface)}
+.lp-vgl{fill:none;stroke:var(--c-vgl);stroke-width:1.75;stroke-linejoin:round;stroke-linecap:round}
+.p-target .lp-vd{fill:var(--c-vgl);stroke:var(--surface);stroke-width:2.5;animation:none}
+.p-lab.lp-vt{fill:var(--c-vgl-ink);stroke:var(--surface)}
+.p-lab .lp-dv{fill:var(--ok-ink)} .p-lab .lp-dv.down{fill:var(--gap-ink)}
 .p-lab.lp-st{fill:var(--accent-ink);stroke:var(--surface)}
-.p-lab.lp-bt{fill:var(--ok-ink);stroke:var(--surface);font-size:13.5px}
-.p-lab.lp-bt.down{fill:var(--gap-ink)}
 @media (max-width:640px){
   #results > section.page,#luecke{padding-top:76px}
   .mod-h{font-size:26px;margin-bottom:14px}
@@ -1112,7 +1114,7 @@ body.started .qs{padding-top:92px}
             <p class="vgl-fx" id="vglFx" hidden></p>
           </div>
           <div class="vgl" id="vglWrap">
-            <button class="qchip vgl-an" type="button" id="vglAn">Mit anderer Sparrate vergleichen</button>
+            <button class="qchip vgl-an" type="button" id="vglAn"></button>
             <div class="vgl-in">
               <div class="vgl-set">
                 <label for="vgl">Vergleich</label>
@@ -1154,7 +1156,7 @@ body.started .qs{padding-top:92px}
     </div>
 
     <div class="panel path sol-path" id="solPathPanel">
-      <div class="path-hero" aria-live="off"><span class="ph-k" id="lpK"></span><div class="ph-row"><b class="ph-v" id="lpV"></b><span class="ph-d" id="lpD"></span></div></div>
+      <div class="path-hero" aria-live="off"><span class="ph-k" id="lpK"></span><div class="ph-row"><b class="ph-v" id="lpV"></b><span class="ph-d ph-ein" id="lpE"></span><span class="ph-d" id="lpD"></span></div></div>
       <div class="path-plot grow-plot" id="lpPlot"><svg id="lpSvg" aria-hidden="true"></svg></div>
     </div>
 
@@ -1608,6 +1610,7 @@ function buildPdf(Doc, D) {
     ink: [11, 11, 15], fg2: [69, 69, 79], fg3: [107, 107, 118], line: [228, 228, 234], line2: [210, 210, 218], s2: [239, 239, 243], bg: [246, 246, 248],
     acc: [127, 95, 232], accI: [100, 69, 207], accS: [236, 231, 252], accM: [196, 182, 246], accL: [214, 204, 249],
     grv: [199, 199, 209], ver: [222, 222, 230], ers: [231, 226, 246], einm: [173, 151, 243], imm: [217, 206, 251], out: [241, 241, 244],
+    vgl: [219, 126, 31], vglI: [166, 90, 14],
     gap: [229, 72, 77], gapS: [251, 228, 229], gapH: [243, 172, 174], today: [24, 24, 29], ok: [38, 146, 95], okS: [224, 241, 232], white: [255, 255, 255]
   };
   let fonts = false;
@@ -1885,18 +1888,20 @@ function buildPdf(Doc, D) {
   font(7.5, 'r', C.ink); txt('Sparrate ab heute', sx3, sy3);
   sy3 += 13; const spw = gross(fE(D.spar), sx3, sy3, 30); font(7, 'r', C.fg3); txt('im Monat', sx3 + spw + 2, sy3);
   sy3 += 3;
-  // Sparrate als Balken wie in der App: Marke „ganze Lücke“, ab dort grün; mit Vergleich bis zur Vergleichsrate blass
+  // Sparrate als Balken wie in der App: Marke „ganze Lücke“, ab dort grün; mit kleinerer Vergleichsrate bis dorthin blass
   if (balken) {
     const sMax = Math.ceil(Math.max(500, D.vorschlag * 1.5, D.spar, LVv ? LVv.rate : 0) / 100) * 100, f = v => sx3 + sw3 * Math.min(1, Math.max(0, v) / sMax);
     const zu = anteil >= 0.995, col = zu ? C.ok : C.acc, blass = zu ? [165, 202, 188] : [195, 184, 235], by = sy3 + (LVv ? 7 : 3), bh = 2.6;
     fc(C.s2); doc.roundedRect(sx3, by, sw3, bh, bh / 2, bh / 2, 'F');
+    // liegt der Vergleich darüber: das fehlende Stück bis dorthin in seiner Farbe
+    if (LVv && LVv.rate > D.spar) { fc([226, 188, 154]); doc.roundedRect(sx3, by, Math.max(bh, f(LVv.rate) - sx3), bh, bh / 2, bh / 2, 'F'); }
     if (D.spar > 0) { fc(col); doc.roundedRect(sx3, by, Math.max(bh, f(D.spar) - sx3), bh, bh / 2, bh / 2, 'F'); }
-    const a = LVv ? Math.min(LVv.rate, D.spar) : 0;
+    const a = LVv && LVv.rate < D.spar ? LVv.rate : 0;
     if (a > 0) { fc(blass); doc.roundedRect(sx3, by, Math.max(bh, f(a) - sx3), bh, bh / 2, bh / 2, 'F'); doc.rect(Math.max(sx3 + bh / 2, f(a) - bh / 2), by, Math.min(bh / 2, f(a) - sx3), bh, 'F'); }
     const marke = (v, c) => { dc(c); doc.setLineWidth(0.4); doc.line(f(v), by - 1, f(v), by + bh + 1); };
     const al = v => { const t = v / sMax; return t < 0.12 ? 'left' : t > 0.88 ? 'right' : 'center'; };
     marke(D.vorschlag, C.ink); font(6.3, 'r', C.accI); txt(`ganze Lücke ${fE(D.vorschlag)}`, f(D.vorschlag), by + bh + 4.6, { align: al(D.vorschlag) });
-    if (LVv) { marke(LVv.rate, C.fg3); font(6.3, 'r', C.fg3); txt(fE(LVv.rate), f(LVv.rate), by - 2.2, { align: al(LVv.rate) }); }
+    if (LVv) { marke(LVv.rate, C.vgl); font(6.3, 'r', C.vglI); txt(fE(LVv.rate), f(LVv.rate), by - 2.2, { align: al(LVv.rate) }); }
     sy3 = by + bh + 8;
     if (satz) {
       const d = D.spar - LVv.rate, dr = D.loes.H.rente - LVv.rente, mehr = d > 0;
@@ -1982,31 +1987,34 @@ function buildPdf(Doc, D) {
     const A = LV.A, B = LV.B, ra = LV.ra, rb = LV.rb, px0 = M + 7, px1 = W - M - 7;
     font(7, 'r', C.fg3); txt(`Kapital mit ${p.rentenbeginn} · ${K.jahr + p.rentenbeginn - p.alter}`, px0, y + 9);
     const kw = gross(fK(A.C0), px0, y + 18.5, 20);
-    if (A.C0 - A.einT >= 50) pill(`+${fK(A.C0 - A.einT)} Wertzuwachs`, px0 + kw + 4, y + 17, { bg: C.okS, c: C.ok });
+    const ew = pill(`${fK(A.einT)} eingezahlt`, px0 + kw + 4, y + 17, { bg: C.accS, c: C.accI });
+    if (A.C0 - A.einT >= 50) pill(`+${fK(A.C0 - A.einT)} Wertzuwachs`, px0 + kw + 4 + ew + 2, y + 17, { bg: C.okS, c: C.ok });
     const pt = y + 32, pb = y + ch - 9;
     const mMax = A.N0 + A.N, yMax = Math.max(...ra.map(q => q.tot), ...(rb ? rb.map(q => q.tot) : [0]), 1) * 1.06;
     const X = m => px0 + m / mMax * (px1 - px0), Y = v => pb - v / yMax * (pb - pt), xr = X(A.N0);
     const ein = q => LV.H.rate * q.m + LV.eB;
     poly([...ra.map(q => [X(q.m), Y(q.tot)]), ...A.sp.slice().reverse().map(q => [X(q.m), Y(ein(q))])], C.accS);
     poly([...A.sp.map(q => [X(q.m), Y(ein(q))]), [xr, pb], [px0, pb]], C.accM);
-    { const i9 = Math.round((A.sp.length - 1) * 0.94), q = A.sp[i9]; if (pb - Y(ein(q)) > 6) { font(6.5, 'sb', C.accI); txt('eingezahlt ' + fK(A.einT), X(q.m) - 1.5, (Y(ein(q)) + pb) / 2 + 1.2, { align: 'right' }); } }
     poly([[xr, Y(A.C0)], ...A.rp.map(q => [X(q.m), Y(q.tot)]), [px1, pb], [xr, pb]], C.out);
     dash([0.5, 1.2]); pline(ra.map(q => [X(q.m), Y(q.avg)]), C.fg3, 0.25); dash();
-    if (B) pline([...rb.map(q => [X(q.m), Y(q.tot)]), ...B.rp.map(q => [X(q.m), Y(q.tot)])], C.fg3, 0.4);
+    if (B) pline([...rb.map(q => [X(q.m), Y(q.tot)]), ...B.rp.map(q => [X(q.m), Y(q.tot)])], C.vgl, 0.45);
     pline([...ra.map(q => [X(q.m), Y(q.tot)]), ...A.rp.map(q => [X(q.m), Y(q.tot)])], C.acc, 0.5);
     dc(C.line2); doc.setLineWidth(0.2); dash([0.8, 1]); doc.line(xr, pt - 4, xr, pb); dash();
     dc(C.ink); doc.setLineWidth(0.3); dash([1.2, 1.2]); doc.line(px0, Y(A.C0), xr, Y(A.C0)); dash();
     if (B) {
-      // Unterschied bei Rentenbeginn als Klammer, die Vergleichslinie beschriftet an ihrem Ende
-      const ya = Y(A.C0), yv = Y(B.C0), bx = xr - 3, dv = A.C0 - B.C0, c = dv >= 0 ? C.ok : C.gap;
-      dc(c); doc.setLineWidth(0.45); doc.line(bx + 1.5, ya, bx, ya); doc.line(bx, ya, bx, yv); doc.line(bx, yv, bx + 1.5, yv);
-      if (Math.abs(dv) >= 50) { font(7.5, 'sb', c); txt(`${dv > 0 ? '+' : '−'}${fK(Math.abs(dv))}`, bx - 1.8, (ya + yv) / 2 + 1.2, { align: 'right' }); }
-      fc(C.fg3); doc.circle(xr, yv, 0.9, 'F');
+      const yv = Y(B.C0), dv = B.C0 - A.C0;
+      fc(C.vgl); doc.circle(xr, yv, 0.9, 'F');
       // beide Linien direkt beschriften wie in der App
-      const iE = Math.round((ra.length - 1) * 0.7), xE = X(ra[iE].m), idx = ra.map((q, i) => i).filter(i => i <= iE && X(ra[i].m) >= xE - 26);
-      const oben = A.C0 >= B.C0, wert = (rr, f) => f(...idx.map(i => Y(rr[i].tot)));
-      font(6.8, 'sb', C.accI); txt(`Sparrate ${fE(LV.H.rate)}`, xE, oben ? wert(ra, Math.min) - 2 : wert(ra, Math.max) + 3.6, { align: 'right' });
-      font(6.8, 'sb', C.fg2); txt(`Vergleich ${fE(LV.V.rate)}`, xE, oben ? Math.min(wert(rb, Math.max) + 3.6, pb - 1.5) : wert(rb, Math.min) - 2, { align: 'right' });
+      // Platz je Beschriftung nach ihrer Breite, damit keine Linie in den Text läuft
+      const iE = Math.round((ra.length - 1) * 0.7), xE = X(ra[iE].m), oben = A.C0 >= B.C0;
+      const wert = (rr, f, b) => f(...ra.map((q, i) => i).filter(i => i <= iE && X(ra[i].m) >= xE - b - 1).map(i => Y(rr[i].tot)));
+      const sT = `Sparrate ${fE(LV.H.rate)}`, vt = `Vergleich ${fE(LV.V.rate)}`, dT = Math.abs(dv) < 50 ? '' : ` ${dv > 0 ? '+' : '−'}${fK(Math.abs(dv))}`;
+      font(6.8, 'sb'); const sw = tw(sT), dw = dT ? tw(dT) : 0, vw = tw(vt) + dw;
+      font(6.8, 'sb', C.accI); txt(sT, xE, oben ? wert(ra, Math.min, sw) - 2.4 : wert(ra, Math.max, sw) + 3.8, { align: 'right' });
+      // Vergleich in seiner Farbe, daneben, was er bei Rentenbeginn an Kapital mehr oder weniger bringt
+      const vy = oben ? Math.min(wert(rb, Math.max, vw) + 3.8, pb - 1.5) : wert(rb, Math.min, vw) - 2.4;
+      font(6.8, 'sb', C.vglI); txt(vt, xE - dw, vy, { align: 'right' });
+      if (dT) { font(6.8, 'sb', dv > 0 ? C.ok : C.gap); txt(dT, xE, vy, { align: 'right' }); }
     }
     fc(C.ink); doc.circle(xr, Y(A.C0), 1, 'F');
     font(7, 'r', C.fg3); txt('Sparen', (px0 + xr) / 2, pt - 4, { align: 'center' }); txt('Rente', (xr + px1) / 2, pt - 4, { align: 'center' });
@@ -2070,7 +2078,7 @@ const KREDIT_ZINS = 0.042;
 const DEF = { started: false, alter: 32, rentenbeginn: 67, status: 'ang', netto: 0, gewinn: 0, drv: false, bedarf: 0, bedarfManuell: false,
   inflation: 0.02, lebenserwartung: 85, einstieg: 22, anpVar: 0.015, bestand: 0, ersp: 0,
   anspar: 0.07, entnahme: 0.03, grvMode: 'auto', grvWert: 0, step: 0, open: new Set([0]),
-  spar: null, depot: false, imm: false, immPreis: 150000, immJahre: 5, immMiete: 450, immKredit: true, avAnteil: 0.8, mindestHeute: null, ums: 3, einmAn: null, einmZiel: 'av', vgl: null };
+  spar: null, depot: false, imm: false, immPreis: 150000, immJahre: 5, immMiete: 450, immKredit: true, avAnteil: 0.8, mindestHeute: null, ums: 3, einmAn: null, einmZiel: 'av', vgl: null, vglAus: false };
 let S = structuredClone(DEF);
 let countUp = false;
 
@@ -2182,7 +2190,9 @@ function compute() {
   };
   const H = fuer(spar), T = H.T, anteil = H.anteil;
   S.split = spar > 0 ? T.av / spar : split;
-  const V = S.vgl == null ? null : fuer(S.vgl);
+  // Vergleich: weicht die Sparrate vom Vorschlag ab, ist der Vorschlag die Vergleichsrate; im Feld von Hand änderbar
+  const vglRate = S.vglAus ? null : S.vgl != null ? S.vgl : vorschlag > 0 && Math.round(spar) !== Math.round(vorschlag) ? vorschlag : null;
+  const V = vglRate == null ? null : fuer(vglRate);
   // Deckt das Sichere (gesetzl. Rente + Verträge + Altersvorsorge) die Mindestsicherung?
   const totB = Math.max(r.bedarfNom, r.grvNom + r.bestand + r.luecke * anteil, 1);
   const eAV = E.dep ? 0 : E.kEff;                          // Einmalzahlung in der AV zählt zum Sicheren
@@ -2284,8 +2294,11 @@ function einmVorteil() {
 }
 // Vergleich zweier Sparraten: in einem Satz, was der Unterschied an Rente bringt (Kapital zeigt die Kurve)
 function renderVgl(C) {
-  const { H, V } = C, an = V != null, fx = $('vglFx');
+  const { H, V } = C, an = V != null, fx = $('vglFx'), weicht = C.vorschlag > 0 && Math.round(C.spar) !== Math.round(C.vorschlag);
   $('vglWrap').classList.toggle('on', an); $('vglWrap').querySelector('.vgl-in').inert = !an;
+  // ausgeschaltet: ein Knopf holt den Vergleich mit dem Vorschlag zurück; ohne Abweichung gibt es nichts zu vergleichen
+  $('vglWrap').hidden = !an && !(S.vglAus && weicht);
+  $('vglAn').textContent = `Vergleichen mit ${fE(C.vorschlag)}`;
   const d = an ? H.rate - V.rate : 0, dr = an ? H.rente - V.rente : 0;
   fx.hidden = !an || Math.abs(d) < 0.5;
   if (!an) return;
@@ -2338,11 +2351,13 @@ function render() {
   /* 3 · Lösung */
   setMoney('spar', spar);
   // Regler zum Ausprobieren: reicht bis anderthalbmal die ganze Lücke, mindestens 500 €, und immer über beide Sparraten
-  const sMax = Math.ceil(Math.max(500, vorschlag * 1.5, spar, S.vgl || 0) / 100) * 100;
+  const sMax = Math.ceil(Math.max(500, vorschlag * 1.5, spar, C.V ? C.V.rate : 0) / 100) * 100;
   $('sparR').max = sMax; setRange('sparR', Math.min(spar, sMax), fE);
   const sw = $('sparRW'), pct = v => Math.min(100, v / sMax * 100);
   sw.classList.toggle('zu', r.kapital <= 0 || C.anteil >= 0.995); sw.classList.toggle('mitv', C.V != null);
-  sw.style.setProperty('--a', C.V ? pct(Math.min(C.V.rate, spar)) + '%' : '0%');
+  // bis zur kleineren Vergleichsrate blass, das Mehr kräftig; liegt der Vergleich darüber, fehlt das Stück in seiner Farbe
+  sw.style.setProperty('--a', C.V && C.V.rate < spar ? pct(C.V.rate) + '%' : '0%');
+  sw.style.setProperty('--b', C.V && C.V.rate > spar ? pct(C.V.rate) + '%' : '0%');
   const marke = (el, v, l) => { const t = pct(v); el.style.setProperty('--t', t + '%'); el.textContent = l; el.classList.toggle('l', t < 12); el.classList.toggle('r', t > 88); };
   $('qFull').hidden = !(r.kapital > 0 && vorschlag > 0); marke($('qFull'), vorschlag, `ganze Lücke ${fE(vorschlag)}`);
   $('vglTick').hidden = C.V == null; if (C.V) marke($('vglTick'), C.V.rate, fE(C.V.rate));
@@ -2814,13 +2829,9 @@ function lpPfade(ys, G) {
   const c0 = ys.c0[0], tl = $('lpTl');
   tl.setAttribute('x1', G.x0); tl.setAttribute('x2', xr); tl.setAttribute('y1', c0); tl.setAttribute('y2', c0);
   $('lpTd').setAttribute('cx', xr); $('lpTd').setAttribute('cy', c0);
-  const v = ys.vgl ? ys.cv[0] : null, bx = xr - 12;
-  $('lpVd').style.display = $('lpBr').style.display = $('lpBt').style.display = v == null ? 'none' : '';
-  if (v != null) {
-    $('lpVd').setAttribute('cx', xr); $('lpVd').setAttribute('cy', v);
-    $('lpBr').setAttribute('d', `M${P(bx + 6, c0)} L${P(bx, c0)} L${P(bx, v)} L${P(bx + 6, v)}`);
-    $('lpBt').setAttribute('x', bx - 8); $('lpBt').setAttribute('y', (c0 + v) / 2 + 5);
-  }
+  const v = ys.vgl ? ys.cv[0] : null;
+  $('lpVd').style.display = v == null ? 'none' : '';
+  if (v != null) { $('lpVd').setAttribute('cx', xr); $('lpVd').setAttribute('cy', v); }
 }
 function drawLoes(C) {
   const { p, r, H, V, E } = C, plot = $('lpPlot'), svg = $('lpSvg');
@@ -2843,29 +2854,29 @@ function drawLoes(C) {
       <line class="p-rb" id="lpRb"/>
       <g clip-path="url(#lpClip)"><path class="p-ein" id="lpEin"/><path class="p-zins" id="lpZins" style="fill:url(#lpGrad)"/><path class="p-out" id="lpOut"/><path class="p-avg" id="lpAvg"/><path class="lp-vgl" id="lpVgl"/><path class="p-line" id="lpLine"/></g>
       <g id="lpLabs"></g><g id="lpLabsIn" clip-path="url(#lpClip)"></g>
-      <g class="p-target${LP.shown ? ' on' : ''}" id="lpTarget"><line id="lpTl"/><circle class="lp-vd" id="lpVd" r="4.5"/><path class="lp-br" id="lpBr"/><text class="p-lab lp-bt" id="lpBt" text-anchor="end"></text><circle id="lpTd" r="5"/></g>
+      <g class="p-target${LP.shown ? ' on' : ''}" id="lpTarget"><line id="lpTl"/><circle class="lp-vd" id="lpVd" r="4.5"/><circle id="lpTd" r="5"/></g>
       <g class="p-tip" id="lpTip"><circle id="lpTipC" r="4.5"/></g>
       <line class="g-cross" id="lpCross" y1="${padT - 6}" y2="${h - padB}"/><circle class="g-dot" id="lpDot" r="5"/>`;
   }
   const xr = X(A.N0);
   $('lpRb').setAttribute('x1', xr); $('lpRb').setAttribute('x2', xr); $('lpRb').setAttribute('y1', 22); $('lpRb').setAttribute('y2', h - padB);
-  // Beschriftung direkt in der Grafik: eingezahlt in der Fläche, die Vergleichslinie an ihrem Ende, der Unterschied an der Klammer
-  const lab = [], labIn = [], Ls = A.sp.length - 1, i9 = Math.round(Ls * 0.94), y0 = G.y0;
+  // Beschriftung direkt in der Grafik: beide Linien; was eingezahlt ist, steht oben neben dem Kapital
+  const lab = [], labIn = [], Ls = A.sp.length - 1, y0 = G.y0;
   lab.push(`<text class="p-cap" x="${(x0 + xr) / 2}" y="14" text-anchor="middle">Sparen</text><text class="p-cap" x="${(xr + x1) / 2}" y="14" text-anchor="middle">Rente</text>`);
   lab.push(`<text class="p-ax" x="${x0}" y="${h - 6}">Alter ${S.alter}</text><text class="p-ax" x="${xr}" y="${h - 6}" text-anchor="middle">${S.rentenbeginn}</text><text class="p-ax" x="${x1}" y="${h - 6}" text-anchor="end">${S.lebenserwartung}</text>`);
-  const two = (x, y, a, b) => `<text class="p-lab ein" x="${x}" y="${y}" text-anchor="end">${a}<tspan class="v" x="${x}" dy="15">${b}</tspan></text>`;
-  if (w >= 560 && y0 - ys.ein[i9] > 30) labIn.push(two(G.xs[i9] - 6, (ys.ein[i9] + y0) / 2 - 3, 'eingezahlt', fK(A.einT)));
   if (B) {
     // beide Linien direkt beschriften, wo sie beim Sparen schon deutlich auseinanderliegen: die obere darüber, die untere darunter
-    const iE = Math.round(Ls * (small ? 0.68 : 0.8)), xE = G.xs[iE], lw = small ? 92 : 112, idx = [];
-    for (let i = 0; i <= iE; i++) if (G.xs[i] >= xE - lw) idx.push(i);
-    const oben = A.C0 >= B.C0, ext = (a, f) => f(...idx.map(i => a[i]));
-    const yS = oben ? ext(ys.tot, Math.min) - 9 : ext(ys.tot, Math.max) + 17, yV = oben ? Math.min(ext(ys.vgl, Math.max) + 17, y0 - 6) : ext(ys.vgl, Math.min) - 9;
-    labIn.push(`<text class="p-lab lp-st" x="${xE}" y="${yS}" text-anchor="end">Sparrate ${fE(H.rate)}</text>`);
-    labIn.push(`<text class="p-lab lp-vt" x="${xE}" y="${yV}" text-anchor="end">Vergleich ${fE(V.rate)}</text>`);
-    const dv = A.C0 - B.C0, bt = $('lpBt');
-    bt.textContent = Math.abs(dv) < 50 ? '' : `${dv > 0 ? '+' : '−'}${fK(Math.abs(dv))}`;
-    bt.classList.toggle('down', dv < 0); $('lpBr').classList.toggle('down', dv < 0);
+    // Platz je Beschriftung nach ihrer Länge: über die ganze Breite darf die Linie nicht in den Text laufen
+    const iE = Math.round(Ls * (small ? 0.68 : 0.8)), xE = G.xs[iE], breite = t => t.length * 7.4 + 6;
+    const ext = (a, f, t) => { const v = []; for (let i = 0; i <= iE; i++) if (G.xs[i] >= xE - breite(t)) v.push(a[i]); return f(...v); };
+    const oben = A.C0 >= B.C0, tS = `Sparrate ${fE(H.rate)}`, tV = `Vergleich ${fE(V.rate)}`;
+    // daneben, was die Vergleichsrate bei Rentenbeginn an Kapital mehr oder weniger bringt (am Handy darunter)
+    const dv = B.C0 - A.C0, tD = Math.abs(dv) < 50 ? '' : `${dv > 0 ? '+' : '−'}${fK(Math.abs(dv))}`, tVg = small || !tD ? tV : tV + ' ' + tD;
+    const yS = oben ? ext(ys.tot, Math.min, tS) - 12 : Math.min(ext(ys.tot, Math.max, tS) + 18, y0 - 6);
+    const yV = oben ? Math.min(ext(ys.vgl, Math.max, tVg) + 18, y0 - (small && tD ? 21 : 6)) : ext(ys.vgl, Math.min, tVg) - 12 - (small && tD ? 15 : 0);
+    labIn.push(`<text class="p-lab lp-st" x="${xE}" y="${yS}" text-anchor="end">${tS}</text>`);
+    const dT = tD ? `<tspan class="lp-dv${dv < 0 ? ' down' : ''}"${small ? ` x="${xE}" dy="15"` : ''}>${small ? '' : ' '}${tD}</tspan>` : '';
+    labIn.push(`<text class="p-lab lp-vt" x="${xE}" y="${yV}" text-anchor="end">${tV}${dT}</text>`);
   }
   $('lpLabs').innerHTML = lab.join(''); $('lpLabsIn').innerHTML = labIn.join('');
   LP.d = { A, ser: [...ra.map(q => [q.m, q.tot]), ...A.rp.map(q => [q.m, q.tot])], Y, x0, x1, xr, mMax, rate: H.rate, eB };
@@ -2882,8 +2893,10 @@ function lpBei(x) {
   const d = LP.d, m = Math.max(0, Math.min(d.mMax, (x - d.x0) / (d.x1 - d.x0) * d.mMax));
   return { m, v: linieBei(d.ser, m), ein: d.rate * Math.min(m, d.A.N0) + d.eB, age: S.alter + m / 12 };
 }
+// neben dem Kapital: was bis dahin eingezahlt ist (Sparrate und Einmalzahlung) und der Wertzuwachs
 function lpChip(v, ein, spar) {
   const ch = $('lpD'), plus = v - ein;
+  $('lpE').textContent = `${fK(ein)} eingezahlt`;
   ch.className = 'ph-d' + (spar ? (plus >= 0 ? ' up' : ' down') : '');
   ch.textContent = !spar ? 'in der Entnahme' : Math.abs(plus) < 50 ? '' : `${plus >= 0 ? '+' : '−'}${fK(Math.abs(plus))} Wertzuwachs`;
 }
@@ -3249,11 +3262,11 @@ document.querySelectorAll('.nstep').forEach(b => b.addEventListener('click', () 
   const f = NUM[b.dataset.for], v = Math.min(val(f.max), Math.max(val(f.min), f.get() + +b.dataset.d)); f.set(v); $(b.dataset.for).value = v; render();
 }));
 $('grvReset').addEventListener('click', () => { S.grvMode = 'auto'; render(); });
-$('qFull').addEventListener('click', () => { S.spar = null; render(); });
+$('qFull').addEventListener('click', () => { S.spar = null; S.vglAus = false; render(); });
 $('sparR').addEventListener('input', e => { S.spar = +e.target.value; render(); });
 // Vergleich: die Rate, die gerade eingestellt ist, wird zur Vergleichsrate; danach die eigene Sparrate ändern (oder umgekehrt)
-$('vglAn').addEventListener('click', () => { S.vgl = compute().spar; render(); if (innerWidth > 640) setTimeout(() => $('spar').focus(), 60); });
-$('vglAus').addEventListener('click', () => { S.vgl = null; render(); $('vglAn').focus(); });
+$('vglAn').addEventListener('click', () => { S.vglAus = false; S.vgl = null; render(); });
+$('vglAus').addEventListener('click', () => { S.vgl = null; S.vglAus = true; render(); $('vglAn').focus(); });
 $('bEinm').addEventListener('click', () => { umbau(() => { S.einmAn = einmAus(); render(); }); if (!einmAus() && !(S.ersp > 0) && innerWidth > 640) setTimeout(() => $('einm').focus(), 250); });
 $('qMin').addEventListener('click', () => {
   const c = compute(); if (!(c.avMin > 0)) return;

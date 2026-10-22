@@ -146,35 +146,39 @@ test('Vorschlag-PDF mit allen Bausteinen @mobil', async ({ page }) => {
   expect(problems).toEqual([]);
 });
 
-test('Sparrate vergleichen: Satz, Marke am Balken, graue Linie und Klammer in der Kurve @mobil', async ({ page }) => {
+test('Sparrate vergleichen: weicht man vom Vorschlag ab, wird er zur Vergleichsrate, von Hand änderbar @mobil', async ({ page }) => {
   const problems = await open(page);
   await zurLoesung(page);
+  // Vorschlag eingestellt: nichts zu vergleichen
+  await expect(page.locator('#vglWrap')).toBeHidden();
   await expect(page.locator('#vglFx')).toBeHidden();
+  const vorschlag = zahl(await page.locator('#spar').inputValue());
+  // eigene Sparrate darunter: der Vorschlag wird zur Vergleichsrate
   await page.fill('#spar', '150');
-  await page.click('#vglAn');
-  await expect(page.locator('#vgl')).toHaveValue('150');
-  await page.fill('#spar', '300');
-  await expect(page.locator('#vglFx')).toContainText('150 € mehr');
-  await expect(page.locator('#vglFx')).toContainText('mehr Rente');
+  await expect(page.locator('#vgl')).toHaveValue(new Intl.NumberFormat('de-DE').format(vorschlag));
+  await expect(page.locator('#vglFx')).toContainText(`${vorschlag - 150} € weniger`);
   await expect(page.locator('#vglTick')).toBeVisible();
-  await expect(page.locator('#sparRW')).toHaveClass(/mitv/);
   expect(await page.locator('#lpVgl').getAttribute('d')).toMatch(/^M/);
-  // Klammer bei Rentenbeginn = Kapital mit 300 € minus Kapital mit 150 €, gleich gerundet wie überall
-  await page.waitForTimeout(1200);
+  await expect(page.locator('#lpLabsIn')).toContainText(`Vergleich ${vorschlag} €`);
+  // Vergleichsrate von Hand: Unterschied neben „Vergleich“ = Kapital mit 300 € minus Kapital mit 150 €
+  await page.fill('#spar', '300'); await page.waitForTimeout(1000);
   const k300 = zahl(await page.locator('#pSumK').textContent());
-  await page.fill('#spar', '150');
-  await expect(page.locator('#vglFx')).toBeHidden();
-  await page.waitForTimeout(1200);
+  await page.fill('#spar', '150'); await page.waitForTimeout(1000);
   const k150 = zahl(await page.locator('#pSumK').textContent());
-  await page.fill('#spar', '300'); await page.waitForTimeout(1200);
-  expect(Math.abs(zahl(await page.locator('#lpBt').textContent()) - (k300 - k150))).toBeLessThanOrEqual(100);
-  // weniger als die Vergleichsrate: der Satz nennt, was es kostet
-  await page.fill('#spar', '100');
-  await expect(page.locator('#vglFx')).toContainText('50 € weniger');
+  await page.fill('#vgl', '300');
+  await expect(page.locator('#vglFx')).toContainText('150 € weniger');
+  await expect(page.locator('#lpLabsIn')).toContainText('Vergleich 300 €');
+  expect(Math.abs(zahl(await page.locator('#lpLabsIn .lp-dv').textContent()) - (k300 - k150))).toBeLessThanOrEqual(100);
+  // ausschalten und wieder holen
   await page.click('#vglAus');
   await expect(page.locator('#vglFx')).toBeHidden();
-  await expect(page.locator('#vglTick')).toBeHidden();
   expect(await page.locator('#lpVgl').getAttribute('d')).toBe('');
+  await expect(page.locator('#vglAn')).toHaveText(`Vergleichen mit ${vorschlag} €`);
+  await page.click('#vglAn');
+  await expect(page.locator('#vglFx')).toBeVisible();
+  // zurück auf die ganze Lücke: Vergleich verschwindet
+  await page.click('#qFull');
+  await expect(page.locator('#vglWrap')).toBeHidden();
   expect(problems).toEqual([]);
 });
 
