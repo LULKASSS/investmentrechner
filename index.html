@@ -817,12 +817,9 @@ body.started .qs{padding-top:92px}
 .f-r{background:var(--accent)} .f-i{background:var(--c-imm)}
 .f-z0{background:#2F9E8F} .f-z1{background:#D9579B} .f-z2{background:#C9A227} .f-z3{background:#A0785A} .f-z4{background:#E07A5F} .f-z5{background:#7FA33A}
 .z-in{display:grid;gap:12px}
-.z-chips{display:flex;flex-wrap:wrap;gap:8px}
-.z-chips .qchip{height:44px;padding:0 16px;font-size:14px;animation:none}
 .z-rows{display:grid;gap:8px}
 .z-rows:empty{display:none}
-.z-row{display:grid;grid-template-columns:minmax(0,1fr) 150px 110px 36px;gap:10px;align-items:center;animation:popIn .45s var(--spring)}
-.z-row .z-n{font-weight:500}
+.z-row{display:grid;grid-template-columns:minmax(0,1fr) 150px 110px 36px;gap:10px;align-items:center}
 .z-titel{height:44px;border:1px solid transparent;border-radius:var(--r-s);background:var(--surface-2);padding:0 12px;font:inherit;color:var(--fg);min-width:0}
 .z-titel:focus{outline:none;border-color:var(--accent);background:var(--surface);box-shadow:0 0 0 4px var(--accent-soft)}
 .z-j{gap:4px;padding-left:12px}
@@ -876,8 +873,8 @@ body.started .qs{padding-top:92px}
 .z-fx{margin:0;font-size:13.5px;color:var(--fg-2)}
 .z-fx b{color:var(--fg);font-weight:600}
 .z-fx.spaet b{color:var(--fg)} .z-fx.neg{color:var(--gap-ink)}
-.z-add{display:grid;gap:10px;margin-top:24px}
-.z-add .bchip[aria-pressed="true"]{display:none}
+.z-add{margin-top:24px}
+.z-add .qchip{height:44px;padding:0 18px;font-size:14px;animation:none}
 @media (max-width:640px){
   .z-row{grid-template-columns:minmax(0,1fr) 120px 36px;grid-template-areas:"n n x" "b j j"}
   .z-row > :first-child{grid-area:n} .z-row .money{grid-area:b} .z-row .z-j{grid-area:j} .z-row .z-x{grid-area:x}
@@ -1104,7 +1101,6 @@ body.started .qs{padding-top:92px}
         <div class="q-body"><div class="q-in"><div class="q-pad">
           <div class="z-in">
             <span class="lbl">Sparziele <span class="hint">optional</span></span>
-            <div class="z-chips" id="zChips"></div>
             <div class="z-rows" id="zRows"></div>
           </div>
           <div class="q-foot"><span class="hint" id="goH"></span><button class="primary" id="go" type="button" disabled>Rentenlücke berechnen</button></div>
@@ -1377,7 +1373,7 @@ body.started .qs{padding-top:92px}
       <div class="z-plan" id="zPlan"></div>
     </div>
     <div class="z-grid" id="zGrid"></div>
-    <div class="z-add"><span class="lbl">Noch ein Ziel</span><div class="z-chips" id="zChips2"></div></div>
+    <div class="z-add"><button class="qchip" type="button" id="zNeu">+ Sparziel</button></div>
   </section>
 
   <p class="foot">Modellrechnung, keine Zusage. <button class="link" id="reset" type="button">Alles zurücksetzen</button></p>
@@ -2508,28 +2504,17 @@ function renderVgl(C) {
   if (!fx.hidden) fx.innerHTML = d > 0 ? `<b>${fE(d)} mehr</b> im Monat bringen dir <b class="plus">${fE(dr)} mehr Rente</b> mit ${S.rentenbeginn}.`
     : `<b>${fE(-d)} weniger</b> im Monat kosten dich <b class="minus">${fE(-dr)} Rente</b> mit ${S.rentenbeginn}.`;
 }
-/* ===== Sparziele neben der Rente: Katalog mit Vorschlägen in heutigen Preisen, alles änderbar ===== */
-const rund500 = v => Math.round(v / 500) * 500;
-const ZTYP = {
-  notgroschen: { n: 'Notgroschen', betrag: () => Math.max(3000, rund500(einkommen() * 3)), jahre: 1, nurTg: true },
-  reise: { n: 'Reise', betrag: () => 4000, jahre: 1 },
-  auto: { n: 'Auto', betrag: () => 25000, jahre: 4 },
-  wohnung: { n: 'Eigenkapital Wohnung', k: 'Wohnung', betrag: () => 70000, jahre: 8 },
-  hochzeit: { n: 'Hochzeit', betrag: () => 15000, jahre: 2 },
-  kind: { n: 'Für ein Kind', k: 'Kind', betrag: () => 20000, jahre: 18 },
-  auszeit: { n: 'Auszeit', betrag: () => Math.max(6000, rund500(einkommen() * 6)), jahre: 5 },
-  vermoegen: { n: 'Vermögen aufbauen', k: 'Vermögen', betrag: () => 100000, jahre: 20 },
-  eigen: { n: 'Eigenes Ziel', betrag: () => 10000, jahre: 3, mehrfach: true }
-};
-const zName = z => z.typ === 'eigen' ? (z.titel || 'Eigenes Ziel') : ZTYP[z.typ].n;
-const zKurz = z => z.typ === 'eigen' ? (z.titel || 'Eigenes Ziel') : (ZTYP[z.typ].k || ZTYP[z.typ].n);
+/* ===== Sparziele neben der Rente: nur eigene Ziele, ohne Vorschläge (Lukas, 22.10.2026) ===== */
+const ZTYP = { eigen: { n: 'Sparziel', jahre: 3 } };
+const zName = z => z.titel || 'Sparziel';
+const zKurz = zName;
 const zFind = id => S.ziele.find(z => z.id === +id);
-function zielDazu(typ) {
-  const t = ZTYP[typ];
-  S.ziele.push({ id: ++S.zid, typ, titel: '', betrag: t.betrag(), jahre: t.jahre, wunsch: t.jahre, start: 0, anlage: null, rate: null });
+function zielDazu() {
+  const z = { id: ++S.zid, typ: 'eigen', titel: '', betrag: 0, jahre: 3, wunsch: 3, start: 0, anlage: null, rate: null };
+  S.ziele.push(z); return z;
 }
-// Anlage: Notgroschen immer Tagesgeld, sonst nach Spardauer (ab 5 Jahren Depot), umstellbar
-const zDepot = (z, ab, bis) => ZTYP[z.typ].nurTg ? false : z.anlage ? z.anlage === 'dep' : bis - ab >= K.depotAb;
+// Anlage nach Spardauer (ab 5 Jahren Depot), umstellbar
+const zDepot = (z, ab, bis) => z.anlage ? z.anlage === 'dep' : bis - ab >= K.depotAb;
 const zRateFuer = (z, ab, bis) => { const d = zDepot(z, ab, bis); return z.betrag > 0 ? Math.ceil(zielRate(z.betrag, bis, S.inflation, d ? S.anspar : K.tagesgeld, d, ab)) : 0; };
 // je Ziel: Sparrate für den Termin – oder bei eigener Rate, wann es reicht. Gespart wird von „start“ bis zum Termin.
 function zieleRechnen() {
@@ -2554,32 +2539,24 @@ function sparplan(C) {
   return { zeilen, A, jahr, jetzt: jahr[0] || 0, spitze: Math.max(0, ...jahr) };
 }
 
-/* Eingabe in der Datenaufnahme: Chips zum Antippen, darunter je Ziel Betrag und „in … Jahren“ */
-function zChipsHtml() {
-  return Object.entries(ZTYP).map(([k, t]) => t.mehrfach
-    ? `<button type="button" class="qchip z-c" data-ztyp="${k}">+ ${t.n}</button>`
-    : `<button type="button" class="bchip z-c" data-ztyp="${k}" aria-pressed="${S.ziele.some(z => z.typ === k)}"><i></i>${t.n}</button>`).join('');
-}
+/* Eingabe in der Datenaufnahme: je Ziel Name, Betrag und „in … Jahren“, darunter immer eine leere Zeile für das nächste */
+const zZeile = z => `<div class="z-row${z ? '' : ' neu'}"${z ? ` data-id="${z.id}"` : ''}>
+      <input class="z-titel" data-f="titel" placeholder="Sparziel, z. B. Auto" aria-label="Name des Sparziels" autocomplete="off">
+      <div class="money"><input data-f="betrag" inputmode="decimal" autocomplete="off" placeholder="Betrag" aria-label="Betrag in heutigen Preisen"><span class="unit">€</span></div>
+      <span class="mini-in z-j"><em>in</em><input data-f="jahre" inputmode="numeric" autocomplete="off" placeholder="${ZTYP.eigen.jahre}" aria-label="in wie vielen Jahren"><i>J.</i></span>
+      ${z ? `<button type="button" class="z-x" data-weg="${z.id}" aria-label="Sparziel entfernen">×</button>` : '<span></span>'}</div>`;
 function renderZielEingabe() {
-  const sig = S.ziele.map(z => z.id + z.typ).join('|');
-  ['zChips', 'zChips2'].forEach(id => { const el = $(id); if (el._sig !== sig) { el._sig = sig; el.innerHTML = zChipsHtml(); } });
+  const sig = S.ziele.map(z => z.id).join('|');
   const rows = $('zRows');
-  if (rows._sig !== sig) {
-    rows._sig = sig;
-    rows.innerHTML = S.ziele.map(z => `<div class="z-row" data-id="${z.id}">
-      ${z.typ === 'eigen' ? `<input class="z-titel" data-f="titel" placeholder="Eigenes Ziel" aria-label="Name des Ziels" autocomplete="off">` : `<span class="z-n">${zName(z)}</span>`}
-      <div class="money"><input data-f="betrag" inputmode="decimal" autocomplete="off" aria-label="${zName(z)}: Betrag in heutigen Preisen"><span class="unit">€</span></div>
-      <span class="mini-in z-j"><em>in</em><input data-f="jahre" inputmode="numeric" autocomplete="off" aria-label="${zName(z)}: in wie vielen Jahren"><i>J.</i></span>
-      <button type="button" class="z-x" data-weg="${z.id}" aria-label="${zName(z)} entfernen">×</button></div>`).join('');
-  }
-  rows.querySelectorAll('.z-row').forEach(r => {
+  if (rows._sig !== sig) { rows._sig = sig; rows.innerHTML = S.ziele.map(zZeile).join('') + zZeile(null); }
+  rows.querySelectorAll('.z-row[data-id]').forEach(r => {
     const z = zFind(r.dataset.id); if (!z) return;
     const b = r.querySelector('[data-f="betrag"]'), j = r.querySelector('[data-f="jahre"]'), t = r.querySelector('[data-f="titel"]');
-    if (document.activeElement !== b) b.value = eur0.format(Math.round(z.betrag));
+    if (document.activeElement !== b) b.value = z.betrag > 0 ? eur0.format(Math.round(z.betrag)) : '';
     if (document.activeElement !== j) j.value = z.jahre;
     if (t && document.activeElement !== t) t.value = z.titel;
   });
-  $('sum4').textContent = S.ziele.length ? S.ziele.map(zKurz).join(' · ') : 'nur Rente';
+  $('sum4').textContent = S.ziele.length ? S.ziele.map(z => z.betrag > 0 ? `${zKurz(z)} ${fE(z.betrag)}` : zKurz(z)).join(' · ') : 'keine';
   const da = S.ziele.length > 0;
   $('tbZiele').hidden = !da || !S.started; $('pnLoesZiele').hidden = !da; $('pnLoesPdf').hidden = da;
 }
@@ -2665,12 +2642,12 @@ $('zPlan').addEventListener('keydown', e => {
   z.jahre = z.wunsch = Math.max((z.start || 0) + 1, Math.min(50, Math.ceil(x.monate / 12) + (e.key === 'ArrowRight' ? 1 : -1))); z.rate = null; render();
   const n = $('zPlan').querySelector(`.zp-h[data-id="${z.id}"]`); if (n) n.focus();
 });
-// Ins Budget einpassen: wichtigstes Ziel zuerst (Notgroschen, dann nach Wunschtermin). Jedes Ziel bekommt den frühesten Termin
+// Ins Budget einpassen: was zuerst fällig ist, zuerst. Jedes Ziel bekommt den frühesten Termin
 // ab seinem Wunsch, für den es in jedem Sparjahr ins freie Budget passt; dafür darf es später anfangen, wenn vorher anderes dran ist.
 function insBudget() {
   const C = compute(), B = S.budget; if (B == null) return;
   const frei = Array.from({ length: 60 }, (_, j) => B - sparplan({ ...C, Z: [] }).zeilen.reduce((a, q) => a + (q.von <= j * 12 && j * 12 < q.bis ? q.rate : 0), 0));
-  const reihe = S.ziele.slice().sort((a, b) => (!!ZTYP[b.typ].nurTg - !!ZTYP[a.typ].nurTg) || ((a.wunsch ?? a.jahre) - (b.wunsch ?? b.jahre)));
+  const reihe = S.ziele.slice().sort((a, b) => (a.wunsch ?? a.jahre) - (b.wunsch ?? b.jahre));
   reihe.forEach(z => {
     z.rate = null; let plan = null;
     for (let E = z.wunsch ?? z.jahre; E <= 50 && !plan; E++)
@@ -2692,13 +2669,13 @@ function zeichneKarten(C) {
   if (g._sig !== sig) {
     g._sig = sig;
     g.innerHTML = C.Z.map((x, i) => { const z = x.z; return `<div class="panel z-card" data-id="${z.id}">
-      <div class="z-card-h"><i class="z-dot f-z${i % 6}"></i>${z.typ === 'eigen' ? `<input class="z-titel" data-f="titel" placeholder="Eigenes Ziel" aria-label="Name des Ziels" autocomplete="off">` : `<b>${zName(z)}</b>`}<button class="link z-weg" type="button" data-weg="${z.id}">Entfernen</button></div>
+      <div class="z-card-h"><i class="z-dot f-z${i % 6}"></i><input class="z-titel" data-f="titel" placeholder="Sparziel" aria-label="Name des Sparziels" autocomplete="off"><button class="link z-weg" type="button" data-weg="${z.id}">Entfernen</button></div>
       <div class="z-card-f">
         <div class="ctl"><div class="ctl-row"><label for="zb${z.id}">Betrag</label><span class="hint">heutige Preise</span></div>
-          <div class="money"><input id="zb${z.id}" data-f="betrag" inputmode="decimal" autocomplete="off"><span class="unit">€</span><button class="step z-st" type="button" tabindex="-1" data-f="betrag" data-d="-500" aria-label="500 € weniger">−</button><button class="step z-st" type="button" tabindex="-1" data-f="betrag" data-d="500" aria-label="500 € mehr">+</button></div></div>
+          <div class="money"><input id="zb${z.id}" data-f="betrag" inputmode="decimal" autocomplete="off" placeholder="0"><span class="unit">€</span><button class="step z-st" type="button" tabindex="-1" data-f="betrag" data-d="-500" aria-label="500 € weniger">−</button><button class="step z-st" type="button" tabindex="-1" data-f="betrag" data-d="500" aria-label="500 € mehr">+</button></div></div>
         <div class="ctl"><div class="ctl-row"><span class="lbl">Wann</span><span class="hint z-in"></span></div>
           <div class="money z-wann"><span class="z-jahr"></span><button class="step z-st" type="button" data-f="jahre" data-d="-1" aria-label="ein Jahr früher">−</button><button class="step z-st" type="button" data-f="jahre" data-d="1" aria-label="ein Jahr später">+</button></div></div>
-        ${ZTYP[z.typ].nurTg ? '<div class="z-anl z-tg"><span class="hint">auf dem Tagesgeld</span></div>' : `<div class="seg z-anl" role="group" aria-label="Anlegen in"><span class="pill"></span><button type="button" data-v="tg">Tagesgeld</button><button type="button" data-v="dep">Depot</button></div>`}
+        <div class="seg z-anl" role="group" aria-label="Anlegen in"><span class="pill"></span><button type="button" data-v="tg">Tagesgeld</button><button type="button" data-v="dep">Depot</button></div>
       </div>
       <div class="z-rate"><div class="ctl-row"><label for="zr${z.id}">Sparrate</label><button class="link z-puenkt" type="button" hidden>wie gewünscht</button></div>
         <div class="money z-rate-in"><input id="zr${z.id}" data-f="rate" inputmode="decimal" autocomplete="off"><span class="unit">€</span><button class="step z-st" type="button" tabindex="-1" data-f="rate" data-d="-25" aria-label="25 € weniger">−</button><button class="step z-st" type="button" tabindex="-1" data-f="rate" data-d="25" aria-label="25 € mehr">+</button></div>
@@ -2708,7 +2685,7 @@ function zeichneKarten(C) {
   C.Z.forEach(x => {
     const z = x.z, c = g.querySelector(`.z-card[data-id="${z.id}"]`); if (!c) return;
     const b = c.querySelector('[data-f="betrag"]'), r = c.querySelector('[data-f="rate"]'), t = c.querySelector('[data-f="titel"]');
-    if (document.activeElement !== b) b.value = eur0.format(Math.round(z.betrag));
+    if (document.activeElement !== b) b.value = z.betrag > 0 ? eur0.format(Math.round(z.betrag)) : '';
     if (document.activeElement !== r) r.value = eur0.format(Math.round(x.rate));
     if (t && document.activeElement !== t) t.value = z.titel;
     const jahre = Math.ceil(x.monate / 12);
@@ -2726,7 +2703,18 @@ function zeichneKarten(C) {
 }
 // Eingaben in Datenaufnahme und Karten: ein Weg für beide. Termin von Hand = neuer Wunsch, Sparen wieder ab sofort.
 function zielEingabe(e) {
-  const f = e.target.dataset.f, el = e.target.closest('[data-id]'); if (!f || !el) return;
+  const f = e.target.dataset.f, neu = e.target.closest('.z-row.neu'), el = e.target.closest('[data-id]'); if (!f || (!el && !neu)) return;
+  if (neu) {
+    // in die leere Zeile getippt: daraus wird ein Ziel, und das Feld bleibt mit dem Cursor am Ende im Fokus
+    const z = zielDazu(), wert = e.target.value;
+    if (f === 'titel') z.titel = wert.trim();
+    if (f === 'betrag') z.betrag = Math.max(0, parse(wert));
+    if (f === 'jahre') { const j = Math.round(parse(wert)); if (j >= 1 && j <= 50) z.jahre = z.wunsch = j; }
+    render();
+    const inp = $('zRows').querySelector(`.z-row[data-id="${z.id}"] [data-f="${f}"]`);
+    if (inp) { inp.value = wert; inp.focus(); inp.setSelectionRange?.(wert.length, wert.length); }
+    return;
+  }
   const z = zFind(el.dataset.id); if (!z) return;
   if (f === 'titel') { z.titel = e.target.value.trim(); render(); return; }   // Namen im Zeitstrahl und in der Zeile oben ziehen beim Zeichnen mit
   const v = Math.max(0, parse(e.target.value));
@@ -2740,11 +2728,10 @@ function zielEingabe(e) {
   $(id).addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('input')) { e.preventDefault(); e.target.blur(); } });
 });
 document.addEventListener('click', e => {
-  const c = e.target.closest('.z-c');
-  if (c) {
-    const typ = c.dataset.ztyp, da = S.ziele.find(z => z.typ === typ);
-    if (da && !ZTYP[typ].mehrfach) S.ziele = S.ziele.filter(z => z !== da); else zielDazu(typ);
-    render(); return;
+  if (e.target.closest('#zNeu')) {
+    const z = zielDazu(); render();
+    const t = $('zGrid').querySelector(`.z-card[data-id="${z.id}"] .z-titel`); if (t) t.focus();
+    return;
   }
   const w = e.target.closest('[data-weg]');
   if (w) { S.ziele = S.ziele.filter(z => z.id !== +w.dataset.weg); render(); return; }

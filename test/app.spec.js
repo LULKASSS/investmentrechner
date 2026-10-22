@@ -240,7 +240,18 @@ test('Schnell durchklicken: Weg- und Lösungs-Kurve zeichnen sich trotzdem ferti
   expect(problems).toEqual([]);
 });
 
-async function mitZielen(page, ziele = ['notgroschen', 'auto', 'wohnung']) {
+// Sparziele in der Datenaufnahme eintippen: immer in die leere Zeile, daraus wird ein Ziel
+async function zieleEintippen(page, ziele) {
+  for (const [name, betrag, jahre] of ziele) {
+    await page.locator('#zRows .z-row.neu [data-f="titel"]').fill(name);
+    const r = page.locator('#zRows .z-row[data-id]').last();
+    await expect(r.locator('[data-f="titel"]')).toHaveValue(name);
+    await r.locator('[data-f="betrag"]').fill(String(betrag));
+    await r.locator('[data-f="jahre"]').fill(String(jahre));
+  }
+}
+const DREI = [['Notgroschen', 9500, 1], ['Auto', 25000, 4], ['Wohnung', 70000, 8]];
+async function mitZielen(page, ziele = DREI) {
   await page.click('#ldGo');
   await page.click('.q-next[data-q="0"]');
   await page.click('.q-next[data-q="1"]');
@@ -249,12 +260,12 @@ async function mitZielen(page, ziele = ['notgroschen', 'auto', 'wohnung']) {
   await page.click('#next2');
   await page.fill('#ersp', '20000');
   await page.click('.q-next[data-q="3"]');
-  for (const t of ziele) await page.click(`#zChips [data-ztyp="${t}"]`);
+  await zieleEintippen(page, ziele);
   await page.click('#go');
   await expect(page.locator('#luecke')).toBeVisible();
 }
 
-test('Ziele: in den Daten angetippt, eigene Seite, Summe = Rente + Ziele, Termin verschieben senkt die Rate @mobil', async ({ page }) => {
+test('Ziele: in den Daten eingetippt, eigene Seite, Summe = Rente + Ziele, Termin verschieben senkt die Rate @mobil', async ({ page }) => {
   const problems = await open(page);
   await mitZielen(page);
   await expect(page.locator('#tbZiele')).toBeVisible();
@@ -322,13 +333,16 @@ test('Vorschlag-PDF mit Zielen @mobil', async ({ page }) => {
   expect(problems).toEqual([]);
 });
 
-test('Eigenes Ziel: Name tippen ohne dass der Cursor springt, steht im Zeitstrahl', async ({ page }) => {
+test('Sparziel: Name tippen ohne dass der Cursor springt, steht im Zeitstrahl; „+ Sparziel“ auf der Seite', async ({ page }) => {
   const problems = await open(page);
-  await mitZielen(page, ['eigen']);
+  await mitZielen(page, [['M', 8000, 2]]);
   await page.click('#tbNav [data-go="ziele"]');
   const t = page.locator('#zGrid .z-titel');
-  await t.click(); await page.keyboard.type('Motorrad');
+  await t.click(); await page.keyboard.press('End'); await page.keyboard.type('otorrad');
   await expect(t).toHaveValue('Motorrad');
   await expect(page.locator('#zPlan')).toContainText('Motorrad');
+  await page.click('#zNeu');
+  await expect(page.locator('#zGrid .z-card')).toHaveCount(2);
+  await expect(page.locator('#zGrid .z-card').nth(1).locator('.z-titel')).toBeFocused();
   expect(problems).toEqual([]);
 });

@@ -36,7 +36,8 @@ for (let seed = 1; seed <= N; seed++) {
     if (rnd() < 0.5) await page.fill('#bestand', String(pick([150, 900, 6000])));
     if (rnd() < 0.6) await page.fill('#ersp', String(pick([5000, 40000, 500000])));
     await page.click('.q-next[data-q="3"]');
-    for (const t of ['notgroschen', 'auto', 'wohnung', 'kind', 'eigen']) if (rnd() < 0.3) await page.click(`#zChips [data-ztyp="${t}"]`);
+    for (const [n, b, j] of [['Auto', pick([0, 25000, 900000]), pick([1, 4, 30])], ['Reise', pick([3000, 'abc', '']), pick([1, 99, ''])]])
+      if (rnd() < 0.4) { await page.locator('#zRows .z-row.neu [data-f="titel"]').fill(n); const r = page.locator('#zRows .z-row[data-id]').last(); await r.locator('[data-f="betrag"]').fill(String(b)); await r.locator('[data-f="jahre"]').fill(String(j)); }
     await page.click('#go');
     await page.waitForTimeout(800);
     for (let i = 0; i < 14; i++) {
