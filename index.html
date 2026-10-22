@@ -857,7 +857,8 @@ body.started .qs{padding-top:92px}
 .p-target .lp-vd{fill:var(--fg-3);stroke:var(--surface);stroke-width:2.5;animation:none}
 .lp-br{stroke:var(--ok);stroke-width:2;stroke-linecap:round;fill:none}
 .lp-br.down{stroke:var(--gap)}
-.p-lab.lp-vt{fill:var(--fg-3);stroke:var(--surface)}
+.p-lab.lp-vt{fill:var(--fg-2);stroke:var(--surface)}
+.p-lab.lp-st{fill:var(--accent-ink);stroke:var(--surface)}
 .p-lab.lp-bt{fill:var(--ok-ink);stroke:var(--surface);font-size:13.5px}
 .p-lab.lp-bt.down{fill:var(--gap-ink)}
 @media (max-width:640px){
@@ -1813,17 +1814,20 @@ function buildPdf(Doc, D) {
   doc.addPage(); bg(); y = M + 4;
   y = head(y, 'Deine Lösung');
   const LVv = D.loes && D.loes.V, balken = r.kapital > 0 && D.vorschlag > 0, satz = LVv && Math.abs(D.spar - LVv.rate) >= 0.5;
-  const c3 = y, c3h = 88 + (balken ? 14 : 0) + (LVv ? 4 : 0) + (satz ? 10 : 0);
+  const c3 = y, c3h = 90 + (balken ? 14 : 0) + (LVv ? 4 : 0) + (satz ? 10 : 0) + (mitDepot ? 4 : 0);
   card(M, c3, CW, c3h);
+  // wie in der App: links Sparrate und Bonus, rechts der Ring (Z = linker Rand des Ring-Bereichs)
+  const Z = W - M - 108;
+  dc(C.line); doc.setLineWidth(0.2); doc.line(Z - 2, c3 + 6, Z - 2, c3 + c3h - 6);
   // Ring wie im Rechner
   const tot = Math.max(r.bedarfNom, r.grvNom + r.bestand + r.luecke * anteil, 1);
   const cA = T.kAV, cD = (T.kDep0 || 0) * (T.faktor || 1), cI = imm ? imm.kMiete : 0, cE = D.E ? D.E.kEff : 0, cSum = cA + cD + cI + cE || 1, ged = r.luecke * anteil;
   const segs = [['Gesetzl. Rente', Math.min(r.grvNom, r.bedarfNom), C.grv], ['Verträge', r.vertraege, C.ver], ['Erspartes', r.erspLS, C.ers],
     ['Altersvorsorge', ged * cA / cSum, C.acc], ['Depot', ged * cD / cSum, C.accM], ['Einmalzahlung', ged * cE / cSum, C.einm], ['Immobilie', ged * cI / cSum, C.imm], ['noch offen', offen, C.gapS]].filter(s => s[1] >= 0.5);
-  const rcx = M + 52, rcy = c3 + 40, R1 = 21, R0 = 14.5;
-  font(8, 'sb'); txt(`Rente mit ${r.start}`, M + 6, c3 + 8);
-  font(7, 'r', C.fg3); txt('Bedarf', M + 78, c3 + 8); font(9, 'sb'); txt(fE(r.bedarfNom), M + 103, c3 + 8, { align: 'right' });
-  if (r.kapital > 0 && Math.max(r.bedarfNom, r.grvNom + r.bestand + r.luecke * anteil, 1) > r.bedarfNom * 1.005) { dc(C.ok); doc.setLineWidth(0.6); doc.line(M + 73.5, c3 + 6.9, M + 76.3, c3 + 6.9); }
+  const rcx = Z + 52, rcy = c3 + c3h / 2 + 1, R1 = 21, R0 = 14.5;
+  font(8, 'sb'); txt(`Rente mit ${r.start}`, Z + 6, c3 + 8);
+  font(7, 'r', C.fg3); txt('Bedarf', Z + 78, c3 + 8); font(9, 'sb'); txt(fE(r.bedarfNom), Z + 103, c3 + 8, { align: 'right' });
+  if (r.kapital > 0 && Math.max(r.bedarfNom, r.grvNom + r.bestand + r.luecke * anteil, 1) > r.bedarfNom * 1.005) { dc(C.ok); doc.setLineWidth(0.6); doc.line(Z + 73.5, c3 + 6.9, Z + 76.3, c3 + 6.9); }
   const arc = (a0, a1, col, hatched) => {
     const n = Math.max(3, Math.ceil((a1 - a0) * 140)), pts = [];
     for (let i = 0; i <= n; i++) { const a = (a0 + (a1 - a0) * i / n) * 2 * Math.PI; pts.push([rcx + Math.sin(a) * R1, rcy - Math.cos(a) * R1]); }
@@ -1875,11 +1879,11 @@ function buildPdf(Doc, D) {
     font(6.5, 'sb'); txt(t1, pxs + 5, py); font(6.5, 'r', C.fg3); txt(t2, pxs + 5 + w1, py);
     fc(ok ? C.okS : C.gapS); doc.roundedRect(pxs + 5 + w1 + w2 + 1, py - 2.7, w3, 3.6, 1.8, 1.8, 'F'); font(6, 'sb', ok ? C.ok : C.gap); txt(st, pxs + 5 + w1 + w2 + 2.5, py - 0.1);
   }
-  // rechts: Sparrate und Bonus
-  const sx3 = M + 114, sw3 = W - M - 6 - sx3;
+  // links: Sparrate und Bonus
+  const sx3 = M + 6, sw3 = Z - 8 - sx3;
   let sy3 = c3 + 9;
   font(7.5, 'r', C.ink); txt('Sparrate ab heute', sx3, sy3);
-  sy3 += 10; gross(fE(D.spar), sx3, sy3, 22);
+  sy3 += 13; const spw = gross(fE(D.spar), sx3, sy3, 30); font(7, 'r', C.fg3); txt('im Monat', sx3 + spw + 2, sy3);
   sy3 += 3;
   // Sparrate als Balken wie in der App: Marke „ganze Lücke“, ab dort grün; mit Vergleich bis zur Vergleichsrate blass
   if (balken) {
@@ -1998,8 +2002,11 @@ function buildPdf(Doc, D) {
       dc(c); doc.setLineWidth(0.45); doc.line(bx + 1.5, ya, bx, ya); doc.line(bx, ya, bx, yv); doc.line(bx, yv, bx + 1.5, yv);
       if (Math.abs(dv) >= 50) { font(7.5, 'sb', c); txt(`${dv > 0 ? '+' : '−'}${fK(Math.abs(dv))}`, bx - 1.8, (ya + yv) / 2 + 1.2, { align: 'right' }); }
       fc(C.fg3); doc.circle(xr, yv, 0.9, 'F');
-      const k = Math.min(B.rp.length - 1, 3), yk = Y(B.rp[k].tot), yak = Y(A.rp[k].tot);
-      font(6.3, 'sb', C.fg3); txt(`mit ${fE(LV.V.rate)}`, xr + 2.5, yk > yak ? Math.min(yk + 4, pb - 1.5) : yk - 2);
+      // beide Linien direkt beschriften wie in der App
+      const iE = Math.round((ra.length - 1) * 0.7), xE = X(ra[iE].m), idx = ra.map((q, i) => i).filter(i => i <= iE && X(ra[i].m) >= xE - 26);
+      const oben = A.C0 >= B.C0, wert = (rr, f) => f(...idx.map(i => Y(rr[i].tot)));
+      font(6.8, 'sb', C.accI); txt(`Sparrate ${fE(LV.H.rate)}`, xE, oben ? wert(ra, Math.min) - 2 : wert(ra, Math.max) + 3.6, { align: 'right' });
+      font(6.8, 'sb', C.fg2); txt(`Vergleich ${fE(LV.V.rate)}`, xE, oben ? Math.min(wert(rb, Math.max) + 3.6, pb - 1.5) : wert(rb, Math.min) - 2, { align: 'right' });
     }
     fc(C.ink); doc.circle(xr, Y(A.C0), 1, 'F');
     font(7, 'r', C.fg3); txt('Sparen', (px0 + xr) / 2, pt - 4, { align: 'center' }); txt('Rente', (xr + px1) / 2, pt - 4, { align: 'center' });
@@ -2849,8 +2856,13 @@ function drawLoes(C) {
   const two = (x, y, a, b) => `<text class="p-lab ein" x="${x}" y="${y}" text-anchor="end">${a}<tspan class="v" x="${x}" dy="15">${b}</tspan></text>`;
   if (w >= 560 && y0 - ys.ein[i9] > 30) labIn.push(two(G.xs[i9] - 6, (ys.ein[i9] + y0) / 2 - 3, 'eingezahlt', fK(A.einT)));
   if (B) {
-    const k = Math.min(B.rp.length - 1, 3), yv = Y(B.rp[k].tot), ya = Y(A.rp[k].tot);
-    labIn.push(`<text class="p-lab lp-vt" x="${xr + 10}" y="${yv > ya ? Math.min(yv + 18, y0 - 6) : yv - 10}">mit ${fE(V.rate)}</text>`);
+    // beide Linien direkt beschriften, wo sie beim Sparen schon deutlich auseinanderliegen: die obere darüber, die untere darunter
+    const iE = Math.round(Ls * (small ? 0.68 : 0.8)), xE = G.xs[iE], lw = small ? 92 : 112, idx = [];
+    for (let i = 0; i <= iE; i++) if (G.xs[i] >= xE - lw) idx.push(i);
+    const oben = A.C0 >= B.C0, ext = (a, f) => f(...idx.map(i => a[i]));
+    const yS = oben ? ext(ys.tot, Math.min) - 9 : ext(ys.tot, Math.max) + 17, yV = oben ? Math.min(ext(ys.vgl, Math.max) + 17, y0 - 6) : ext(ys.vgl, Math.min) - 9;
+    labIn.push(`<text class="p-lab lp-st" x="${xE}" y="${yS}" text-anchor="end">Sparrate ${fE(H.rate)}</text>`);
+    labIn.push(`<text class="p-lab lp-vt" x="${xE}" y="${yV}" text-anchor="end">Vergleich ${fE(V.rate)}</text>`);
     const dv = A.C0 - B.C0, bt = $('lpBt');
     bt.textContent = Math.abs(dv) < 50 ? '' : `${dv > 0 ? '+' : '−'}${fK(Math.abs(dv))}`;
     bt.classList.toggle('down', dv < 0); $('lpBr').classList.toggle('down', dv < 0);
