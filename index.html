@@ -405,7 +405,7 @@ body.ld-open{overflow:hidden}
 }
 
 /* Lösung: Karte mit dem Ring */
-.cov{padding:20px;display:grid;gap:12px}
+.cov{padding:20px;display:grid;gap:12px;grid-template-rows:auto 1fr auto}
 .cov-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:13px;color:var(--fg-3)}
 .cov-head > span:first-child{font-size:14px;font-weight:600;letter-spacing:-.01em;color:var(--fg)}
 .cov-need b{color:var(--fg);font-weight:600;font-size:16px;margin-left:6px;font-variant-numeric:tabular-nums}
@@ -678,7 +678,7 @@ body.started .qs{padding-top:92px}
 .p-avg{fill:none;stroke:var(--fg-3);stroke-width:1.2;stroke-dasharray:2 5;opacity:.7}
 .p-lab.ein{fill:var(--accent-ink);stroke:var(--surface)}
 
-/* Lösung: links Ring, rechts Sparrate und Bonus, darunter die Pille über die volle Breite */
+/* Lösung: links Sparrate und Bonus, rechts Ring, darunter die Kurve der Töpfe und die Pille über die volle Breite */
 .sol{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:stretch}
 .side{display:grid;grid-template-rows:auto 1fr;gap:20px;min-width:0}
 .sol-ctl,.sol-bonus{display:grid;gap:14px;align-content:start}
@@ -815,17 +815,60 @@ body.started .qs{padding-top:92px}
 .pnav .primary{min-width:min(100%,340px);padding:16px 36px;font-size:16px;text-align:center}
 #intakeNav{margin-top:24px}
 .big-rate{padding-bottom:2px}
-.sp-lbl{font-size:13px!important;color:var(--fg-3)!important;font-weight:400!important}
-#sparBox{height:64px}
-#sparBox input{font-size:34px;font-weight:600;letter-spacing:-.035em;padding-left:14px}
-#sparBox .unit{font-size:20px}
-#sparBox .step{width:48px;font-size:20px}
+.sp-lbl{font-size:15px!important;font-weight:600!important;letter-spacing:-.01em}
+/* Sparrate ist die Zahl der Lösung: größer als alles andere auf der Seite, darunter ein Regler zum Ausprobieren */
+#sparBox{height:88px}
+#sparBox input{font-size:56px;font-weight:600;letter-spacing:-.045em;padding-left:18px}
+#sparBox .unit{font-size:26px;font-weight:500}
+#sparBox .step{width:56px;font-size:24px}
+.sol-ctl > .ctl{gap:12px}
+/* Sparrate als Balken: gefüllt bis zur Sparrate, Marke „ganze Lücke“, ab der Marke grün.
+   Mit Vergleich: bis zur Vergleichsrate blass, was die eigene Sparrate darüber hinaus bringt, kräftig. */
+.spar-r{height:auto;margin:26px 0 30px;--fill:var(--accent);--fa:var(--fill);--a:0%}
+.spar-r.zu{--fill:var(--ok)}
+.spar-r.mitv{--fa:color-mix(in srgb,var(--fill) 34%,var(--surface-3))}
+.spar-r input{height:30px;position:relative;z-index:1}
+.spar-r input::-webkit-slider-runnable-track{height:14px;border-radius:7px;background:linear-gradient(to right,var(--fa) 0 var(--a),var(--fill) var(--a) var(--p),var(--surface-3) var(--p) 100%);transition:background .3s}
+.spar-r input::-moz-range-track{height:14px;border-radius:7px}
+.spar-r input::-moz-range-progress{height:14px;border-radius:7px;background:var(--fill)}
+.spar-r input::-webkit-slider-thumb{width:28px;height:28px;margin-top:-7px}
+.spar-r input::-moz-range-thumb{width:28px;height:28px}
+.sr-mark{position:absolute;left:calc(14px + (100% - 28px) * var(--t, 0%) / 100%);transform:translateX(-50%);padding:0;border:0;background:none;font:500 12.5px var(--sans);white-space:nowrap;font-variant-numeric:tabular-nums;pointer-events:none;--x:50%}
+.sr-mark.l{transform:translateX(-12px);--x:12px} .sr-mark.r{transform:translateX(calc(-100% + 12px));--x:calc(100% - 12px)}
+.sr-mark::before{content:"";position:absolute;left:calc(var(--x) - 1px);width:2px;height:26px;border-radius:1px;pointer-events:none}
+.sr-mark.lm{top:32px;color:var(--accent-ink);pointer-events:auto;cursor:pointer}
+.sr-mark.lm::before{top:-30px;background:var(--fg)}
+.sr-mark.lm.on{color:var(--fg-2);cursor:default}
+.sr-mark.vm{bottom:32px;color:var(--fg-3)}
+.sr-mark.vm::before{bottom:-30px;background:var(--fg-3)}
+.vgl-fx{margin:0;font-size:15px;line-height:1.45;color:var(--fg-2)}
+.vgl-fx b{font-weight:600;color:var(--fg);font-variant-numeric:tabular-nums}
+.vgl-fx b.plus{color:var(--ok-ink)} .vgl-fx b.minus{color:var(--gap-ink)}
+/* Vergleich zweier Sparraten */
+.vgl{padding-top:16px;border-top:1px solid var(--line)}
+.vgl-an{justify-self:start;padding:8px 14px;font-size:13px;animation:none}
+.vgl.on .vgl-an,.vgl:not(.on) .vgl-in{display:none}
+.vgl-in{display:grid;gap:14px;animation:popIn .45s var(--spring)}
+.vgl-set{display:grid;grid-template-columns:auto minmax(0,190px) auto;align-items:center;gap:12px}
+.vgl-set label{font-weight:500;font-size:14px}
+.vgl-set .link{justify-self:end}
+.sol-path{margin-top:20px}
+.lp-vgl{fill:none;stroke:var(--fg-3);stroke-width:1.75;stroke-linejoin:round;stroke-linecap:round}
+.p-target .lp-vd{fill:var(--fg-3);stroke:var(--surface);stroke-width:2.5;animation:none}
+.lp-br{stroke:var(--ok);stroke-width:2;stroke-linecap:round;fill:none}
+.lp-br.down{stroke:var(--gap)}
+.p-lab.lp-vt{fill:var(--fg-3);stroke:var(--surface)}
+.p-lab.lp-bt{fill:var(--ok-ink);stroke:var(--surface);font-size:13.5px}
+.p-lab.lp-bt.down{fill:var(--gap-ink)}
 @media (max-width:640px){
   #results > section.page,#luecke{padding-top:76px}
   .mod-h{font-size:26px;margin-bottom:14px}
   .pnav .primary{width:100%}
-  #sparBox{height:58px}
-  #sparBox input{font-size:30px!important}
+  #sparBox{height:72px}
+  #sparBox input{font-size:44px!important}
+  #sparBox .step{width:48px}
+  .vgl-set{grid-template-columns:auto minmax(0,1fr) auto}
+  .vgl-fx{font-size:14px}
 }
 @media (min-width:641px){
   .pnav{position:fixed;z-index:25;right:max(24px,calc((100vw - 1120px) / 2));bottom:24px;margin:0;justify-content:flex-end}
@@ -858,8 +901,6 @@ body.started .qs{padding-top:92px}
   #goH{display:none}
 }
 
-#qFull{font-size:12.5px;white-space:nowrap}
-#qFull.on{color:var(--fg-3);text-decoration:none;cursor:default}
 @media (min-width:641px){
   body.started{padding-bottom:0}
   #results{min-height:100svh;display:flex;flex-direction:column;padding-bottom:40px}
@@ -1061,20 +1102,23 @@ body.started .qs{padding-top:92px}
   <section id="toepfe" class="page" hidden>
     <h2 class="mod-h">Deine Lösung</h2>
     <div class="sol">
-      <div class="panel cov">
-        <div class="cov-head"><span id="covAge"></span><span class="cov-need" id="covNeedW"><i></i>Bedarf<b id="covNeed"></b></span></div>
-        <div class="ring" id="ring">
-          <svg id="ringSvg" aria-hidden="true"><g></g></svg>
-          <div class="ring-c"><b id="ringPct"></b><span id="ringSub"></span><em id="ringSub2"></em></div>
-        </div>
-        <div class="min-pill" id="minPill" hidden><i></i><span id="annMin"></span></div>
-      </div>
-
       <div class="side">
         <div class="panel sol-ctl">
           <div class="ctl">
-            <div class="ctl-row"><label for="spar" class="sp-lbl">Sparrate ab heute</label><button class="link" type="button" id="qFull"></button></div>
+            <label for="spar" class="sp-lbl">Sparrate ab heute</label>
             <div class="money" id="sparBox"><input id="spar" inputmode="decimal" autocomplete="off"><span class="unit">€</span><button class="step" type="button" tabindex="-1" data-for="spar" data-d="-25" aria-label="25 € weniger">−</button><button class="step" type="button" tabindex="-1" data-for="spar" data-d="25" aria-label="25 € mehr">+</button></div>
+            <div class="range spar-r" id="sparRW"><input type="range" id="sparR" min="0" max="500" step="25" aria-label="Sparrate in Euro"><i class="sr-mark vm" id="vglTick" hidden></i><button class="sr-mark lm" type="button" id="qFull"></button></div>
+            <p class="vgl-fx" id="vglFx" hidden></p>
+          </div>
+          <div class="vgl" id="vglWrap">
+            <button class="qchip vgl-an" type="button" id="vglAn">Mit anderer Sparrate vergleichen</button>
+            <div class="vgl-in">
+              <div class="vgl-set">
+                <label for="vgl">Vergleich</label>
+                <div class="money"><input id="vgl" inputmode="decimal" autocomplete="off" aria-label="Sparrate zum Vergleich in Euro"><span class="unit">€</span><button class="step" type="button" tabindex="-1" data-for="vgl" data-d="-25" aria-label="25 € weniger">−</button><button class="step" type="button" tabindex="-1" data-for="vgl" data-d="25" aria-label="25 € mehr">+</button></div>
+                <button class="link" type="button" id="vglAus">Entfernen</button>
+              </div>
+            </div>
           </div>
         </div>
         <div class="panel sol-bonus">
@@ -1098,6 +1142,19 @@ body.started .qs{padding-top:92px}
           <div class="bonus-inline" id="bonusInline"></div>
         </div>
       </div>
+      <div class="panel cov">
+        <div class="cov-head"><span id="covAge"></span><span class="cov-need" id="covNeedW"><i></i>Bedarf<b id="covNeed"></b></span></div>
+        <div class="ring" id="ring">
+          <svg id="ringSvg" aria-hidden="true"><g></g></svg>
+          <div class="ring-c"><b id="ringPct"></b><span id="ringSub"></span><em id="ringSub2"></em></div>
+        </div>
+        <div class="min-pill" id="minPill" hidden><i></i><span id="annMin"></span></div>
+      </div>
+    </div>
+
+    <div class="panel path sol-path" id="solPathPanel">
+      <div class="path-hero" aria-live="off"><span class="ph-k" id="lpK"></span><div class="ph-row"><b class="ph-v" id="lpV"></b><span class="ph-d" id="lpD"></span></div></div>
+      <div class="path-plot grow-plot" id="lpPlot"><svg id="lpSvg" aria-hidden="true"></svg></div>
     </div>
 
       <div class="bonus-grid" id="bonusGrid" hidden>
@@ -1448,7 +1505,25 @@ function toepfe(p, r, sparrate, avAnteil, topf2, tgZins, ums) {
     anteil: r.kapital > 0 ? (kAV + kDep0 * faktor) / r.kapital : 1 };
 }
 
-if (typeof module !== 'undefined') module.exports = { kvpvSatz, depotVerlauf, depotSim, vpFaktor, DEPOT_FAKTOR, abschlagFaktor, K, tarif, nettoAusBrutto, bruttoAusNetto, nettoSelbst, grvBrutto, grvNetto, rechne, toepfe, barwert, endwert, depotMitUmschichten, grvStartAlter };
+// Verlauf der Lösung: die Töpfe beim Sparen übereinander (ohne Schwankung), ab Rentenbeginn gemeinsam entnommen wie im Weg.
+// Endet bei Rentenbeginn genau beim Kapital der Pille (Altersvorsorge + Depot nach Steuer + Einmalzahlung).
+function loesungVerlauf(p, r, T, eBetrag, n1 = 120, n2 = 40) {
+  const N0 = Math.round(r.n * 12), N = r.N, sp = [];
+  const dep0 = endwert(T.dep, r.n, p.anspar), fDep = dep0 > 0 ? T.kDep / dep0 : 1;
+  for (let i = 0; i <= n1; i++) {
+    const m = Math.round(N0 * i / n1), t = m / 12, f = N0 > 0 ? m / N0 : 1;
+    sp.push({ m, av: endwert(T.av, t, p.anspar), dep: endwert(T.dep, t, p.anspar) * (1 - (1 - fDep) * f), ein: (eBetrag || 0) * Math.pow(1 + p.anspar, t) });
+  }
+  const e = sp[n1], C0 = e.av + e.dep + e.ein;
+  const re = Math.pow(1 + p.entnahme, 1 / 12) - 1, g = Math.pow(1 + p.inflation, 1 / 12), L = 1 / (barwert(1, 0, N, p.entnahme, p.inflation) || 1);
+  let c = 1; const v = [1];
+  for (let k = 0; k < N; k++) { c -= L * Math.pow(g, k); c *= 1 + re; v.push(Math.max(0, c)); }
+  const rp = [];
+  for (let i = 1; i <= n2; i++) { const k = Math.round(N * i / n2); rp.push({ m: N0 + k, tot: C0 * v[k] }); }
+  return { N0, N, sp, rp, C0, einT: (T.av + T.dep) * N0 + (eBetrag || 0) };
+}
+
+if (typeof module !== 'undefined') module.exports = { loesungVerlauf, kvpvSatz, depotVerlauf, depotSim, vpFaktor, DEPOT_FAKTOR, abschlagFaktor, K, tarif, nettoAusBrutto, bruttoAusNetto, nettoSelbst, grvBrutto, grvNetto, rechne, toepfe, barwert, endwert, depotMitUmschichten, grvStartAlter };
 
 </script>
 <script>
@@ -1737,7 +1812,8 @@ function buildPdf(Doc, D) {
   /* ---------- Seite 2 · Deine Lösung ---------- */
   doc.addPage(); bg(); y = M + 4;
   y = head(y, 'Deine Lösung');
-  const c3 = y, c3h = 88;
+  const LVv = D.loes && D.loes.V, balken = r.kapital > 0 && D.vorschlag > 0, satz = LVv && Math.abs(D.spar - LVv.rate) >= 0.5;
+  const c3 = y, c3h = 88 + (balken ? 14 : 0) + (LVv ? 4 : 0) + (satz ? 10 : 0);
   card(M, c3, CW, c3h);
   // Ring wie im Rechner
   const tot = Math.max(r.bedarfNom, r.grvNom + r.bestand + r.luecke * anteil, 1);
@@ -1803,9 +1879,31 @@ function buildPdf(Doc, D) {
   const sx3 = M + 114, sw3 = W - M - 6 - sx3;
   let sy3 = c3 + 9;
   font(7.5, 'r', C.ink); txt('Sparrate ab heute', sx3, sy3);
-  if (r.kapital > 0) { font(6.5, 'r', C.accI); txt(`ganze Lücke: ${fE(D.vorschlag)}`, sx3 + sw3, sy3, { align: 'right' }); }
   sy3 += 10; gross(fE(D.spar), sx3, sy3, 22);
   sy3 += 3;
+  // Sparrate als Balken wie in der App: Marke „ganze Lücke“, ab dort grün; mit Vergleich bis zur Vergleichsrate blass
+  if (balken) {
+    const sMax = Math.ceil(Math.max(500, D.vorschlag * 1.5, D.spar, LVv ? LVv.rate : 0) / 100) * 100, f = v => sx3 + sw3 * Math.min(1, Math.max(0, v) / sMax);
+    const zu = anteil >= 0.995, col = zu ? C.ok : C.acc, blass = zu ? [165, 202, 188] : [195, 184, 235], by = sy3 + (LVv ? 7 : 3), bh = 2.6;
+    fc(C.s2); doc.roundedRect(sx3, by, sw3, bh, bh / 2, bh / 2, 'F');
+    if (D.spar > 0) { fc(col); doc.roundedRect(sx3, by, Math.max(bh, f(D.spar) - sx3), bh, bh / 2, bh / 2, 'F'); }
+    const a = LVv ? Math.min(LVv.rate, D.spar) : 0;
+    if (a > 0) { fc(blass); doc.roundedRect(sx3, by, Math.max(bh, f(a) - sx3), bh, bh / 2, bh / 2, 'F'); doc.rect(Math.max(sx3 + bh / 2, f(a) - bh / 2), by, Math.min(bh / 2, f(a) - sx3), bh, 'F'); }
+    const marke = (v, c) => { dc(c); doc.setLineWidth(0.4); doc.line(f(v), by - 1, f(v), by + bh + 1); };
+    const al = v => { const t = v / sMax; return t < 0.12 ? 'left' : t > 0.88 ? 'right' : 'center'; };
+    marke(D.vorschlag, C.ink); font(6.3, 'r', C.accI); txt(`ganze Lücke ${fE(D.vorschlag)}`, f(D.vorschlag), by + bh + 4.6, { align: al(D.vorschlag) });
+    if (LVv) { marke(LVv.rate, C.fg3); font(6.3, 'r', C.fg3); txt(fE(LVv.rate), f(LVv.rate), by - 2.2, { align: al(LVv.rate) }); }
+    sy3 = by + bh + 8;
+    if (satz) {
+      const d = D.spar - LVv.rate, dr = D.loes.H.rente - LVv.rente, mehr = d > 0;
+      const teile = mehr ? [[`${fE(d)} mehr`, 'sb', C.ink], [' im Monat bringen dir ', 'r', C.fg2], [`${fE(dr)} mehr Rente`, 'sb', C.ok], [` mit ${p.rentenbeginn}.`, 'r', C.fg2]]
+        : [[`${fE(-d)} weniger`, 'sb', C.ink], [' im Monat kosten dich ', 'r', C.fg2], [`${fE(-dr)} Rente`, 'sb', C.gap], [` mit ${p.rentenbeginn}.`, 'r', C.fg2]];
+      // Satz wie in der App, bricht um, wo die Spalte endet
+      let tx = sx3; sy3 += 2;
+      teile.forEach(([t, k, c]) => { font(7.5, k, c); if (tx > sx3 && tx + tw(t.trimEnd()) > sx3 + sw3) { tx = sx3; sy3 += 3.6; t = t.trimStart(); } txt(t, tx, sy3); tx += tw(t); });
+      sy3 += 4;
+    }
+  }
   const chip = (t, x, on) => pill(t, x, sy3, on ? { bg: C.accS, c: C.ink, border: C.accM } : { c: C.fg2 });
   let cx;
   sy3 += 8; hline(sx3, sx3 + sw3, sy3 - 3);
@@ -1869,7 +1967,49 @@ function buildPdf(Doc, D) {
     iv.forEach(([v, k], j) => { font(9, 'sb'); txt(v, ix + j * iws, y + 14); font(6, 'r', C.fg3); txt(k, ix + j * iws, y + 17.5); });
     y += 27;
   }
-  // Deine Angaben: wie die zugeklappten Fragen im Rechner
+  // Entwicklung der Töpfe wie in der App: übereinander bis Rentenbeginn, dann Entnahme; gestrichelt die Vergleichsrate
+  const LV = D.loes;
+  if (LV) {
+    // rutschen die Angaben ohnehin auf die nächste Seite, nimmt die Kurve den Platz bis unten
+    let ch = 64;
+    if (y + ch > BOT) { doc.addPage(); bg(); y = M + 4; }
+    else if (y + ch + 5 + 72 > BOT) ch = Math.max(64, Math.min(96, BOT - y - 4));
+    card(M, y, CW, ch);
+    const A = LV.A, B = LV.B, ra = LV.ra, rb = LV.rb, px0 = M + 7, px1 = W - M - 7;
+    font(7, 'r', C.fg3); txt(`Kapital mit ${p.rentenbeginn} · ${K.jahr + p.rentenbeginn - p.alter}`, px0, y + 9);
+    const kw = gross(fK(A.C0), px0, y + 18.5, 20);
+    if (A.C0 - A.einT >= 50) pill(`+${fK(A.C0 - A.einT)} Wertzuwachs`, px0 + kw + 4, y + 17, { bg: C.okS, c: C.ok });
+    const pt = y + 32, pb = y + ch - 9;
+    const mMax = A.N0 + A.N, yMax = Math.max(...ra.map(q => q.tot), ...(rb ? rb.map(q => q.tot) : [0]), 1) * 1.06;
+    const X = m => px0 + m / mMax * (px1 - px0), Y = v => pb - v / yMax * (pb - pt), xr = X(A.N0);
+    const ein = q => LV.H.rate * q.m + LV.eB;
+    poly([...ra.map(q => [X(q.m), Y(q.tot)]), ...A.sp.slice().reverse().map(q => [X(q.m), Y(ein(q))])], C.accS);
+    poly([...A.sp.map(q => [X(q.m), Y(ein(q))]), [xr, pb], [px0, pb]], C.accM);
+    { const i9 = Math.round((A.sp.length - 1) * 0.94), q = A.sp[i9]; if (pb - Y(ein(q)) > 6) { font(6.5, 'sb', C.accI); txt('eingezahlt ' + fK(A.einT), X(q.m) - 1.5, (Y(ein(q)) + pb) / 2 + 1.2, { align: 'right' }); } }
+    poly([[xr, Y(A.C0)], ...A.rp.map(q => [X(q.m), Y(q.tot)]), [px1, pb], [xr, pb]], C.out);
+    dash([0.5, 1.2]); pline(ra.map(q => [X(q.m), Y(q.avg)]), C.fg3, 0.25); dash();
+    if (B) pline([...rb.map(q => [X(q.m), Y(q.tot)]), ...B.rp.map(q => [X(q.m), Y(q.tot)])], C.fg3, 0.4);
+    pline([...ra.map(q => [X(q.m), Y(q.tot)]), ...A.rp.map(q => [X(q.m), Y(q.tot)])], C.acc, 0.5);
+    dc(C.line2); doc.setLineWidth(0.2); dash([0.8, 1]); doc.line(xr, pt - 4, xr, pb); dash();
+    dc(C.ink); doc.setLineWidth(0.3); dash([1.2, 1.2]); doc.line(px0, Y(A.C0), xr, Y(A.C0)); dash();
+    if (B) {
+      // Unterschied bei Rentenbeginn als Klammer, die Vergleichslinie beschriftet an ihrem Ende
+      const ya = Y(A.C0), yv = Y(B.C0), bx = xr - 3, dv = A.C0 - B.C0, c = dv >= 0 ? C.ok : C.gap;
+      dc(c); doc.setLineWidth(0.45); doc.line(bx + 1.5, ya, bx, ya); doc.line(bx, ya, bx, yv); doc.line(bx, yv, bx + 1.5, yv);
+      if (Math.abs(dv) >= 50) { font(7.5, 'sb', c); txt(`${dv > 0 ? '+' : '−'}${fK(Math.abs(dv))}`, bx - 1.8, (ya + yv) / 2 + 1.2, { align: 'right' }); }
+      fc(C.fg3); doc.circle(xr, yv, 0.9, 'F');
+      const k = Math.min(B.rp.length - 1, 3), yk = Y(B.rp[k].tot), yak = Y(A.rp[k].tot);
+      font(6.3, 'sb', C.fg3); txt(`mit ${fE(LV.V.rate)}`, xr + 2.5, yk > yak ? Math.min(yk + 4, pb - 1.5) : yk - 2);
+    }
+    fc(C.ink); doc.circle(xr, Y(A.C0), 1, 'F');
+    font(7, 'r', C.fg3); txt('Sparen', (px0 + xr) / 2, pt - 4, { align: 'center' }); txt('Rente', (xr + px1) / 2, pt - 4, { align: 'center' });
+    hline(px0, px1, pb, C.line2, 0.25);
+    font(6.5, 'r', C.fg3); txt(`Alter ${p.alter}`, px0, pb + 4); txt(String(p.rentenbeginn), xr, pb + 4, { align: 'center' }); txt(String(p.lebenserwartung), px1, pb + 4, { align: 'right' });
+    y += ch + 5;
+  }
+  // Deine Angaben: wie die zugeklappten Fragen im Rechner (passt es nicht mehr, auf eine eigene Seite)
+  let neueSeite = false;
+  if (y + 72 > BOT) { doc.addPage(); bg(); y = M; neueSeite = true; }
   y += 4; y = head(y, 'Deine Angaben');
   const job = S.status === 'ang' ? `Angestellt · ${fE(p.netto)} netto` : `Selbstständig · ${fE(p.gewinn)} Gewinn`;
   const vorh = [r.vertraege > 0 ? `Verträge ${fE(r.vertraege)}` : '', S.ersp > 0 ? `Erspartes ${fE(S.ersp)}` : ''].filter(Boolean).join(' · ') || 'noch nichts';
@@ -1885,7 +2025,7 @@ function buildPdf(Doc, D) {
   });
   y += 26;
   // Annahmen, knapp
-  y = Math.max(y + 8, 252);
+  y = neueSeite ? y + 8 : Math.max(y + 8, 252);
   hline(M, W - M, y); y += 5;
   font(7.5, 'sb'); txt('Annahmen', M, y); y += 4.5;
   const ann2 = [
@@ -1923,7 +2063,7 @@ const KREDIT_ZINS = 0.042;
 const DEF = { started: false, alter: 32, rentenbeginn: 67, status: 'ang', netto: 0, gewinn: 0, drv: false, bedarf: 0, bedarfManuell: false,
   inflation: 0.02, lebenserwartung: 85, einstieg: 22, anpVar: 0.015, bestand: 0, ersp: 0,
   anspar: 0.07, entnahme: 0.03, grvMode: 'auto', grvWert: 0, step: 0, open: new Set([0]),
-  spar: null, depot: false, imm: false, immPreis: 150000, immJahre: 5, immMiete: 450, immKredit: true, avAnteil: 0.8, mindestHeute: null, ums: 3, einmAn: null, einmZiel: 'av' };
+  spar: null, depot: false, imm: false, immPreis: 150000, immJahre: 5, immMiete: 450, immKredit: true, avAnteil: 0.8, mindestHeute: null, ums: 3, einmAn: null, einmZiel: 'av', vgl: null };
 let S = structuredClone(DEF);
 let countUp = false;
 
@@ -2025,10 +2165,17 @@ function compute() {
     }
   }
   const spar = S.spar == null ? vorschlag : S.spar;
-  const avBetrag = depA ? Math.min(spar, Math.max(0, Math.round(spar * split / 5) * 5)) : spar;
-  S.split = spar > 0 ? avBetrag / spar : split;
-  const T = toepfe(p, r, spar, S.split, 'depot', 0, S.ums);
-  const anteil = r.kapital > 0 ? (T.anteil * r.kapital + I.kMiete + E.kEff) / r.kapital : 1;
+  // Ergebnis für eine Sparrate bei gleicher Aufteilung und gleichem Bonus: die eigene und die zum Vergleich rechnen gleich
+  const eMit = E.on && E.betrag > 0;
+  const fuer = rate => {
+    const av = depA ? Math.min(rate, Math.max(0, Math.round(rate * split / 5) * 5)) : rate;
+    const t = toepfe(p, r, rate, rate > 0 ? av / rate : split, 'depot', 0, S.ums);
+    return { rate, T: t, anteil: r.kapital > 0 ? (t.anteil * r.kapital + I.kMiete + E.kEff) / r.kapital : 1,
+      kapital: t.kAV + t.kDep + (eMit ? E.k : 0), rente: t.lAV + t.lDep + (eMit ? E.l : 0) };
+  };
+  const H = fuer(spar), T = H.T, anteil = H.anteil;
+  S.split = spar > 0 ? T.av / spar : split;
+  const V = S.vgl == null ? null : fuer(S.vgl);
   // Deckt das Sichere (gesetzl. Rente + Verträge + Altersvorsorge) die Mindestsicherung?
   const totB = Math.max(r.bedarfNom, r.grvNom + r.bestand + r.luecke * anteil, 1);
   const eAV = E.dep ? 0 : E.kEff;                          // Einmalzahlung in der AV zählt zum Sicheren
@@ -2040,7 +2187,7 @@ function compute() {
   const E1 = endwert(1, r.n, S.anspar), needMin = Math.max(0, mNom - Math.min(r.grvNom, r.bedarfNom) - r.bestand);
   const kMin = r.luecke > 0 && r.kapital > 0 && needMin > 0 ? needMin / r.luecke * r.kapital - eAV : 0;
   const avMin = E1 > 0 && kMin > 0 ? Math.ceil(kMin / E1 / 5) * 5 : 0;
-  return { p, r, T, vorschlag, spar, split, mindest, I, anteil, depA, immA, sicher, avMin, E };
+  return { p, r, T, vorschlag, spar, split, mindest, I, anteil, depA, immA, sicher, avMin, E, H, V };
 }
 
 function renderIntake(r, mindest, sicher) {
@@ -2128,6 +2275,17 @@ function einmVorteil() {
   try { S.einmAn = false; const ohne = compute().vorschlag; S.einmAn = true; return ohne - compute().vorschlag; }
   finally { S.einmAn = an; S.split = sp; }
 }
+// Vergleich zweier Sparraten: in einem Satz, was der Unterschied an Rente bringt (Kapital zeigt die Kurve)
+function renderVgl(C) {
+  const { H, V } = C, an = V != null, fx = $('vglFx');
+  $('vglWrap').classList.toggle('on', an); $('vglWrap').querySelector('.vgl-in').inert = !an;
+  const d = an ? H.rate - V.rate : 0, dr = an ? H.rente - V.rente : 0;
+  fx.hidden = !an || Math.abs(d) < 0.5;
+  if (!an) return;
+  setMoney('vgl', V.rate);
+  if (!fx.hidden) fx.innerHTML = d > 0 ? `<b>${fE(d)} mehr</b> im Monat bringen dir <b class="plus">${fE(dr)} mehr Rente</b> mit ${S.rentenbeginn}.`
+    : `<b>${fE(-d)} weniger</b> im Monat kosten dich <b class="minus">${fE(-dr)} Rente</b> mit ${S.rentenbeginn}.`;
+}
 function render() {
   const vorteil = einmVorteil();
   const C = compute(); compute.last = C;
@@ -2154,6 +2312,8 @@ function render() {
   if (r.bruecke > 0) $('bridge').innerHTML = `Gesetzliche Rente frühestens ab ${r.start}. Bis dahin fehlen <b>${fE(r.lueckeBruecke)}</b> im Monat.`;
   if (PLAY.pending) heroVerbergen();
 
+  if (PAGE === 'toepfe' || LP.k) drawLoes(C);
+
   /* 2 · Weg dorthin */
   const rates = r.raten.map(x => ({ ...x, rate: x.rate == null || !isFinite(x.rate) ? x.rate : Math.ceil(x.rate) })), base = rates[0].rate;
   const hatWeg = r.kapital > 0 && base > 0 && isFinite(base);
@@ -2170,9 +2330,18 @@ function render() {
 
   /* 3 · Lösung */
   setMoney('spar', spar);
+  // Regler zum Ausprobieren: reicht bis anderthalbmal die ganze Lücke, mindestens 500 €, und immer über beide Sparraten
+  const sMax = Math.ceil(Math.max(500, vorschlag * 1.5, spar, S.vgl || 0) / 100) * 100;
+  $('sparR').max = sMax; setRange('sparR', Math.min(spar, sMax), fE);
+  const sw = $('sparRW'), pct = v => Math.min(100, v / sMax * 100);
+  sw.classList.toggle('zu', r.kapital <= 0 || C.anteil >= 0.995); sw.classList.toggle('mitv', C.V != null);
+  sw.style.setProperty('--a', C.V ? pct(Math.min(C.V.rate, spar)) + '%' : '0%');
+  const marke = (el, v, l) => { const t = pct(v); el.style.setProperty('--t', t + '%'); el.textContent = l; el.classList.toggle('l', t < 12); el.classList.toggle('r', t > 88); };
+  $('qFull').hidden = !(r.kapital > 0 && vorschlag > 0); marke($('qFull'), vorschlag, `ganze Lücke ${fE(vorschlag)}`);
+  $('vglTick').hidden = C.V == null; if (C.V) marke($('vglTick'), C.V.rate, fE(C.V.rate));
+  renderVgl(C);
   // Schnellknöpfe: ganze Lücke oder nur die Mindestsicherung
   const avMin = compute.last ? compute.last.avMin : 0;
-  $('qFull').textContent = `ganze Lücke: ${fE(vorschlag)}`;
   setMoney('einm', S.ersp, S.ersp <= 0);
   // Einmalzahlung: eingestellt unter dem Chip, Ergebnis als eigene Spalte in der Pille
   const einmOn = !einmAus(), einmCol = einmOn && E.betrag > 0, spart = r.kapital > 0 && vorteil >= 1;
@@ -2585,29 +2754,168 @@ function kurveAbtasten(e) {
   PATH.scrub = true; pathHero(p);
   $('pathPlot').classList.add('hov');
 }
-function abtastenEnde() { clearTimeout(FINGER.t); FINGER.an = false; FINGER.id = null; $('pathPlot').classList.remove('hov'); PATH.scrub = false; pathHeroRuhe(); }
+function abtastenEnde() { $('pathPlot').classList.remove('hov'); PATH.scrub = false; pathHeroRuhe(); }
 // Maus: Abtasten beim Drüberfahren. Finger: erst nach kurzem Halten (0,25 s) oder seitlichem Wischen,
 // damit Scrollen über die Kurve hinweg einfach scrollt; solange abgetastet wird, scrollt die Seite nicht.
-const FINGER = { id: null, x: 0, y: 0, an: false, t: 0 };
-$('pathPlot').addEventListener('pointerdown', e => {
-  if (e.pointerType === 'mouse') { kurveAbtasten(e); return; }
-  Object.assign(FINGER, { id: e.pointerId, x: e.clientX, y: e.clientY, an: false });
-  clearTimeout(FINGER.t);
-  FINGER.t = setTimeout(() => { if (FINGER.id === e.pointerId) { FINGER.an = true; kurveAbtasten(FINGER.letztes || e); } }, 250);
-  FINGER.letztes = e;
-});
-$('pathPlot').addEventListener('pointermove', e => {
-  if (e.pointerType === 'mouse') { kurveAbtasten(e); return; }
-  if (e.pointerId !== FINGER.id) return;
-  FINGER.letztes = e;
-  if (FINGER.an) { kurveAbtasten(e); return; }
-  const dx = Math.abs(e.clientX - FINGER.x), dy = Math.abs(e.clientY - FINGER.y);
-  if (dy > 8 && dy > dx) { clearTimeout(FINGER.t); FINGER.id = null; return; }   // senkrecht: Seite scrollt
-  if (dx > 10 && dx > dy * 1.5) { clearTimeout(FINGER.t); FINGER.an = true; kurveAbtasten(e); }
-});
-$('pathPlot').addEventListener('touchmove', e => { if (FINGER.an) e.preventDefault(); }, { passive: false });
-['pointerup', 'pointercancel'].forEach(t => $('pathPlot').addEventListener(t, e => { if (e.pointerType !== 'mouse') abtastenEnde(); }));
-$('pathPlot').addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') abtastenEnde(); });
+function abtastbar(plot, zeig, ende) {
+  const F = { id: null, x: 0, y: 0, an: false, t: 0, letztes: null };
+  const aus = () => { clearTimeout(F.t); F.an = false; F.id = null; ende(); };
+  plot.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'mouse') { zeig(e); return; }
+    Object.assign(F, { id: e.pointerId, x: e.clientX, y: e.clientY, an: false, letztes: e });
+    clearTimeout(F.t);
+    F.t = setTimeout(() => { if (F.id === e.pointerId) { F.an = true; zeig(F.letztes || e); } }, 250);
+  });
+  plot.addEventListener('pointermove', e => {
+    if (e.pointerType === 'mouse') { zeig(e); return; }
+    if (e.pointerId !== F.id) return;
+    F.letztes = e;
+    if (F.an) { zeig(e); return; }
+    const dx = Math.abs(e.clientX - F.x), dy = Math.abs(e.clientY - F.y);
+    if (dy > 8 && dy > dx) { clearTimeout(F.t); F.id = null; return; }   // senkrecht: Seite scrollt
+    if (dx > 10 && dx > dy * 1.5) { clearTimeout(F.t); F.an = true; zeig(e); }
+  });
+  plot.addEventListener('touchmove', e => { if (F.an) e.preventDefault(); }, { passive: false });
+  ['pointerup', 'pointercancel'].forEach(t => plot.addEventListener(t, e => { if (e.pointerType !== 'mouse') aus(); }));
+  plot.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') aus(); });
+}
+abtastbar($('pathPlot'), kurveAbtasten, abtastenEnde);
+
+/* ===== Lösung: Kurve wie im Weg, aber mit der Sparrate der Lösung samt Bonus (Depot nach Steuer, Einmalzahlung).
+   Mit Vergleich: dieselbe Kurve für die Vergleichsrate in Grau, bei Rentenbeginn eine Klammer mit dem Unterschied. ===== */
+const LP = { k: null, cur: null, raf: 0, shown: false, playing: false, scrub: false, d: null };
+// Wert einer Linie aus Punkten [Monat, Wert] an einem Monat
+const linieBei = (pts, m) => {
+  for (let i = 1; i < pts.length; i++) if (pts[i][0] >= m) { const a = pts[i - 1], b = pts[i], t = (m - a[0]) / Math.max(1e-9, b[0] - a[0]); return a[1] + (b[1] - a[1]) * t; }
+  return pts[pts.length - 1][1];
+};
+// Schwankung wie im Weg: dieselbe feste Zufallsfolge, endet bei Rentenbeginn genau beim Kapital
+function lpReihe(D) {
+  const B = marktRauschen(D.sp.length - 1), sig = 0.42;
+  return D.sp.map((q, i) => { const avg = q.av + q.ein + q.dep; return { m: q.m, avg, tot: avg * Math.exp(sig * B[i]) }; });
+}
+function lpPfade(ys, G) {
+  LP.cur = ys;
+  const P = (x, y) => x.toFixed(1) + ',' + y.toFixed(1), xs = G.xs, rx = G.rx, L = xs.length - 1, y0 = G.y0, xr = xs[L];
+  const linie = a => xs.map((x, i) => P(x, a[i])).join(' L');
+  $('lpEin').setAttribute('d', 'M' + linie(ys.ein) + ` L${P(xr, y0)} L${P(xs[0], y0)} Z`);
+  $('lpZins').setAttribute('d', 'M' + linie(ys.tot) + ' L' + xs.map((_, i) => P(xs[L - i], ys.ein[L - i])).join(' L') + ' Z');
+  $('lpOut').setAttribute('d', `M${P(xr, ys.tot[L])} L` + rx.map((x, i) => P(x, ys.out[i])).join(' L') + ` L${P(rx[rx.length - 1], y0)} L${P(xr, y0)} Z`);
+  $('lpAvg').setAttribute('d', 'M' + linie(ys.avg));
+  $('lpLine').setAttribute('d', 'M' + linie(ys.tot) + ' L' + rx.map((x, i) => P(x, ys.out[i])).join(' L'));
+  $('lpVgl').setAttribute('d', ys.vgl ? 'M' + linie(ys.vgl) + ' L' + rx.map((x, i) => P(x, ys.vglOut[i])).join(' L') : '');
+  const c0 = ys.c0[0], tl = $('lpTl');
+  tl.setAttribute('x1', G.x0); tl.setAttribute('x2', xr); tl.setAttribute('y1', c0); tl.setAttribute('y2', c0);
+  $('lpTd').setAttribute('cx', xr); $('lpTd').setAttribute('cy', c0);
+  const v = ys.vgl ? ys.cv[0] : null, bx = xr - 12;
+  $('lpVd').style.display = $('lpBr').style.display = $('lpBt').style.display = v == null ? 'none' : '';
+  if (v != null) {
+    $('lpVd').setAttribute('cx', xr); $('lpVd').setAttribute('cy', v);
+    $('lpBr').setAttribute('d', `M${P(bx + 6, c0)} L${P(bx, c0)} L${P(bx, v)} L${P(bx + 6, v)}`);
+    $('lpBt').setAttribute('x', bx - 8); $('lpBt').setAttribute('y', (c0 + v) / 2 + 5);
+  }
+}
+function drawLoes(C) {
+  const { p, r, H, V, E } = C, plot = $('lpPlot'), svg = $('lpSvg');
+  $('solPathPanel').hidden = !(r.n > 0 && H.kapital > 0);
+  if ($('solPathPanel').hidden) { LP.d = null; return; }
+  const w = plot.clientWidth || 1000, small = innerWidth <= 640, h = small ? 230 : 300;
+  const padT = 44, padB = 28, x0 = 2, x1 = w - 2, eB = E.on ? E.betrag : 0;
+  const A = loesungVerlauf(p, r, H.T, eB), B = V ? loesungVerlauf(p, r, V.T, eB) : null;
+  const ra = lpReihe(A), rb = B ? lpReihe(B) : null;
+  const mMax = A.N0 + A.N, yMax = Math.max(...ra.map(q => q.tot), ...(rb ? rb.map(q => q.tot) : [0]), 1) * 1.12;
+  const X = m => x0 + m / mMax * (x1 - x0), Y = v => padT + (1 - v / yMax) * (h - padT - padB);
+  const G = { xs: A.sp.map(q => X(q.m)), rx: A.rp.map(q => X(q.m)), y0: Y(0), x0 };
+  const ys = { tot: ra.map(q => Y(q.tot)), avg: ra.map(q => Y(q.avg)), ein: A.sp.map(q => Y(H.rate * q.m + eB)), out: A.rp.map(q => Y(q.tot)), c0: [Y(A.C0)],
+    vgl: rb ? rb.map(q => Y(q.tot)) : null, vglOut: B ? B.rp.map(q => Y(q.tot)) : null, cv: B ? [Y(B.C0)] : null };
+  const key = [w, h, A.N0, A.N].join('|'), morph = LP.k === key && LP.cur;
+  svg.setAttribute('viewBox', `0 0 ${w} ${h}`); svg.style.height = h + 'px';
+  if (LP.k !== key) {
+    LP.k = key; LP.cur = null;
+    svg.innerHTML = `<defs><linearGradient id="lpGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".16"/><stop offset="1" stop-color="var(--accent)" stop-opacity=".04"/></linearGradient><clipPath id="lpClip"><rect id="lpClipR" x="-4" y="-60" height="${h + 120}" width="${LP.shown ? w + 8 : 0}"/></clipPath></defs>
+      <line class="p-rb" id="lpRb"/>
+      <g clip-path="url(#lpClip)"><path class="p-ein" id="lpEin"/><path class="p-zins" id="lpZins" style="fill:url(#lpGrad)"/><path class="p-out" id="lpOut"/><path class="p-avg" id="lpAvg"/><path class="lp-vgl" id="lpVgl"/><path class="p-line" id="lpLine"/></g>
+      <g id="lpLabs"></g><g id="lpLabsIn" clip-path="url(#lpClip)"></g>
+      <g class="p-target${LP.shown ? ' on' : ''}" id="lpTarget"><line id="lpTl"/><circle class="lp-vd" id="lpVd" r="4.5"/><path class="lp-br" id="lpBr"/><text class="p-lab lp-bt" id="lpBt" text-anchor="end"></text><circle id="lpTd" r="5"/></g>
+      <g class="p-tip" id="lpTip"><circle id="lpTipC" r="4.5"/></g>
+      <line class="g-cross" id="lpCross" y1="${padT - 6}" y2="${h - padB}"/><circle class="g-dot" id="lpDot" r="5"/>`;
+  }
+  const xr = X(A.N0);
+  $('lpRb').setAttribute('x1', xr); $('lpRb').setAttribute('x2', xr); $('lpRb').setAttribute('y1', 22); $('lpRb').setAttribute('y2', h - padB);
+  // Beschriftung direkt in der Grafik: eingezahlt in der Fläche, die Vergleichslinie an ihrem Ende, der Unterschied an der Klammer
+  const lab = [], labIn = [], Ls = A.sp.length - 1, i9 = Math.round(Ls * 0.94), y0 = G.y0;
+  lab.push(`<text class="p-cap" x="${(x0 + xr) / 2}" y="14" text-anchor="middle">Sparen</text><text class="p-cap" x="${(xr + x1) / 2}" y="14" text-anchor="middle">Rente</text>`);
+  lab.push(`<text class="p-ax" x="${x0}" y="${h - 6}">Alter ${S.alter}</text><text class="p-ax" x="${xr}" y="${h - 6}" text-anchor="middle">${S.rentenbeginn}</text><text class="p-ax" x="${x1}" y="${h - 6}" text-anchor="end">${S.lebenserwartung}</text>`);
+  const two = (x, y, a, b) => `<text class="p-lab ein" x="${x}" y="${y}" text-anchor="end">${a}<tspan class="v" x="${x}" dy="15">${b}</tspan></text>`;
+  if (w >= 560 && y0 - ys.ein[i9] > 30) labIn.push(two(G.xs[i9] - 6, (ys.ein[i9] + y0) / 2 - 3, 'eingezahlt', fK(A.einT)));
+  if (B) {
+    const k = Math.min(B.rp.length - 1, 3), yv = Y(B.rp[k].tot), ya = Y(A.rp[k].tot);
+    labIn.push(`<text class="p-lab lp-vt" x="${xr + 10}" y="${yv > ya ? Math.min(yv + 18, y0 - 6) : yv - 10}">mit ${fE(V.rate)}</text>`);
+    const dv = A.C0 - B.C0, bt = $('lpBt');
+    bt.textContent = Math.abs(dv) < 50 ? '' : `${dv > 0 ? '+' : '−'}${fK(Math.abs(dv))}`;
+    bt.classList.toggle('down', dv < 0); $('lpBr').classList.toggle('down', dv < 0);
+  }
+  $('lpLabs').innerHTML = lab.join(''); $('lpLabsIn').innerHTML = labIn.join('');
+  LP.d = { A, ser: [...ra.map(q => [q.m, q.tot]), ...A.rp.map(q => [q.m, q.tot])], Y, x0, x1, xr, mMax, rate: H.rate, eB };
+  if (!LP.playing) lpRuhe();
+  cancelAnimationFrame(LP.raf);
+  if (morph && !LP.playing) {
+    const from = LP.cur, t0 = performance.now(), lerp = (a, b, e) => b ? b.map((v, i) => (a ? a[i] : v) + (v - (a ? a[i] : v)) * e) : null;
+    const st = now => { const e = easeOut((now - t0) / 480), o = {}; Object.keys(ys).forEach(k => o[k] = lerp(from[k], ys[k], e)); lpPfade(o, G); if (e < 1) LP.raf = requestAnimationFrame(st); };
+    LP.raf = requestAnimationFrame(st);
+  } else lpPfade(ys, G);
+}
+// Wert der Kurve an einer x-Position
+function lpBei(x) {
+  const d = LP.d, m = Math.max(0, Math.min(d.mMax, (x - d.x0) / (d.x1 - d.x0) * d.mMax));
+  return { m, v: linieBei(d.ser, m), ein: d.rate * Math.min(m, d.A.N0) + d.eB, age: S.alter + m / 12 };
+}
+function lpChip(v, ein, spar) {
+  const ch = $('lpD'), plus = v - ein;
+  ch.className = 'ph-d' + (spar ? (plus >= 0 ? ' up' : ' down') : '');
+  ch.textContent = !spar ? 'in der Entnahme' : Math.abs(plus) < 50 ? '' : `${plus >= 0 ? '+' : '−'}${fK(Math.abs(plus))} Wertzuwachs`;
+}
+function lpRuhe() {
+  const d = LP.d; if (!d || LP.scrub) return;
+  $('lpK').textContent = `Kapital mit ${S.rentenbeginn} · ${K.jahr + S.rentenbeginn - S.alter}`;
+  tween($('lpV'), d.A.C0, fK);
+  lpChip(d.A.C0, d.A.einT, true);
+}
+function lpHero(q) {
+  const alter = Math.min(S.lebenserwartung, Math.floor(q.age));
+  $('lpK').textContent = `Mit ${alter} · ${K.jahr + alter - S.alter}`;
+  zahlSofort($('lpV'), q.v, fK);
+  lpChip(q.v, q.ein, q.m <= LP.d.A.N0);
+}
+function lpAbtasten(e) {
+  if (!LP.shown || !LP.d || LP.playing) return;
+  const d = LP.d, rc = $('lpPlot').getBoundingClientRect(), x = Math.max(d.x0, Math.min(d.x1, e.clientX - rc.left)), q = lpBei(x);
+  $('lpCross').setAttribute('x1', x); $('lpCross').setAttribute('x2', x);
+  $('lpDot').setAttribute('cx', x); $('lpDot').setAttribute('cy', d.Y(q.v));
+  LP.scrub = true; lpHero(q); $('lpPlot').classList.add('hov');
+}
+abtastbar($('lpPlot'), lpAbtasten, () => { $('lpPlot').classList.remove('hov'); LP.scrub = false; lpRuhe(); });
+// Erster Auftritt, sobald die Kurve im Bild ist: wächst bis Rentenbeginn, kurzer Halt, dann die Entnahme
+function playLoes() {
+  if (!LP.d || LP.playing || LP.shown) return;
+  LP.playing = true;
+  const tip = $('lpTip'), tgt = $('lpTarget'), t0 = performance.now();
+  tgt.classList.remove('on'); tip.classList.add('on');
+  const st = now => {
+    const t = (now - t0) / 1000, d = LP.d; if (!d) { LP.playing = false; return; }
+    const xEnd = d.x1 + 6, x = t < 1.42 ? d.x0 + (d.xr - d.x0) * (t / 1.42) : t < 1.67 ? d.xr : d.xr + (xEnd - d.xr) * smooth((t - 1.67) / 0.71);
+    $('lpClipR').setAttribute('width', Math.max(0, x + 4));
+    if (t >= 1.42) tgt.classList.add('on');
+    const q = lpBei(Math.min(x, d.x1));
+    $('lpTipC').setAttribute('cx', Math.min(x, d.x1)); $('lpTipC').setAttribute('cy', d.Y(q.v));
+    if (t < 1.42) lpHero(q); else if (!st.ziel) { st.ziel = true; lpRuhe(); }
+    if (t < 2.45) LP.raf = requestAnimationFrame(st);
+    else { LP.playing = false; LP.shown = true; tip.classList.remove('on'); $('lpClipR').setAttribute('width', d.x1 + 12); lpRuhe(); }
+  };
+  LP.raf = requestAnimationFrame(st);
+}
+if ('IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting && PAGE === 'toepfe') playLoes(); }), { threshold: 0.35 }).observe($('solPathPanel'));
+else LP.shown = true;
 /* Seiten und Fragen, die schon einmal zu sehen waren: ihr Auftritt läuft nur beim ersten Mal */
 const SEEN = new Set();
 const QSEEN = new Set([0]);
@@ -2883,10 +3191,11 @@ const money = {
   einm: v => { const neu = () => { S.ersp = v; S.einmAn = true; }; if ((S.ersp > 0) !== (v > 0) && S.started) umbau(() => { neu(); render(); }); else neu(); },
   grvB: v => { if (v > 0) { S.grvMode = 'brief'; S.grvWert = v; } else S.grvMode = 'auto'; },
   spar: v => S.spar = v,
+  vgl: v => S.vgl = v,
   immPreis: v => S.immPreis = v, immMiete: v => halteAnteil(() => { S.immMiete = v; }),
   mindest: v => S.mindestHeute = v
 };
-const stepOf = id => id === 'bedarf' || id === 'immMiete' || id === 'mindest' ? 50 : id === 'spar' ? 25 : id === 'immPreis' ? 10000 : id === 'ersp' || id === 'einm' ? 1000 : 100;
+const stepOf = id => id === 'bedarf' || id === 'immMiete' || id === 'mindest' ? 50 : id === 'spar' || id === 'vgl' ? 25 : id === 'immPreis' ? 10000 : id === 'ersp' || id === 'einm' ? 1000 : 100;
 const snap = (cur, st, dir) => dir > 0 ? (Math.floor(cur / st + 1e-9) + 1) * st : Math.max(0, (cur % st > 1e-9 ? Math.floor(cur / st) : Math.round(cur / st) - 1) * st);
 Object.entries(money).forEach(([id, fn]) => {
   const el = $(id);
@@ -2930,6 +3239,10 @@ document.querySelectorAll('.nstep').forEach(b => b.addEventListener('click', () 
 }));
 $('grvReset').addEventListener('click', () => { S.grvMode = 'auto'; render(); });
 $('qFull').addEventListener('click', () => { S.spar = null; render(); });
+$('sparR').addEventListener('input', e => { S.spar = +e.target.value; render(); });
+// Vergleich: die Rate, die gerade eingestellt ist, wird zur Vergleichsrate; danach die eigene Sparrate ändern (oder umgekehrt)
+$('vglAn').addEventListener('click', () => { S.vgl = compute().spar; render(); if (innerWidth > 640) setTimeout(() => $('spar').focus(), 60); });
+$('vglAus').addEventListener('click', () => { S.vgl = null; render(); $('vglAn').focus(); });
 $('bEinm').addEventListener('click', () => { umbau(() => { S.einmAn = einmAus(); render(); }); if (!einmAus() && !(S.ersp > 0) && innerWidth > 640) setTimeout(() => $('einm').focus(), 250); });
 $('qMin').addEventListener('click', () => {
   const c = compute(); if (!(c.avMin > 0)) return;
@@ -2940,7 +3253,8 @@ $('qMin').addEventListener('click', () => {
 $('splitAuto').addEventListener('click', () => { S.mindestHeute = null; render(); });
 $('reset').addEventListener('click', () => {
   S = structuredClone(DEF); render._gap = null; $('results').hidden = true; $('topbar').hidden = true; SEEN.clear(); QSEEN.clear(); QSEEN.add(0); $('ring')._shown = false;
-  stopPlay(); RING.k = 4; PATH.k = null; PATH.cur = null; PATH.shown = false; cancelAnimationFrame(PATH.raf); cancelAnimationFrame(TL.raf); TL.p = 0; $('tl').classList.remove('live'); ['cmpNv', 'cmpWv', 'cmpMv'].forEach(id => $(id)._v = undefined);
+  stopPlay(); RING.k = 4; PATH.k = null; PATH.cur = null; PATH.shown = false; cancelAnimationFrame(PATH.raf);
+  Object.assign(LP, { k: null, cur: null, shown: false, playing: false, scrub: false, d: null }); cancelAnimationFrame(LP.raf); cancelAnimationFrame(TL.raf); TL.p = 0; $('tl').classList.remove('live'); ['cmpNv', 'cmpWv', 'cmpMv'].forEach(id => $(id)._v = undefined);
   PAGE = 'intake'; ['luecke', 'warten', 'toepfe'].forEach(x => { $(x).hidden = true; $(x).classList.remove('in-r', 'in-l', 'in-s', 'out-l', 'out-r', 'leert'); $(x).removeAttribute('style'); }); $('intake').hidden = false;
   render(); window.scrollTo({ top: 0, behavior: 'auto' }); zeigeStart();
 });
@@ -2971,11 +3285,14 @@ function klassischerDownload(blob, file) {
   setTimeout(() => URL.revokeObjectURL(url), 30000);
 }
 const docDaten = () => {
-  const { p, r, T, vorschlag, spar, I, anteil, depA, immA, sicher, E } = compute();
+  const { p, r, T, vorschlag, spar, I, anteil, depA, immA, sicher, E, H, V } = compute();
+  const eB = E.on ? E.betrag : 0, kurz = x => x && { rate: x.rate, anteil: x.anteil, rente: x.rente, kapital: x.kapital };
   const now = new Date();
   return { now, D: { p, r, T: { ...T, anteil }, S: { ...S, topf2: 'depot' }, name: '', datum: now.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }), vorschlag, spar,
     sicher: r.kapital > 0 && sicher.heute > 0 ? sicher : null,
     avMin: compute().avMin, einmPlus: einmAus() ? 0 : einmVorteil(), E: E.on && E.betrag > 0 ? E : null, weg: r.kapital > 0 && r.raten[0].rate > 0 && isFinite(r.raten[0].rate) ? pathData(r, Math.ceil(r.raten[0].rate)) : null,
+    loes: r.n > 0 && H.kapital > 0 ? (() => { const A = loesungVerlauf(p, r, H.T, eB), B = V ? loesungVerlauf(p, r, V.T, eB) : null;
+      return { A, B, ra: lpReihe(A), rb: B ? lpReihe(B) : null, eB, H: kurz(H), V: kurz(V) }; })() : null,
     viz: depA && S.ums ? depotVerlauf(T.dep >= 1 ? T.dep : 100, r.n, S.anspar, S.ums) : null,
     imm: immA ? { kredit: true, zins: KREDIT_ZINS, kreditRate: (() => { const k = S.immPreis * 0.9, z = KREDIT_ZINS / 12; return k > 0 ? k * z / (1 - Math.pow(1 + z, -360)) : 0; })(), preis: S.immPreis, ek: I.ek, jahre: I.jahre, rate: I.rate, miete: S.immMiete, mieteRb: I.mieteRb, kMiete: I.kMiete } : null } };
 };

@@ -141,7 +141,52 @@ test('Vorschlag-PDF mit allen Bausteinen @mobil', async ({ page }) => {
   await zurLoesung(page);
   await page.click('#bDep'); await page.click('#bImm');
   await page.click('#pdfBtn');
-  await expect(page.locator('#vPages img')).toHaveCount(2, { timeout: 20_000 });
+  // mit allen Bausteinen und der Kurve der Lösung rutschen „Deine Angaben“ auf Seite 3
+  await expect(page.locator('#vPages img')).toHaveCount(3, { timeout: 20_000 });
+  expect(problems).toEqual([]);
+});
+
+test('Sparrate vergleichen: Satz, Marke am Balken, graue Linie und Klammer in der Kurve @mobil', async ({ page }) => {
+  const problems = await open(page);
+  await zurLoesung(page);
+  await expect(page.locator('#vglFx')).toBeHidden();
+  await page.fill('#spar', '150');
+  await page.click('#vglAn');
+  await expect(page.locator('#vgl')).toHaveValue('150');
+  await page.fill('#spar', '300');
+  await expect(page.locator('#vglFx')).toContainText('150 € mehr');
+  await expect(page.locator('#vglFx')).toContainText('mehr Rente');
+  await expect(page.locator('#vglTick')).toBeVisible();
+  await expect(page.locator('#sparRW')).toHaveClass(/mitv/);
+  expect(await page.locator('#lpVgl').getAttribute('d')).toMatch(/^M/);
+  // Klammer bei Rentenbeginn = Kapital mit 300 € minus Kapital mit 150 €, gleich gerundet wie überall
+  await page.waitForTimeout(1200);
+  const k300 = zahl(await page.locator('#pSumK').textContent());
+  await page.fill('#spar', '150');
+  await expect(page.locator('#vglFx')).toBeHidden();
+  await page.waitForTimeout(1200);
+  const k150 = zahl(await page.locator('#pSumK').textContent());
+  await page.fill('#spar', '300'); await page.waitForTimeout(1200);
+  expect(Math.abs(zahl(await page.locator('#lpBt').textContent()) - (k300 - k150))).toBeLessThanOrEqual(100);
+  // weniger als die Vergleichsrate: der Satz nennt, was es kostet
+  await page.fill('#spar', '100');
+  await expect(page.locator('#vglFx')).toContainText('50 € weniger');
+  await page.click('#vglAus');
+  await expect(page.locator('#vglFx')).toBeHidden();
+  await expect(page.locator('#vglTick')).toBeHidden();
+  expect(await page.locator('#lpVgl').getAttribute('d')).toBe('');
+  expect(problems).toEqual([]);
+});
+
+test('Balken der Sparrate: Regler stellt die Sparrate, „ganze Lücke“ setzt zurück, ab der Lücke grün', async ({ page }) => {
+  const problems = await open(page);
+  await zurLoesung(page);
+  await expect(page.locator('#sparRW')).toHaveClass(/zu/);
+  await page.locator('#sparR').fill('100');
+  await expect(page.locator('#spar')).toHaveValue('100');
+  await expect(page.locator('#sparRW')).not.toHaveClass(/zu/);
+  await page.click('#qFull');
+  await expect(page.locator('#sparRW')).toHaveClass(/zu/);
   expect(problems).toEqual([]);
 });
 

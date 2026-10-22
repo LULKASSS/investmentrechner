@@ -43,3 +43,14 @@ test('Zufallswerte: nie NaN, nie negative Lücke', () => {
     for (const k of ['kAV', 'kDep', 'lAV', 'lDep']) expect(Number.isFinite(T[k])).toBe(true);
   }
 });
+
+test('Verlauf der Lösung endet bei Rentenbeginn beim Kapital der Pille', () => {
+  const r = M.rechne(BASIS);
+  for (const [anteil, ums, ein] of [[1, 0, 0], [0.8, 3, 0], [0.7, 5, 20000]]) {
+    const T = M.toepfe(BASIS, r, 300, anteil, 'depot', 0, ums), V = M.loesungVerlauf(BASIS, r, T, ein);
+    const e = V.sp[V.sp.length - 1], kE = ein * Math.pow(1 + BASIS.anspar, r.n);
+    expect(e.av + e.dep + e.ein).toBeCloseTo(T.kAV + T.kDep + kE, 0);
+    expect(V.rp[V.rp.length - 1].tot).toBeCloseTo(0, 0);
+    for (const q of [...V.sp, ...V.rp]) expect(Object.values(q).every(Number.isFinite)).toBe(true);
+  }
+});
