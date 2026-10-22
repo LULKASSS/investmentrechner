@@ -215,3 +215,21 @@ test('Scrollen über die Weg-Kurve schaltet nicht ins Abtasten, Halten schon @mo
   await touch('touchEnd');
   await expect(page.locator('#phK')).toHaveText(/^Kapital mit/);
 });
+
+test('Schnell durchklicken: Weg- und Lösungs-Kurve zeichnen sich trotzdem fertig', async ({ page }) => {
+  const problems = await open(page);
+  await zurLoesung(page);
+  // Lösung: Kurve ins Bild, während sie sich zeichnet neu rechnen lassen
+  await page.evaluate(() => document.getElementById('solPathPanel').scrollIntoView({ block: 'center' }));
+  await page.waitForTimeout(500);
+  await page.fill('#spar', '300');
+  await page.waitForTimeout(3000);
+  const ganz = async (clip, plot) => page.evaluate(([c, p]) => +document.getElementById(c).getAttribute('width') >= document.getElementById(p).clientWidth, [clip, plot]);
+  expect(await ganz('lpClipR', 'lpPlot')).toBe(true);
+  // Weg: hin, sofort weiter, zurück
+  await page.click('#tbNav [data-go="warten"]'); await page.waitForTimeout(450);
+  await page.click('#tbNav [data-go="toepfe"]'); await page.waitForTimeout(300);
+  await page.click('#tbNav [data-go="warten"]'); await page.waitForTimeout(3000);
+  expect(await ganz('pClipR', 'pathPlot')).toBe(true);
+  expect(problems).toEqual([]);
+});

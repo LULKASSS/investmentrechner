@@ -2617,7 +2617,8 @@ $('ringSvg').addEventListener('click', e => {
 });
 
 /* ===== Weg dorthin: der Sparplan wächst bis zum nötigen Kapital, in der Rente wird es aufgebraucht ===== */
-const PATH = { k: null, cur: null, raf: 0, shown: false, playing: false, d: null };
+// raf: Nachziehen bei Änderungen, play: erster Auftritt. Getrennt, damit ein neues Rechnen den Auftritt nicht abbricht.
+const PATH = { k: null, cur: null, raf: 0, play: 0, shown: false, playing: false, d: null };
 function marktRauschen(n) {
   if (marktRauschen[n]) return marktRauschen[n];
   let s = 20261006; const rnd = () => { s = (s * 1664525 + 1013904223) % 4294967296; return s / 4294967296; };
@@ -2709,24 +2710,23 @@ function pathAt(x) {
 // Erster Auftritt: die Kurve wächst bis zur Ziellinie, kurzer Halt, dann die Entnahme bis zum Ende
 function playPath() {
   const d = PATH.d; if (!d) return;
-  cancelAnimationFrame(PATH.raf); PATH.playing = true;
-  const rect = $('pClipR'), tip = $('pTip'), tgt = $('pTarget'), xEnd = d.x1 + 6;
-  tgt.classList.remove('on'); tip.classList.add('on');
+  cancelAnimationFrame(PATH.play); PATH.playing = true;
   const t0 = performance.now();
+  // die Elemente jedes Mal neu holen: ändert sich die Breite, wird die Grafik neu aufgebaut
   const st = now => {
-    const t = (now - t0) / 1000, dd = PATH.d;
+    const t = (now - t0) / 1000, dd = PATH.d, xEnd = dd.x1 + 6;
     const x = t < 1.42 ? dd.x0 + (dd.xr - dd.x0) * (t / 1.42) : t < 1.67 ? dd.xr : dd.xr + (xEnd - dd.xr) * smooth((t - 1.67) / 0.71);
     $('pClipR').setAttribute('width', Math.max(0, x + 4));
-    if (t >= 1.42) tgt.classList.add('on');
+    $('pTarget').classList.toggle('on', t >= 1.42); $('pTip').classList.add('on');
     const p = pathAt(Math.min(x, dd.x1));
     $('pTipC').setAttribute('cx', Math.min(x, dd.x1)); $('pTipC').setAttribute('cy', p.y);
     $('pTipT').setAttribute('x', Math.min(Math.max(Math.min(x, dd.x1), 56), dd.x1 - 56)); $('pTipT').setAttribute('y', p.y - 12);
     // die große Zahl oben wächst mit der Linie bis zum Ziel und bleibt dort stehen
     if (t < 1.42) pathHero(p); else if (!st.ziel) { st.ziel = true; pathHeroRuhe(); }
-    if (t < 2.45) PATH.raf = requestAnimationFrame(st);
-    else { PATH.playing = false; PATH.shown = true; tip.classList.remove('on'); rect.setAttribute('width', dd.x1 + 12); pathHeroRuhe(); }
+    if (t < 2.45) PATH.play = requestAnimationFrame(st);
+    else { PATH.playing = false; PATH.shown = true; $('pTip').classList.remove('on'); $('pClipR').setAttribute('width', dd.x1 + 12); pathHeroRuhe(); }
   };
-  PATH.raf = requestAnimationFrame(st);
+  PATH.play = requestAnimationFrame(st);
 }
 // Abtasten: Linie und Punkt folgen Maus oder Finger, die große Zahl oben zeigt den Wert in diesem Alter
 function pathHero(p) {
@@ -2783,7 +2783,7 @@ abtastbar($('pathPlot'), kurveAbtasten, abtastenEnde);
 
 /* ===== Lösung: Kurve wie im Weg, aber mit der Sparrate der Lösung samt Bonus (Depot nach Steuer, Einmalzahlung).
    Mit Vergleich: dieselbe Kurve für die Vergleichsrate in Grau, bei Rentenbeginn eine Klammer mit dem Unterschied. ===== */
-const LP = { k: null, cur: null, raf: 0, shown: false, playing: false, scrub: false, d: null };
+const LP = { k: null, cur: null, raf: 0, play: 0, shown: false, playing: false, scrub: false, d: null };
 // Wert einer Linie aus Punkten [Monat, Wert] an einem Monat
 const linieBei = (pts, m) => {
   for (let i = 1; i < pts.length; i++) if (pts[i][0] >= m) { const a = pts[i - 1], b = pts[i], t = (m - a[0]) / Math.max(1e-9, b[0] - a[0]); return a[1] + (b[1] - a[1]) * t; }
@@ -2899,20 +2899,19 @@ abtastbar($('lpPlot'), lpAbtasten, () => { $('lpPlot').classList.remove('hov'); 
 function playLoes() {
   if (!LP.d || LP.playing || LP.shown) return;
   LP.playing = true;
-  const tip = $('lpTip'), tgt = $('lpTarget'), t0 = performance.now();
-  tgt.classList.remove('on'); tip.classList.add('on');
+  const t0 = performance.now();
   const st = now => {
     const t = (now - t0) / 1000, d = LP.d; if (!d) { LP.playing = false; return; }
     const xEnd = d.x1 + 6, x = t < 1.42 ? d.x0 + (d.xr - d.x0) * (t / 1.42) : t < 1.67 ? d.xr : d.xr + (xEnd - d.xr) * smooth((t - 1.67) / 0.71);
     $('lpClipR').setAttribute('width', Math.max(0, x + 4));
-    if (t >= 1.42) tgt.classList.add('on');
+    $('lpTarget').classList.toggle('on', t >= 1.42); $('lpTip').classList.add('on');
     const q = lpBei(Math.min(x, d.x1));
     $('lpTipC').setAttribute('cx', Math.min(x, d.x1)); $('lpTipC').setAttribute('cy', d.Y(q.v));
     if (t < 1.42) lpHero(q); else if (!st.ziel) { st.ziel = true; lpRuhe(); }
-    if (t < 2.45) LP.raf = requestAnimationFrame(st);
-    else { LP.playing = false; LP.shown = true; tip.classList.remove('on'); $('lpClipR').setAttribute('width', d.x1 + 12); lpRuhe(); }
+    if (t < 2.45) LP.play = requestAnimationFrame(st);
+    else { LP.playing = false; LP.shown = true; $('lpTip').classList.remove('on'); $('lpClipR').setAttribute('width', d.x1 + 12); lpRuhe(); }
   };
-  LP.raf = requestAnimationFrame(st);
+  LP.play = requestAnimationFrame(st);
 }
 if ('IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting && PAGE === 'toepfe') playLoes(); }), { threshold: 0.35 }).observe($('solPathPanel'));
 else LP.shown = true;
@@ -3253,8 +3252,8 @@ $('qMin').addEventListener('click', () => {
 $('splitAuto').addEventListener('click', () => { S.mindestHeute = null; render(); });
 $('reset').addEventListener('click', () => {
   S = structuredClone(DEF); render._gap = null; $('results').hidden = true; $('topbar').hidden = true; SEEN.clear(); QSEEN.clear(); QSEEN.add(0); $('ring')._shown = false;
-  stopPlay(); RING.k = 4; PATH.k = null; PATH.cur = null; PATH.shown = false; cancelAnimationFrame(PATH.raf);
-  Object.assign(LP, { k: null, cur: null, shown: false, playing: false, scrub: false, d: null }); cancelAnimationFrame(LP.raf); cancelAnimationFrame(TL.raf); TL.p = 0; $('tl').classList.remove('live'); ['cmpNv', 'cmpWv', 'cmpMv'].forEach(id => $(id)._v = undefined);
+  stopPlay(); RING.k = 4; PATH.k = null; PATH.cur = null; PATH.shown = false; PATH.playing = false; cancelAnimationFrame(PATH.raf); cancelAnimationFrame(PATH.play);
+  Object.assign(LP, { k: null, cur: null, shown: false, playing: false, scrub: false, d: null }); cancelAnimationFrame(LP.raf); cancelAnimationFrame(LP.play); cancelAnimationFrame(TL.raf); TL.p = 0; $('tl').classList.remove('live'); ['cmpNv', 'cmpWv', 'cmpMv'].forEach(id => $(id)._v = undefined);
   PAGE = 'intake'; ['luecke', 'warten', 'toepfe'].forEach(x => { $(x).hidden = true; $(x).classList.remove('in-r', 'in-l', 'in-s', 'out-l', 'out-r', 'leert'); $(x).removeAttribute('style'); }); $('intake').hidden = false;
   render(); window.scrollTo({ top: 0, behavior: 'auto' }); zeigeStart();
 });
