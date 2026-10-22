@@ -54,3 +54,18 @@ test('Verlauf der Lösung endet bei Rentenbeginn beim Kapital der Pille', () => 
     for (const q of [...V.sp, ...V.rp]) expect(Object.values(q).every(Number.isFinite)).toBe(true);
   }
 });
+
+test('Sparziele: Rate und Dauer passen zueinander, Depot nach Steuer, später anfangen kostet mehr', () => {
+  for (const [betrag, jahre, zins, depot] of [[25000, 4, 0.02, false], [70000, 8, 0.07, true], [9500, 1, 0.02, false]]) {
+    const rate = Math.ceil(M.zielRate(betrag, jahre, 0.02, zins, depot));
+    const m = M.zielMonate(betrag, rate, 0.02, zins, depot);
+    expect(Math.abs(m - jahre * 12)).toBeLessThanOrEqual(1);
+    expect(M.zielNetto(rate, jahre * 12, zins, depot)).toBeGreaterThanOrEqual(M.zielBetrag(betrag, jahre * 12, 0.02) - 1);
+  }
+  // Depot: Steuer nur auf den Gewinn
+  expect(M.zielNetto(100, 120, 0.07, true)).toBeLessThan(M.zielNetto(100, 120, 0.07, false));
+  expect(M.zielNetto(100, 120, 0.07, true)).toBeGreaterThan(100 * 120);
+  // erst in 2 Jahren anfangen, Termin bleibt: höhere Rate
+  expect(M.zielRate(70000, 8, 0.02, 0.07, true, 2)).toBeGreaterThan(M.zielRate(70000, 8, 0.02, 0.07, true, 0));
+  expect(M.zielMonate(1000, 0, 0.02, 0.02, false)).toBe(null);
+});

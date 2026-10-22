@@ -35,6 +35,8 @@ for (let seed = 1; seed <= N; seed++) {
     await page.click('#next2');
     if (rnd() < 0.5) await page.fill('#bestand', String(pick([150, 900, 6000])));
     if (rnd() < 0.6) await page.fill('#ersp', String(pick([5000, 40000, 500000])));
+    await page.click('.q-next[data-q="3"]');
+    for (const t of ['notgroschen', 'auto', 'wohnung', 'kind', 'eigen']) if (rnd() < 0.3) await page.click(`#zChips [data-ztyp="${t}"]`);
     await page.click('#go');
     await page.waitForTimeout(800);
     for (let i = 0; i < 14; i++) {

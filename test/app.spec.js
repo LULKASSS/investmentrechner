@@ -18,6 +18,7 @@ async function fragenBeantworten(page, { netto = '2600', bedarf = '2100' } = {})
   await page.fill('#bedarf', bedarf);
   await expect(page.locator('#next2')).toBeEnabled();
   await page.click('#next2');
+  await page.click('.q-next[data-q="3"]');
   await expect(page.locator('#go')).toBeEnabled();
   await page.click('#go');
   await expect(page.locator('.mod-h:visible').first()).toHaveText('Deine Lücke');
@@ -74,6 +75,7 @@ async function zurLoesung(page, { ersp = '20000' } = {}) {
   await page.fill('#netto', '3200'); await page.fill('#bedarf', '2800');
   await page.click('#next2');
   if (ersp) await page.fill('#ersp', ersp);
+  await page.click('.q-next[data-q="3"]');
   await page.click('#go');
   await expect(page.locator('#luecke')).toBeVisible();
   await page.click('#tbNav [data-go="toepfe"]');
@@ -128,7 +130,7 @@ test('Immobilie: Eigenanteil nie länger als bis zur Rente', async ({ page }) =>
   await page.click('.q-next[data-q="0"]');
   await page.click('.q-next[data-q="1"]');
   await page.click('[data-v="ang"]'); await page.fill('#netto', '3200');
-  await page.click('#next2'); await page.click('#go');
+  await page.click('#next2'); await page.click('.q-next[data-q="3"]'); await page.click('#go');
   await expect(page.locator('#luecke')).toBeVisible();
   await page.click('#tbNav [data-go="toepfe"]');
   await page.click('#bImm');
@@ -235,5 +237,98 @@ test('Schnell durchklicken: Weg- und Lösungs-Kurve zeichnen sich trotzdem ferti
   await page.click('#tbNav [data-go="toepfe"]'); await page.waitForTimeout(300);
   await page.click('#tbNav [data-go="warten"]'); await page.waitForTimeout(3000);
   expect(await ganz('pClipR', 'pathPlot')).toBe(true);
+  expect(problems).toEqual([]);
+});
+
+async function mitZielen(page, ziele = ['notgroschen', 'auto', 'wohnung']) {
+  await page.click('#ldGo');
+  await page.click('.q-next[data-q="0"]');
+  await page.click('.q-next[data-q="1"]');
+  await page.click('[data-v="ang"]');
+  await page.fill('#netto', '3200'); await page.fill('#bedarf', '2800');
+  await page.click('#next2');
+  await page.fill('#ersp', '20000');
+  await page.click('.q-next[data-q="3"]');
+  for (const t of ziele) await page.click(`#zChips [data-ztyp="${t}"]`);
+  await page.click('#go');
+  await expect(page.locator('#luecke')).toBeVisible();
+}
+
+test('Ziele: in den Daten angetippt, eigene Seite, Summe = Rente + Ziele, Termin verschieben senkt die Rate @mobil', async ({ page }) => {
+  const problems = await open(page);
+  await mitZielen(page);
+  await expect(page.locator('#tbZiele')).toBeVisible();
+  await page.click('#tbNav [data-go="toepfe"]');
+  await expect(page.locator('#pnLoesZiele')).toBeVisible();
+  const rente = zahl(await page.locator('#spar').inputValue());
+  await page.click('#tbNav [data-go="ziele"]');
+  await expect(page.locator('#ziele .z-card')).toHaveCount(3);
+  await page.waitForTimeout(900);
+  const raten = await page.locator('#zGrid input[data-f="rate"]').evaluateAll(els => els.map(e => +e.value.replace(/\D/g, '')));
+  expect(zahl(await page.locator('#zSum').textContent())).toBe(rente + raten.reduce((a, b) => a + b, 0));
+  // Auto ein Jahr später (Griff mit der Pfeiltaste): kleinere Rate
+  const auto = page.locator('#zGrid .z-card').nth(1);
+  const vorher = zahl(await auto.locator('input[data-f="rate"]').inputValue());
+  await page.locator('#zPlan .zp-h').nth(1).focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(auto.locator('.z-jahr')).toHaveText('2031');
+  expect(zahl(await auto.locator('input[data-f="rate"]').inputValue())).toBeLessThan(vorher);
+  // eigene, kleinere Rate: das Ziel rückt nach hinten
+  await auto.locator('input[data-f="rate"]').fill('200');
+  await expect(auto.locator('.z-fx')).toContainText('später als gewünscht');
+  await auto.locator('.z-puenkt').click();
+  await expect(auto.locator('.z-jahr')).toHaveText('2031');
+  expect(problems).toEqual([]);
+});
+
+test('Ziele: Budget zu klein, „Ins Budget einpassen“ verschiebt, bis jedes Jahr passt', async ({ page }) => {
+  const problems = await open(page);
+  await mitZielen(page);
+  await page.click('#tbNav [data-go="ziele"]');
+  await page.fill('#budget', '1200');
+  await expect(page.locator('#zBud')).toContainText('über Budget');
+  await page.click('#zFit');
+  await expect(page.locator('#zBud')).toContainText('passt');
+  await expect(page.locator('#zFit')).toBeHidden();
+  // jede Jahres-Säule bleibt im Budget
+  const ueber = await page.locator('#zPlan .zp-ue').evaluateAll(els => els.filter(e => parseFloat(e.style.height) > 0.5).length);
+  expect(ueber).toBe(0);
+  await expect(page.locator('#zGrid .z-card').nth(2).locator('.z-fx')).toContainText('Sparen ab');
+  expect(problems).toEqual([]);
+});
+
+test('Lösung: weniger als die ganze Lücke nennt die Erhöhung ab nächstem Jahr', async ({ page }) => {
+  const problems = await open(page);
+  await zurLoesung(page);
+  await expect(page.locator('#nachFx')).toBeHidden();
+  await page.fill('#spar', '150');
+  await expect(page.locator('#nachFx')).toContainText('mehr');
+  await expect(page.locator('#nachFx')).toContainText('Gehaltserhöhung');
+  // wer die Erhöhung ab nächstem Jahr dazunimmt, deckt die Lücke: etwa so viel wie die Differenz plus ein Jahr Zinsen
+  const plus = zahl(await page.locator('#nachFx b').textContent());
+  const ganz = zahl(await page.locator('#qFull').textContent().then(t => t.replace(/^.*Lücke/, '')));
+  expect(plus).toBeGreaterThan(ganz - 150);
+  expect(plus).toBeLessThan((ganz - 150) * 1.25);
+  await page.click('#qFull');
+  await expect(page.locator('#nachFx')).toBeHidden();
+  expect(problems).toEqual([]);
+});
+
+test('Vorschlag-PDF mit Zielen @mobil', async ({ page }) => {
+  const problems = await open(page);
+  await mitZielen(page);
+  await page.click('#pdfBtn');
+  await expect(page.locator('#vPages img')).toHaveCount(3, { timeout: 20_000 });
+  expect(problems).toEqual([]);
+});
+
+test('Eigenes Ziel: Name tippen ohne dass der Cursor springt, steht im Zeitstrahl', async ({ page }) => {
+  const problems = await open(page);
+  await mitZielen(page, ['eigen']);
+  await page.click('#tbNav [data-go="ziele"]');
+  const t = page.locator('#zGrid .z-titel');
+  await t.click(); await page.keyboard.type('Motorrad');
+  await expect(t).toHaveValue('Motorrad');
+  await expect(page.locator('#zPlan')).toContainText('Motorrad');
   expect(problems).toEqual([]);
 });

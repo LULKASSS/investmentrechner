@@ -813,6 +813,83 @@ body.started .qs{padding-top:92px}
   .sol-bonus > #einmWrap{order:3}
   .sol-bonus > #splitWrap.open .split-row{margin-top:16px}
 }
+/* Ziele neben der Rente */
+.f-r{background:var(--accent)} .f-i{background:var(--c-imm)}
+.f-z0{background:#2F9E8F} .f-z1{background:#D9579B} .f-z2{background:#C9A227} .f-z3{background:#A0785A} .f-z4{background:#E07A5F} .f-z5{background:#7FA33A}
+.z-in{display:grid;gap:12px}
+.z-chips{display:flex;flex-wrap:wrap;gap:8px}
+.z-chips .qchip{height:44px;padding:0 16px;font-size:14px;animation:none}
+.z-rows{display:grid;gap:8px}
+.z-rows:empty{display:none}
+.z-row{display:grid;grid-template-columns:minmax(0,1fr) 150px 110px 36px;gap:10px;align-items:center;animation:popIn .45s var(--spring)}
+.z-row .z-n{font-weight:500}
+.z-titel{height:44px;border:1px solid transparent;border-radius:var(--r-s);background:var(--surface-2);padding:0 12px;font:inherit;color:var(--fg);min-width:0}
+.z-titel:focus{outline:none;border-color:var(--accent);background:var(--surface);box-shadow:0 0 0 4px var(--accent-soft)}
+.z-j{gap:4px;padding-left:12px}
+.z-j em{font-style:normal;color:var(--fg-3);font-size:13px}
+.z-j input{width:100%;min-width:0}
+.z-x{width:36px;height:36px;border:0;border-radius:999px;background:transparent;color:var(--fg-3);font-size:20px;cursor:pointer}
+.z-x:hover{background:var(--surface-2);color:var(--fg)}
+.z-sum{display:grid;gap:22px}
+.z-top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
+.z-top .path-hero{margin:0}
+.z-budget{width:240px}
+.z-plan{display:grid;gap:10px}
+/* Säulen je Jahr: was in dem Jahr im Monat gespart wird, darüber das Budget als Linie, Zuviel rot schraffiert */
+.zp-cols .zp-track{height:110px;margin-bottom:6px;border-bottom:1px solid var(--line-2)}
+.zp-col{position:absolute;top:0;bottom:0}
+.zp-col i{position:absolute;left:12%;right:12%;transition:height .45s var(--spring),bottom .45s var(--spring)}
+.zp-col i:first-child{border-radius:0 0 2px 2px}
+.zp-ue{position:absolute;left:12%;right:12%;background:repeating-linear-gradient(135deg,var(--gap) 0 2px,transparent 2px 5px);transition:height .45s var(--spring),bottom .45s var(--spring)}
+.zp-bud{position:absolute;left:-6px;right:-6px;height:0;border-top:2px dashed var(--fg);transition:bottom .45s var(--spring)}
+.zp-bud span{position:absolute;right:0;bottom:4px;font-size:12px;font-weight:600;font-style:normal;background:var(--surface);padding:0 4px;border-radius:4px;white-space:nowrap}
+.zp-row,.zp-ax{display:grid;grid-template-columns:130px minmax(0,1fr);gap:14px;align-items:center;min-height:40px}
+.zp-n{font-weight:500;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.zp-n b{font-weight:500} .zp-n em{display:none;font-style:normal;color:var(--fg-3);font-size:12.5px;margin-left:8px;font-variant-numeric:tabular-nums}
+.zp-track{position:relative;height:30px;margin-right:110px}
+.zp-bar{position:absolute;left:0;top:3px;bottom:3px;border-radius:999px;transition:width .45s var(--spring),left .45s var(--spring);display:flex;align-items:center;min-width:54px}
+.zp-bar.offen{border-radius:999px 0 0 999px;-webkit-mask:linear-gradient(to right,#000 85%,transparent);mask:linear-gradient(to right,#000 85%,transparent)}
+.zp-r{padding:0 12px;font-size:12.5px;font-weight:600;color:#fff;white-space:nowrap;font-variant-numeric:tabular-nums}
+.zp-e{position:absolute;top:50%;transform:translateY(-50%);padding-left:18px;font-size:12.5px;color:var(--fg-2);white-space:nowrap;font-variant-numeric:tabular-nums;transition:left .45s var(--spring)}
+.zp-e.innen{padding-left:0;transform:translate(calc(-100% - 22px),-50%);color:#fff;font-weight:500}
+.zp-e.neg{color:var(--gap-ink)}
+.zp-h{position:absolute;top:50%;width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;border:1px solid var(--line-2);background:var(--thumb,#fff);box-shadow:0 1px 4px rgba(0,0,0,.2);cursor:ew-resize;touch-action:none;transition:left .45s var(--spring),transform .3s var(--spring)}
+.zp-h:hover,.zp-h.zieht{transform:scale(1.15)}
+.zp-h.zieht{transition:transform .3s var(--spring)}
+.zp-ax .zp-track{height:18px}
+.zp-ax .zp-track span{position:absolute;transform:translateX(-50%);font-size:11.5px;color:var(--fg-3);font-variant-numeric:tabular-nums}
+.z-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;margin-top:20px}
+.z-card{display:grid;gap:16px;align-content:start}
+.z-card-h{display:flex;align-items:center;gap:10px;font-size:17px}
+.z-card-h .z-titel{flex:1;font-weight:600}
+.z-card-h .link{margin-left:auto}
+.z-dot{width:12px;height:12px;border-radius:4px;flex:none}
+.z-card-f{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.z-card-f > :first-child{grid-column:1/-1}
+.z-card-f .z-anl{align-self:end;height:44px}
+.z-anl.z-tg{display:flex;align-items:center}
+.z-wann{align-items:center}
+.z-jahr{flex:1;padding-left:12px;font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
+.z-rate{display:grid;gap:8px;padding-top:14px;border-top:1px solid var(--line)}
+.z-rate-in{height:56px}
+.z-rate-in input{font-size:26px;font-weight:600;letter-spacing:-.03em}
+.z-fx{margin:0;font-size:13.5px;color:var(--fg-2)}
+.z-fx b{color:var(--fg);font-weight:600}
+.z-fx.spaet b{color:var(--fg)} .z-fx.neg{color:var(--gap-ink)}
+.z-add{display:grid;gap:10px;margin-top:24px}
+.z-add .bchip[aria-pressed="true"]{display:none}
+@media (max-width:640px){
+  .z-row{grid-template-columns:minmax(0,1fr) 120px 36px;grid-template-areas:"n n x" "b j j"}
+  .z-row > :first-child{grid-area:n} .z-row .money{grid-area:b} .z-row .z-j{grid-area:j} .z-row .z-x{grid-area:x}
+  .z-budget{width:100%}
+  .zp-row,.zp-ax{grid-template-columns:minmax(0,1fr);gap:2px}
+  .zp-n em{display:inline}
+  .zp-ax > .zp-n,.zp-cols > .zp-n{display:none}
+  .zp-track{margin:0 12px}
+  .zp-e,.zp-r{display:none}
+  .zp-bar{min-width:12px}
+  .z-grid{grid-template-columns:minmax(0,1fr)}
+}
 /* Modulköpfe und Weiter-Knopf */
 .mod-h{font-size:clamp(26px,3vw,34px);line-height:1.1;letter-spacing:-.035em;margin:0 0 18px}
 #results > section.page,#luecke{padding-top:84px}
@@ -849,6 +926,8 @@ body.started .qs{padding-top:92px}
 .vgl-fx{margin:0;font-size:15px;line-height:1.45;color:var(--fg-2)}
 .vgl-fx b{font-weight:600;color:var(--fg);font-variant-numeric:tabular-nums}
 .vgl-fx b.plus{color:var(--ok-ink)} .vgl-fx b.minus{color:var(--gap-ink)}
+.nach-fx{padding:10px 14px;border-radius:var(--r-s);background:var(--accent-soft);color:var(--fg)}
+.nach-fx b{color:var(--accent-ink)}
 /* Vergleich zweier Sparraten */
 .vgl{padding-top:16px;border-top:1px solid var(--line)}
 .vgl-an{justify-self:start;padding:8px 14px;font-size:13px;animation:none}
@@ -932,7 +1011,7 @@ body.started .qs{padding-top:92px}
 <!-- Kopfzeile: erscheint nach dem Abschicken, sobald die Datenaufnahme aus dem Bild ist -->
 <div class="topbar" id="topbar" hidden>
   <div class="tb-in">
-    <nav class="tb-nav" id="tbNav" aria-label="Schritte"><span class="tb-pill" id="tbPill"></span><button type="button" data-go="intake">Daten</button><button type="button" data-go="luecke">Lücke</button><button type="button" data-go="warten">Weg</button><button type="button" data-go="toepfe">Lösung</button></nav>
+    <nav class="tb-nav" id="tbNav" aria-label="Schritte"><span class="tb-pill" id="tbPill"></span><button type="button" data-go="intake">Daten</button><button type="button" data-go="luecke">Lücke</button><button type="button" data-go="warten">Weg</button><button type="button" data-go="toepfe">Lösung</button><button type="button" data-go="ziele" id="tbZiele" hidden>Ziele</button></nav>
     <button class="primary" id="pdfBtn" type="button">Vorschlag</button>
   </div>
   <div class="toast" id="toast" hidden></div>
@@ -1016,6 +1095,17 @@ body.started .qs{padding-top:92px}
               <div class="money"><input id="ersp" inputmode="decimal" autocomplete="off" placeholder="0"><span class="unit">€</span></div>
               <div class="hint" id="erspH"></div>
             </div>
+          </div>
+          <div class="q-foot"><button class="primary q-next" type="button" data-q="3">Weiter</button></div>
+        </div></div></div>
+      </li>
+      <li class="q" id="q4">
+        <div class="q-sum"><button class="q-row" type="button" data-q="4"><span class="q-k">Ziele</span><span class="q-v" id="sum4"></span><span class="q-e">ändern</span></button></div>
+        <div class="q-body"><div class="q-in"><div class="q-pad">
+          <div class="z-in">
+            <span class="lbl">Sparziele <span class="hint">optional</span></span>
+            <div class="z-chips" id="zChips"></div>
+            <div class="z-rows" id="zRows"></div>
           </div>
           <div class="q-foot"><span class="hint" id="goH"></span><button class="primary" id="go" type="button" disabled>Rentenlücke berechnen</button></div>
         </div></div></div>
@@ -1112,6 +1202,7 @@ body.started .qs{padding-top:92px}
             <div class="money" id="sparBox"><input id="spar" inputmode="decimal" autocomplete="off"><span class="unit">€</span><button class="step" type="button" tabindex="-1" data-for="spar" data-d="-25" aria-label="25 € weniger">−</button><button class="step" type="button" tabindex="-1" data-for="spar" data-d="25" aria-label="25 € mehr">+</button></div>
             <div class="range spar-r" id="sparRW"><input type="range" id="sparR" min="0" max="500" step="25" aria-label="Sparrate in Euro"><i class="sr-mark vm" id="vglTick" hidden></i><button class="sr-mark lm" type="button" id="qFull"></button></div>
             <p class="vgl-fx" id="vglFx" hidden></p>
+            <p class="vgl-fx nach-fx" id="nachFx" hidden></p>
           </div>
           <div class="vgl" id="vglWrap">
             <button class="qchip vgl-an" type="button" id="vglAn"></button>
@@ -1269,7 +1360,24 @@ body.started .qs{padding-top:92px}
           </dl>
         </div>
       </div>
-    <div class="pnav"><button class="primary" type="button" data-pdf>Vorschlag ansehen</button></div>
+    <div class="pnav"><button class="primary" type="button" data-pdf id="pnLoesPdf">Vorschlag ansehen</button><button class="primary" type="button" data-go="ziele" id="pnLoesZiele" hidden>Weiter: Deine Ziele</button></div>
+  </section>
+
+  <!-- 4 · Ziele neben der Rente: was im Monat zusammenkommt, wann was dran ist, je Ziel einstellbar -->
+  <section id="ziele" class="page" hidden>
+    <h2 class="mod-h">Deine Ziele</h2>
+    <div class="panel z-sum">
+      <div class="z-top">
+        <div class="path-hero"><span class="ph-k">Jetzt im Monat</span><div class="ph-row"><b class="ph-v" id="zSum"></b><span class="ph-d" id="zBud"></span><button class="qchip" type="button" id="zFit" hidden>Ins Budget einpassen</button></div></div>
+        <div class="ctl z-budget">
+          <label for="budget">Sparbudget im Monat</label>
+          <div class="money"><input id="budget" inputmode="decimal" autocomplete="off" placeholder="offen"><span class="unit">€</span><button class="step" type="button" tabindex="-1" data-for="budget" data-d="-50" aria-label="50 € weniger">−</button><button class="step" type="button" tabindex="-1" data-for="budget" data-d="50" aria-label="50 € mehr">+</button></div>
+        </div>
+      </div>
+      <div class="z-plan" id="zPlan"></div>
+    </div>
+    <div class="z-grid" id="zGrid"></div>
+    <div class="z-add"><span class="lbl">Noch ein Ziel</span><div class="z-chips" id="zChips2"></div></div>
   </section>
 
   <p class="foot">Modellrechnung, keine Zusage. <button class="link" id="reset" type="button">Alles zurücksetzen</button></p>
@@ -1311,6 +1419,8 @@ const K = {
   pauschbetrag: 1000,         // Sparerpauschbetrag je Jahr, hier ganz fürs Depot
   basiszins: 0.032,           // Basiszins Vorabpauschale 2026 (BMF 13.01.2026), fortgeschrieben
   erspZins: 0.06,             // vorhandenes Erspartes bis Rentenbeginn
+  tagesgeld: 0.02,            // Sparziele bis 4 Jahre: Tagesgeld 2 % p. a. (Annahme, nicht gegen aktuelle Angebote geprüft)
+  depotAb: 5,                 // Sparziele ab 5 Jahren standardmäßig im Depot (Annahme)
   jahr: 2026
 };
 
@@ -1526,7 +1636,29 @@ function loesungVerlauf(p, r, T, eBetrag, n1 = 120, n2 = 40) {
   return { N0, N, sp, rp, C0, einT: (T.av + T.dep) * N0 + (eBetrag || 0) };
 }
 
-if (typeof module !== 'undefined') module.exports = { loesungVerlauf, kvpvSatz, depotVerlauf, depotSim, vpFaktor, DEPOT_FAKTOR, abschlagFaktor, K, tarif, nettoAusBrutto, bruttoAusNetto, nettoSelbst, grvBrutto, grvNetto, rechne, toepfe, barwert, endwert, depotMitUmschichten, grvStartAlter };
+/* Sparziele neben der Rente (Auto, Wohnung, Reise …): kein Rentenrecht, nur Tagesgeld oder Depot.
+   Zielbetrag in heutigen Preisen, steigt mit der Inflation bis zum Termin. Einzahlung am Monatsanfang wie bei der Rente.
+   Tagesgeld: Zinsen im Sparerpauschbetrag, also ohne Steuer (Annahme). Depot: beim Verkauf Abgeltungsteuer auf 70 % des
+   Gewinns (Teilfreistellung); Vorabpauschale und Pauschbetrag nicht eigens gerechnet (Annahme). */
+function zielNetto(rate, monate, zins, depot) {
+  const E = endwert(rate, monate / 12, zins);
+  return depot ? E - Math.max(0, E - rate * Math.round(monate)) * K.abgeltung : E;
+}
+const zielBetrag = (betrag, monate, infl) => betrag * Math.pow(1 + infl, monate / 12);
+// Sparrate, damit das Ziel in „jahre“ Jahren da ist; gespart wird ab Jahr „ab“ (später anfangen, wenn anderes vorgeht)
+function zielRate(betrag, jahre, infl, zins, depot, ab = 0) {
+  const n = Math.round((jahre - ab) * 12), je1 = zielNetto(1, n, zins, depot);
+  return n > 0 && je1 > 0 ? zielBetrag(betrag, Math.round(jahre * 12), infl) / je1 : betrag;
+}
+// Mit fester Sparrate ab Monat „ab“: nach wie vielen Monaten Sparen ist das Ziel erreicht (null: in 50 Jahren nicht)
+function zielMonate(betrag, rate, infl, zins, depot, ab = 0) {
+  if (!(betrag > 0)) return 0;
+  if (!(rate > 0)) return null;
+  for (let m = 1; m <= 600; m++) if (zielNetto(rate, m, zins, depot) >= zielBetrag(betrag, ab + m, infl) - 0.5) return m;
+  return null;
+}
+
+if (typeof module !== 'undefined') module.exports = { zielNetto, zielRate, zielMonate, zielBetrag, loesungVerlauf, kvpvSatz, depotVerlauf, depotSim, vpFaktor, DEPOT_FAKTOR, abschlagFaktor, K, tarif, nettoAusBrutto, bruttoAusNetto, nettoSelbst, grvBrutto, grvNetto, rechne, toepfe, barwert, endwert, depotMitUmschichten, grvStartAlter };
 
 </script>
 <script>
@@ -1817,7 +1949,8 @@ function buildPdf(Doc, D) {
   doc.addPage(); bg(); y = M + 4;
   y = head(y, 'Deine Lösung');
   const LVv = D.loes && D.loes.V, balken = r.kapital > 0 && D.vorschlag > 0, satz = LVv && Math.abs(D.spar - LVv.rate) >= 0.5;
-  const c3 = y, c3h = 90 + (balken ? 14 : 0) + (LVv ? 4 : 0) + (satz ? 10 : 0) + (mitDepot ? 4 : 0);
+  const nach = D.nachher > 0;
+  const c3 = y, c3h = 90 + (balken ? 14 : 0) + (LVv ? 4 : 0) + (satz ? 10 : 0) + (nach ? 12 : 0) + (mitDepot ? 4 : 0);
   card(M, c3, CW, c3h);
   // wie in der App: links Sparrate und Bonus, rechts der Ring (Z = linker Rand des Ring-Bereichs)
   const Z = W - M - 108;
@@ -1912,6 +2045,13 @@ function buildPdf(Doc, D) {
       teile.forEach(([t, k, c]) => { font(7.5, k, c); if (tx > sx3 && tx + tw(t.trimEnd()) > sx3 + sw3) { tx = sx3; sy3 += 3.6; t = t.trimStart(); } txt(t, tx, sy3); tx += tw(t); });
       sy3 += 4;
     }
+    // reicht die Sparrate nicht: was ab dem nächsten Jahr in die Altersvorsorge dazukommt
+    if (nach) {
+      const zl = doc.splitTextToSize(safe(`Ab ${K.jahr + 1} ${fE(D.nachher)} mehr im Monat in die Altersvorsorge, dann ist die Lücke zu. Zum Beispiel aus der nächsten Gehaltserhöhung.`), sw3 - 5);
+      sy3 += 1; fc(C.accS); doc.roundedRect(sx3, sy3 - 1, sw3, zl.length * 3.5 + 3, 2, 2, 'F');
+      font(7, 'r', C.ink); zl.forEach((l, i) => doc.text(l, sx3 + 2.5, sy3 + 2.6 + i * 3.5));
+      sy3 += zl.length * 3.5 + 5;
+    }
   }
   const chip = (t, x, on) => pill(t, x, sy3, on ? { bg: C.accS, c: C.ink, border: C.accM } : { c: C.fg2 });
   let cx;
@@ -1981,6 +2121,7 @@ function buildPdf(Doc, D) {
   if (LV) {
     // rutschen die Angaben ohnehin auf die nächste Seite, nimmt die Kurve den Platz bis unten
     let ch = 64;
+    if (y + ch > BOT && y + 54 <= BOT) ch = BOT - y;          // knapp: etwas niedriger, aber auf derselben Seite
     if (y + ch > BOT) { doc.addPage(); bg(); y = M + 4; }
     else if (y + ch + 5 + 72 > BOT) ch = Math.max(64, Math.min(96, BOT - y - 4));
     card(M, y, CW, ch);
@@ -2022,6 +2163,62 @@ function buildPdf(Doc, D) {
     font(6.5, 'r', C.fg3); txt(`Alter ${p.alter}`, px0, pb + 4); txt(String(p.rentenbeginn), xr, pb + 4, { align: 'center' }); txt(String(p.lebenserwartung), px1, pb + 4, { align: 'right' });
     y += ch + 5;
   }
+  /* ---------- Deine Ziele: was im Monat zusammenkommt, Jahr für Jahr, und je Ziel Termin und Rate ---------- */
+  const ZD = D.ziele;
+  if (ZD) {
+    const ZF = [[47, 158, 143], [217, 87, 155], [201, 162, 39], [160, 120, 90], [224, 122, 95], [127, 163, 58]];
+    const fz = q => q.k === 'rente' ? C.acc : q.k === 'imm' ? C.imm : ZF[q.farbe % 6];
+    const P = ZD.P, Bud = ZD.budget, zh = 30 + 34 + P.zeilen.length * 8 + 10;
+    // auf die Seite der Kurve, wenn alles darunter passt, sonst eine eigene Seite
+    if (y + 15 + zh + 15 + ZD.liste.length * 13 > BOT) { doc.addPage(); bg(); y = M + 4; } else y += 4;
+    y = head(y, 'Deine Ziele');
+    card(M, y, CW, zh);
+    const lx = M + 7, tx0 = M + 38, tx1 = W - M - 30, A = P.A, X = j => tx0 + j / A * (tx1 - tx0);
+    font(7, 'r', C.fg3); txt('Jetzt im Monat', lx, y + 9);
+    const sw = gross(fE(P.jetzt), lx, y + 18.5, 20);
+    const ueber = Bud == null ? [] : P.jahr.map((v, j) => v > Bud + 0.5 ? j : -1).filter(j => j >= 0);
+    if (Bud != null) pill(!ueber.length ? `passt ins Budget von ${fE(Bud)}` : `${fE(P.spitze - Bud)} über Budget ${K.jahr + ueber[0]}${ueber.length > 1 ? '–' + (K.jahr + ueber[ueber.length - 1]) : ''}`,
+      lx + sw + 4, y + 17, ueber.length ? { bg: C.gapS, c: C.gap } : { bg: C.okS, c: C.ok });
+    // Säulen je Jahr
+    const cb = y + 56, ch2 = 26, yMax = Math.max(P.spitze, Bud || 0, 1) * 1.12, bwz = (tx1 - tx0) / A;
+    font(7, 'r', C.fg2); txt('Im Monat', lx, cb - 10);
+    P.jahr.forEach((v, j) => {
+      let u = 0;
+      P.zeilen.forEach(q => { if (!(q.von <= j * 12 && j * 12 < q.bis)) return; const hh = q.rate / yMax * ch2; fc(fz(q)); doc.rect(X(j) + bwz * 0.14, cb - u - hh, bwz * 0.72, hh, 'F'); u += hh; });
+      if (Bud != null && v > Bud) hatch(X(j) + bwz * 0.14, cb - v / yMax * ch2, bwz * 0.72, (v - Bud) / yMax * ch2, C.gap, 1.2, 0.3);
+    });
+    hline(tx0, tx1, cb, C.line2, 0.25);
+    if (Bud != null) { const by2 = cb - Bud / yMax * ch2; dc(C.ink); doc.setLineWidth(0.3); dash([1.2, 1.2]); doc.line(tx0 - 1, by2, tx1 + 1, by2); dash(); font(6.3, 'sb'); txt(`Budget ${fE(Bud)}`, tx1 + 2, by2 + 1); }
+    // Balken je Ziel von Start bis Termin
+    let ry = cb + 7;
+    P.zeilen.forEach(q => {
+      const l = X(q.von / 12), r2 = X(Math.min(A, q.bis / 12));
+      font(7.5, 'r', C.ink); txt(q.n, lx, ry + 2.2);
+      fc(fz(q)); doc.roundedRect(l, ry - 0.6, Math.max(2, r2 - l), 3.6, 1.8, 1.8, 'F');
+      font(6.5, 'sb', C.white); if (r2 - l > 14) txt(fE(q.rate), l + 2, ry + 1.9);
+      const zl = ZD.liste.find(z => z.farbe === q.farbe && q.k.startsWith('z'));
+      const ende = q.k === 'rente' ? `bis ${q.ende}` : zl ? (zl.ok ? `${zl.jahr} · ${fK(zl.ziel)}` : 'reicht nicht') : `${K.jahr + Math.ceil(q.bis / 12)}`;
+      font(6.5, 'r', C.fg2); txt(q.bis / 12 > A ? `→ ${ende}` : ende, Math.min(r2 + 2, tx1 + 2), ry + 2);
+      ry += 8;
+    });
+    const schritt = A <= 8 ? 1 : A <= 20 ? 2 : 5;
+    font(6.3, 'r', C.fg3); for (let j = 0; j <= A; j += schritt) txt(String(K.jahr + j), X(j), ry + 1, { align: 'center' });
+    y += zh + 6;
+    // je Ziel eine Zeile wie die Karten in der App
+    const sp = [M + 7, M + 52, M + 82, M + 112, M + 140];
+    font(6.5, 'r', C.fg3); ['Ziel', 'Betrag heute', 'Wann', 'Anlage', 'Sparrate'].forEach((k, i) => txt(k, sp[i], y + 4));
+    y += 7;
+    ZD.liste.forEach(z => {
+      card(M, y, CW, 11);
+      fc(ZF[z.farbe % 6]); doc.roundedRect(M + 4, y + 4, 2, 3, 0.6, 0.6, 'F');
+      font(8.5, 'sb'); txt(z.n, sp[0], y + 5);
+      font(6.3, 'r', C.fg3); txt(!z.ok ? 'reicht so nicht' : `${z.abJahr > K.jahr ? `ab ${z.abJahr} · ` : ''}${z.jahr} sind ${fK(z.ziel)} da${z.spaeter >= 12 ? ` (${Math.round(z.spaeter / 12)} J. später)` : ''}`, sp[0], y + 8.6);
+      font(8.5, 'r'); txt(fE(z.betrag), sp[1], y + 6.8); txt(z.ok ? String(z.jahr) : '–', sp[2], y + 6.8); txt(z.depot ? 'Depot' : 'Tagesgeld', sp[3], y + 6.8);
+      font(11, 'sb'); const rw = tw(fE(z.rate)); txt(fE(z.rate), sp[4], y + 7.2); font(6.5, 'r', C.fg3); txt('im Monat', sp[4] + rw + 1.5, y + 7.2);
+      y += 13;
+    });
+    y += 2;
+  }
   // Deine Angaben: wie die zugeklappten Fragen im Rechner (passt es nicht mehr, auf eine eigene Seite)
   let neueSeite = false;
   if (y + 72 > BOT) { doc.addPage(); bg(); y = M; neueSeite = true; }
@@ -2045,6 +2242,7 @@ function buildPdf(Doc, D) {
   font(7.5, 'sb'); txt('Annahmen', M, y); y += 4.5;
   const ann2 = [
     `Rendite ${fP(p.anspar)} beim Sparen, ${fP(p.entnahme)} in der Rente (dann sicher angelegt). Inflation ${fP(p.inflation)} pro Jahr. Auszahlung steigt mit der Inflation, Kapital bis ${p.lebenserwartung} aufgebraucht.`,
+    ...(ZD ? [`Ziele: Beträge in heutigen Preisen, steigen mit der Inflation bis zum Termin. Tagesgeld ${fP(K.tagesgeld)} ohne Steuer (im Sparerpauschbetrag), Depot ${fP(p.anspar)} mit Abgeltungsteuer auf 70 % des Gewinns beim Verkauf.`] : []),
     `Gesetzliche Rente ${r.quelle === 'brief' ? 'laut deiner Renteninformation' : 'geschätzt'}, netto nach Kranken-/Pflegeversicherung und Steuer.${D.E ? ` Einmalzahlung mit ${fP(p.anspar)} pro Jahr bis Rentenbeginn${D.E.dep ? ', im Depot nach Steuern wie die Depot-Sparrate' : ''}.` : ''}${mitDepot ? ' Depot nach Abgeltungsteuer, Sparerpauschbetrag und Vorabpauschale.' : ''}`
   ];
   font(6.5, 'r', C.fg2);
@@ -2078,7 +2276,7 @@ const KREDIT_ZINS = 0.042;
 const DEF = { started: false, alter: 32, rentenbeginn: 67, status: 'ang', netto: 0, gewinn: 0, drv: false, bedarf: 0, bedarfManuell: false,
   inflation: 0.02, lebenserwartung: 85, einstieg: 22, anpVar: 0.015, bestand: 0, ersp: 0,
   anspar: 0.07, entnahme: 0.03, grvMode: 'auto', grvWert: 0, step: 0, open: new Set([0]),
-  spar: null, depot: false, imm: false, immPreis: 150000, immJahre: 5, immMiete: 450, immKredit: true, avAnteil: 0.8, mindestHeute: null, ums: 3, einmAn: null, einmZiel: 'av', vgl: null, vglAus: false };
+  spar: null, depot: false, imm: false, immPreis: 150000, immJahre: 5, immMiete: 450, immKredit: true, avAnteil: 0.8, mindestHeute: null, ums: 3, einmAn: null, einmZiel: 'av', vgl: null, vglAus: false, ziele: [], zid: 0, budget: null };
 let S = structuredClone(DEF);
 let countUp = false;
 
@@ -2204,7 +2402,10 @@ function compute() {
   const E1 = endwert(1, r.n, S.anspar), needMin = Math.max(0, mNom - Math.min(r.grvNom, r.bedarfNom) - r.bestand);
   const kMin = r.luecke > 0 && r.kapital > 0 && needMin > 0 ? needMin / r.luecke * r.kapital - eAV : 0;
   const avMin = E1 > 0 && kMin > 0 ? Math.ceil(kMin / E1 / 5) * 5 : 0;
-  return { p, r, T, vorschlag, spar, split, mindest, I, anteil, depA, immA, sicher, avMin, E, H, V };
+  // Reicht die Sparrate nicht für die ganze Lücke: so viel mehr im Monat ab dem nächsten Jahr in die Altersvorsorge, dann ist sie zu
+  const fehlt = r.kapital > 0 && anteil < 0.995 && r.n > 1 ? (1 - anteil) * r.kapital : 0;
+  const nachher = fehlt > 0 ? Math.ceil(fehlt / endwert(1, r.n - 1, S.anspar) / 5) * 5 : 0;
+  return { p, r, T, vorschlag, spar, split, mindest, I, anteil, depA, immA, sicher, avMin, E, H, V, nachher, Z: zieleRechnen() };
 }
 
 function renderIntake(r, mindest, sicher) {
@@ -2248,6 +2449,7 @@ function renderIntake(r, mindest, sicher) {
   $('sum2').textContent = (S.status === 'ang' ? `${fE(S.netto)} netto` : `${fE(S.gewinn)} Gewinn`) + ` · Wunsch ${fE(S.bedarf)} · mindestens ${fE(mindest)}`;
   const v4 = [S.bestand > 0 ? `Verträge ${fE(S.bestand)}` : '', S.ersp > 0 ? `Erspartes ${fE(S.ersp)}` : ''].filter(Boolean);
   $('sum3').textContent = v4.length ? v4.join(' · ') : 'noch nichts';
+  renderZielEingabe();
 }
 
 /* Zeitstrahl in Frage 2: erst laufen die Jahre bis zur Rente durch, dann die Jahre in Rente */
@@ -2306,6 +2508,261 @@ function renderVgl(C) {
   if (!fx.hidden) fx.innerHTML = d > 0 ? `<b>${fE(d)} mehr</b> im Monat bringen dir <b class="plus">${fE(dr)} mehr Rente</b> mit ${S.rentenbeginn}.`
     : `<b>${fE(-d)} weniger</b> im Monat kosten dich <b class="minus">${fE(-dr)} Rente</b> mit ${S.rentenbeginn}.`;
 }
+/* ===== Sparziele neben der Rente: Katalog mit Vorschlägen in heutigen Preisen, alles änderbar ===== */
+const rund500 = v => Math.round(v / 500) * 500;
+const ZTYP = {
+  notgroschen: { n: 'Notgroschen', betrag: () => Math.max(3000, rund500(einkommen() * 3)), jahre: 1, nurTg: true },
+  reise: { n: 'Reise', betrag: () => 4000, jahre: 1 },
+  auto: { n: 'Auto', betrag: () => 25000, jahre: 4 },
+  wohnung: { n: 'Eigenkapital Wohnung', k: 'Wohnung', betrag: () => 70000, jahre: 8 },
+  hochzeit: { n: 'Hochzeit', betrag: () => 15000, jahre: 2 },
+  kind: { n: 'Für ein Kind', k: 'Kind', betrag: () => 20000, jahre: 18 },
+  auszeit: { n: 'Auszeit', betrag: () => Math.max(6000, rund500(einkommen() * 6)), jahre: 5 },
+  vermoegen: { n: 'Vermögen aufbauen', k: 'Vermögen', betrag: () => 100000, jahre: 20 },
+  eigen: { n: 'Eigenes Ziel', betrag: () => 10000, jahre: 3, mehrfach: true }
+};
+const zName = z => z.typ === 'eigen' ? (z.titel || 'Eigenes Ziel') : ZTYP[z.typ].n;
+const zKurz = z => z.typ === 'eigen' ? (z.titel || 'Eigenes Ziel') : (ZTYP[z.typ].k || ZTYP[z.typ].n);
+const zFind = id => S.ziele.find(z => z.id === +id);
+function zielDazu(typ) {
+  const t = ZTYP[typ];
+  S.ziele.push({ id: ++S.zid, typ, titel: '', betrag: t.betrag(), jahre: t.jahre, wunsch: t.jahre, start: 0, anlage: null, rate: null });
+}
+// Anlage: Notgroschen immer Tagesgeld, sonst nach Spardauer (ab 5 Jahren Depot), umstellbar
+const zDepot = (z, ab, bis) => ZTYP[z.typ].nurTg ? false : z.anlage ? z.anlage === 'dep' : bis - ab >= K.depotAb;
+const zRateFuer = (z, ab, bis) => { const d = zDepot(z, ab, bis); return z.betrag > 0 ? Math.ceil(zielRate(z.betrag, bis, S.inflation, d ? S.anspar : K.tagesgeld, d, ab)) : 0; };
+// je Ziel: Sparrate für den Termin – oder bei eigener Rate, wann es reicht. Gespart wird von „start“ bis zum Termin.
+function zieleRechnen() {
+  return S.ziele.map(z => {
+    const ab = Math.min(z.start || 0, z.jahre - 1), depot = zDepot(z, ab, z.jahre), zins = depot ? S.anspar : K.tagesgeld;
+    let rate, monate = Math.round(z.jahre * 12);
+    if (z.rate != null) { rate = z.rate; const m = zielMonate(z.betrag, rate, S.inflation, zins, depot, ab * 12); monate = m == null ? null : ab * 12 + m; }
+    else rate = zRateFuer(z, ab, z.jahre);
+    const ok = monate != null, m = ok ? monate : 600;
+    return { z, ab, depot, zins, rate, monate: m, ok, eigen: z.rate != null, jahr: K.jahr + Math.ceil(m / 12), abJahr: K.jahr + ab,
+      ziel: zielBetrag(z.betrag, m, S.inflation), spaeter: ok ? m - Math.round((z.wunsch ?? z.jahre) * 12) : 0 };
+  });
+}
+// Was im Monat zusammenkommt, Jahr für Jahr: Rente (Sparrate der Lösung), Eigenanteil Immobilie, Ziele von ihrem Start bis zum Termin
+function sparplan(C) {
+  const zeilen = [{ k: 'rente', n: 'Rente', rate: C.r.kapital > 0 ? C.spar : 0, von: 0, bis: Math.round(C.r.n * 12), ende: S.rentenbeginn }];
+  if (C.immA) zeilen.push({ k: 'imm', n: 'Immobilie', rate: C.I.rate, von: 0, bis: C.I.jahre * 12 });
+  C.Z.forEach((x, i) => zeilen.push({ k: 'z' + x.z.id, n: zKurz(x.z), rate: x.rate, von: x.ab * 12, bis: x.monate, x, farbe: i }));
+  const ziele = zeilen.filter(q => q.k !== 'rente');
+  const A = Z.achse || Math.min(50, Math.max(5, Math.ceil(Math.max(0, ...ziele.map(q => q.bis)) / 12) + 1));
+  const jahr = Array.from({ length: A }, (_, j) => zeilen.reduce((a, q) => a + (q.von <= j * 12 && j * 12 < q.bis ? q.rate : 0), 0));
+  return { zeilen, A, jahr, jetzt: jahr[0] || 0, spitze: Math.max(0, ...jahr) };
+}
+
+/* Eingabe in der Datenaufnahme: Chips zum Antippen, darunter je Ziel Betrag und „in … Jahren“ */
+function zChipsHtml() {
+  return Object.entries(ZTYP).map(([k, t]) => t.mehrfach
+    ? `<button type="button" class="qchip z-c" data-ztyp="${k}">+ ${t.n}</button>`
+    : `<button type="button" class="bchip z-c" data-ztyp="${k}" aria-pressed="${S.ziele.some(z => z.typ === k)}"><i></i>${t.n}</button>`).join('');
+}
+function renderZielEingabe() {
+  const sig = S.ziele.map(z => z.id + z.typ).join('|');
+  ['zChips', 'zChips2'].forEach(id => { const el = $(id); if (el._sig !== sig) { el._sig = sig; el.innerHTML = zChipsHtml(); } });
+  const rows = $('zRows');
+  if (rows._sig !== sig) {
+    rows._sig = sig;
+    rows.innerHTML = S.ziele.map(z => `<div class="z-row" data-id="${z.id}">
+      ${z.typ === 'eigen' ? `<input class="z-titel" data-f="titel" placeholder="Eigenes Ziel" aria-label="Name des Ziels" autocomplete="off">` : `<span class="z-n">${zName(z)}</span>`}
+      <div class="money"><input data-f="betrag" inputmode="decimal" autocomplete="off" aria-label="${zName(z)}: Betrag in heutigen Preisen"><span class="unit">€</span></div>
+      <span class="mini-in z-j"><em>in</em><input data-f="jahre" inputmode="numeric" autocomplete="off" aria-label="${zName(z)}: in wie vielen Jahren"><i>J.</i></span>
+      <button type="button" class="z-x" data-weg="${z.id}" aria-label="${zName(z)} entfernen">×</button></div>`).join('');
+  }
+  rows.querySelectorAll('.z-row').forEach(r => {
+    const z = zFind(r.dataset.id); if (!z) return;
+    const b = r.querySelector('[data-f="betrag"]'), j = r.querySelector('[data-f="jahre"]'), t = r.querySelector('[data-f="titel"]');
+    if (document.activeElement !== b) b.value = eur0.format(Math.round(z.betrag));
+    if (document.activeElement !== j) j.value = z.jahre;
+    if (t && document.activeElement !== t) t.value = z.titel;
+  });
+  $('sum4').textContent = S.ziele.length ? S.ziele.map(zKurz).join(' · ') : 'nur Rente';
+  const da = S.ziele.length > 0;
+  $('tbZiele').hidden = !da || !S.started; $('pnLoesZiele').hidden = !da; $('pnLoesPdf').hidden = da;
+}
+
+/* Seite „Ziele“: oben was jetzt im Monat zusammenkommt und das Budget, darunter Jahr für Jahr als Säulen
+   und je Ziel ein Balken von Start bis Termin mit Griff zum Verschieben. Darunter die Karten. */
+const Z = { drag: null, achse: null };
+const fF = q => q.k === 'rente' ? 'f-r' : q.k === 'imm' ? 'f-i' : 'f-z' + (q.farbe % 6);
+function renderZiele(C) {
+  const P = sparplan(C), Bud = S.budget;
+  tween($('zSum'), P.jetzt, fE);
+  // Budget: gilt für jedes Jahr; drüber heißt, in mindestens einem Jahr reicht es nicht
+  const ueber = Bud == null ? [] : P.jahr.map((v, j) => v > Bud + 0.5 ? j : -1).filter(j => j >= 0);
+  const zb = $('zBud');
+  zb.className = 'ph-d' + (Bud == null ? '' : ueber.length ? ' down' : ' up');
+  zb.textContent = Bud == null ? '' : !ueber.length ? (P.spitze < Bud - 0.5 ? `passt, ${fE(Bud - P.jetzt)} frei` : 'passt genau')
+    : `${fE(P.spitze - Bud)} über Budget ${K.jahr + ueber[0]}${ueber.length > 1 ? '–' + (K.jahr + ueber[ueber.length - 1]) : ''}`;
+  setMoney('budget', Bud || 0, Bud == null);
+  $('zFit').hidden = !ueber.length;
+  zeichnePlan(P, Bud);
+  zeichneKarten(C);
+}
+function zeichnePlan(P, Bud) {
+  const pl = $('zPlan'), A = P.A, sig = P.zeilen.map(q => q.k).join('|') + '/' + A + (innerWidth <= 640);
+  if (pl._sig !== sig) {
+    pl._sig = sig;
+    const eng = innerWidth <= 640, schritt = A <= 8 ? (eng ? 2 : 1) : A <= 20 ? (eng ? 4 : 2) : (eng ? 10 : 5), ticks = [];
+    for (let j = 0; j <= A; j += schritt) ticks.push(`<span style="left:${j / A * 100}%">${K.jahr + j}</span>`);
+    pl.innerHTML = `<div class="zp-row zp-cols"><span class="zp-n">Im Monat</span><div class="zp-track">${P.jahr.map((_, j) =>
+        `<div class="zp-col" style="left:${j / A * 100}%;width:${100 / A}%">${P.zeilen.map(q => `<i class="${fF(q)}" data-k="${q.k}"></i>`).join('')}<b class="zp-ue"></b></div>`).join('')}
+        <i class="zp-bud" hidden><span></span></i></div></div>`
+      + P.zeilen.map(q => `<div class="zp-row" data-k="${q.k}"><span class="zp-n"><b></b><em></em></span><div class="zp-track">
+        <div class="zp-bar ${fF(q)}"><span class="zp-r"></span></div>
+        <span class="zp-e"></span>${q.x ? `<button type="button" class="zp-h" data-id="${q.x.z.id}"></button>` : ''}</div></div>`).join('')
+      + `<div class="zp-ax"><span class="zp-n"></span><div class="zp-track">${ticks.join('')}</div></div>`;
+  }
+  // Säulen je Jahr: Höhe = was in diesem Jahr im Monat gespart wird; über dem Budget rot schraffiert
+  const H = 110, yMax = Math.max(P.spitze, Bud || 0, 1) * 1.12;
+  pl.querySelectorAll('.zp-col').forEach((col, j) => {
+    let unten = 0;
+    P.zeilen.forEach(q => {
+      const an = q.von <= j * 12 && j * 12 < q.bis, h = an ? q.rate / yMax * H : 0, el = col.querySelector(`[data-k="${q.k}"]`);
+      el.style.bottom = unten + 'px'; el.style.height = h + 'px'; unten += h;
+    });
+    const ue = col.querySelector('.zp-ue'), v = P.jahr[j];
+    ue.style.bottom = (Bud != null && v > Bud ? Bud / yMax * H : 0) + 'px'; ue.style.height = (Bud != null && v > Bud ? (v - Bud) / yMax * H : 0) + 'px';
+    col.title = `${K.jahr + j}: ${fE(v)} im Monat`;
+  });
+  const bl = pl.querySelector('.zp-bud'); bl.hidden = Bud == null;
+  if (Bud != null) { bl.style.bottom = Bud / yMax * H + 'px'; bl.querySelector('span').textContent = `Budget ${fE(Bud)}`; }
+  P.zeilen.forEach(q => {
+    const row = pl.querySelector(`.zp-row[data-k="${q.k}"]`), l = q.von / 12 / A * 100, w = Math.max(0, Math.min(100, q.bis / 12 / A * 100) - l), weiter = q.bis / 12 > A;
+    row.querySelector('.zp-n b').textContent = q.n;
+    const b = row.querySelector('.zp-bar'); b.style.left = l + '%'; b.style.width = w + '%'; b.classList.toggle('offen', weiter);
+    row.querySelector('.zp-r').textContent = fE(q.rate);
+    const e = row.querySelector('.zp-e'), r = l + w;
+    e.style.left = r + '%'; e.classList.toggle('innen', r > 72 && w > 30);
+    e.textContent = q.k === 'rente' ? `bis ${q.ende}` : q.x ? (q.x.ok ? `${q.x.jahr} · ${fK(q.x.ziel)}` : 'reicht nicht') : `${K.jahr + Math.ceil(q.bis / 12)}`;
+    e.classList.toggle('neg', !!(q.x && !q.x.ok));
+    row.querySelector('.zp-n em').textContent = `${fE(q.rate)} · ${e.textContent}`;   // am Handy über dem Balken
+    const h = row.querySelector('.zp-h');
+    if (h) { h.style.left = r + '%'; h.setAttribute('aria-label', `${q.n}: Termin ${q.x.jahr}, mit Pfeiltasten verschieben`); }
+  });
+}
+// Griff ziehen: Termin in ganzen Jahren, Rate rechnet sich neu; die Achse bleibt beim Ziehen stehen
+$('zPlan').addEventListener('pointerdown', e => {
+  const h = e.target.closest('.zp-h'); if (!h) return;
+  e.preventDefault(); h.setPointerCapture(e.pointerId);
+  Z.achse = sparplan(compute()).A;
+  Z.drag = { id: +h.dataset.id, track: h.parentElement.getBoundingClientRect() };
+  h.classList.add('zieht');
+});
+$('zPlan').addEventListener('pointermove', e => {
+  if (!Z.drag) return;
+  const d = Z.drag, z = zFind(d.id); if (!z) return;
+  const j = Math.max((z.start || 0) + 1, Math.min(Z.achse, Math.round((e.clientX - d.track.left) / d.track.width * Z.achse)));
+  if (j !== z.jahre || z.rate != null) { z.jahre = z.wunsch = j; z.rate = null; render(); }
+});
+['pointerup', 'pointercancel'].forEach(t => $('zPlan').addEventListener(t, () => { if (!Z.drag) return; Z.drag = null; Z.achse = null; render(); }));
+$('zPlan').addEventListener('keydown', e => {
+  const h = e.target.closest('.zp-h'); if (!h || !['ArrowLeft', 'ArrowRight'].includes(e.key)) return;
+  e.preventDefault(); const z = zFind(h.dataset.id), x = compute().Z.find(q => q.z === z);
+  z.jahre = z.wunsch = Math.max((z.start || 0) + 1, Math.min(50, Math.ceil(x.monate / 12) + (e.key === 'ArrowRight' ? 1 : -1))); z.rate = null; render();
+  const n = $('zPlan').querySelector(`.zp-h[data-id="${z.id}"]`); if (n) n.focus();
+});
+// Ins Budget einpassen: wichtigstes Ziel zuerst (Notgroschen, dann nach Wunschtermin). Jedes Ziel bekommt den frühesten Termin
+// ab seinem Wunsch, für den es in jedem Sparjahr ins freie Budget passt; dafür darf es später anfangen, wenn vorher anderes dran ist.
+function insBudget() {
+  const C = compute(), B = S.budget; if (B == null) return;
+  const frei = Array.from({ length: 60 }, (_, j) => B - sparplan({ ...C, Z: [] }).zeilen.reduce((a, q) => a + (q.von <= j * 12 && j * 12 < q.bis ? q.rate : 0), 0));
+  const reihe = S.ziele.slice().sort((a, b) => (!!ZTYP[b.typ].nurTg - !!ZTYP[a.typ].nurTg) || ((a.wunsch ?? a.jahre) - (b.wunsch ?? b.jahre)));
+  reihe.forEach(z => {
+    z.rate = null; let plan = null;
+    for (let E = z.wunsch ?? z.jahre; E <= 50 && !plan; E++)
+      for (let A0 = 0; A0 < E && !plan; A0++) {
+        const r = zRateFuer(z, A0, E);
+        if (frei.slice(A0, E).every(f => f >= r - 0.5)) plan = { A0, E, r };
+      }
+    if (!plan) plan = { A0: 0, E: 50, r: zRateFuer(z, 0, 50) };
+    z.start = plan.A0; z.jahre = plan.E;
+    for (let j = plan.A0; j < plan.E; j++) frei[j] -= plan.r;
+  });
+  render();
+}
+$('zFit').addEventListener('click', insBudget);
+
+// Karten: je Ziel Betrag, Termin, Anlage und Sparrate; eine eigene Rate verschiebt den Termin
+function zeichneKarten(C) {
+  const g = $('zGrid'), sig = S.ziele.map(z => z.id + z.typ).join('|');
+  if (g._sig !== sig) {
+    g._sig = sig;
+    g.innerHTML = C.Z.map((x, i) => { const z = x.z; return `<div class="panel z-card" data-id="${z.id}">
+      <div class="z-card-h"><i class="z-dot f-z${i % 6}"></i>${z.typ === 'eigen' ? `<input class="z-titel" data-f="titel" placeholder="Eigenes Ziel" aria-label="Name des Ziels" autocomplete="off">` : `<b>${zName(z)}</b>`}<button class="link z-weg" type="button" data-weg="${z.id}">Entfernen</button></div>
+      <div class="z-card-f">
+        <div class="ctl"><div class="ctl-row"><label for="zb${z.id}">Betrag</label><span class="hint">heutige Preise</span></div>
+          <div class="money"><input id="zb${z.id}" data-f="betrag" inputmode="decimal" autocomplete="off"><span class="unit">€</span><button class="step z-st" type="button" tabindex="-1" data-f="betrag" data-d="-500" aria-label="500 € weniger">−</button><button class="step z-st" type="button" tabindex="-1" data-f="betrag" data-d="500" aria-label="500 € mehr">+</button></div></div>
+        <div class="ctl"><div class="ctl-row"><span class="lbl">Wann</span><span class="hint z-in"></span></div>
+          <div class="money z-wann"><span class="z-jahr"></span><button class="step z-st" type="button" data-f="jahre" data-d="-1" aria-label="ein Jahr früher">−</button><button class="step z-st" type="button" data-f="jahre" data-d="1" aria-label="ein Jahr später">+</button></div></div>
+        ${ZTYP[z.typ].nurTg ? '<div class="z-anl z-tg"><span class="hint">auf dem Tagesgeld</span></div>' : `<div class="seg z-anl" role="group" aria-label="Anlegen in"><span class="pill"></span><button type="button" data-v="tg">Tagesgeld</button><button type="button" data-v="dep">Depot</button></div>`}
+      </div>
+      <div class="z-rate"><div class="ctl-row"><label for="zr${z.id}">Sparrate</label><button class="link z-puenkt" type="button" hidden>wie gewünscht</button></div>
+        <div class="money z-rate-in"><input id="zr${z.id}" data-f="rate" inputmode="decimal" autocomplete="off"><span class="unit">€</span><button class="step z-st" type="button" tabindex="-1" data-f="rate" data-d="-25" aria-label="25 € weniger">−</button><button class="step z-st" type="button" tabindex="-1" data-f="rate" data-d="25" aria-label="25 € mehr">+</button></div>
+        <p class="z-fx"></p></div>
+    </div>`; }).join('');
+  }
+  C.Z.forEach(x => {
+    const z = x.z, c = g.querySelector(`.z-card[data-id="${z.id}"]`); if (!c) return;
+    const b = c.querySelector('[data-f="betrag"]'), r = c.querySelector('[data-f="rate"]'), t = c.querySelector('[data-f="titel"]');
+    if (document.activeElement !== b) b.value = eur0.format(Math.round(z.betrag));
+    if (document.activeElement !== r) r.value = eur0.format(Math.round(x.rate));
+    if (t && document.activeElement !== t) t.value = z.titel;
+    const jahre = Math.ceil(x.monate / 12);
+    c.querySelector('.z-jahr').textContent = x.ok ? String(x.jahr) : 'nie';
+    c.querySelector('.z-in').textContent = x.ok ? (jahre === 1 ? 'in 1 Jahr' : `in ${jahre} Jahren`) : '';
+    const seg = c.querySelector('.seg.z-anl'); if (seg) { seg.id = seg.id || 'zanl' + z.id; setSeg(seg.id, x.depot ? 'dep' : 'tg'); }
+    c.querySelector('.z-puenkt').hidden = !x.eigen && !(x.spaeter >= 12) && !(x.ab > 0);
+    const fx = c.querySelector('.z-fx'), sp = Math.round(x.spaeter / 12);
+    const ab = x.ab > 0 ? `Sparen ab <b>${x.abJahr}</b>. ` : '';
+    fx.className = 'z-fx' + (!x.ok ? ' neg' : '');
+    fx.innerHTML = !x.ok ? 'Mit dieser Rate reicht es nicht.'
+      : sp >= 1 ? `${ab}${sp} ${sp === 1 ? 'Jahr' : 'Jahre'} später als gewünscht, <b>${x.jahr}</b> sind <b>${fK(x.ziel)}</b> da.`
+      : `${ab}<b>${x.jahr}</b> brauchst du <b>${fK(x.ziel)}</b>.`;
+  });
+}
+// Eingaben in Datenaufnahme und Karten: ein Weg für beide. Termin von Hand = neuer Wunsch, Sparen wieder ab sofort.
+function zielEingabe(e) {
+  const f = e.target.dataset.f, el = e.target.closest('[data-id]'); if (!f || !el) return;
+  const z = zFind(el.dataset.id); if (!z) return;
+  if (f === 'titel') { z.titel = e.target.value.trim(); render(); return; }   // Namen im Zeitstrahl und in der Zeile oben ziehen beim Zeichnen mit
+  const v = Math.max(0, parse(e.target.value));
+  if (f === 'betrag') z.betrag = v;
+  if (f === 'jahre') { const j = Math.round(v); if (j < 1 || j > 50) return; z.jahre = z.wunsch = j; z.start = 0; z.rate = null; }
+  if (f === 'rate') z.rate = v;
+  render();
+}
+['zRows', 'zGrid'].forEach(id => {
+  $(id).addEventListener('input', zielEingabe);
+  $(id).addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('input')) { e.preventDefault(); e.target.blur(); } });
+});
+document.addEventListener('click', e => {
+  const c = e.target.closest('.z-c');
+  if (c) {
+    const typ = c.dataset.ztyp, da = S.ziele.find(z => z.typ === typ);
+    if (da && !ZTYP[typ].mehrfach) S.ziele = S.ziele.filter(z => z !== da); else zielDazu(typ);
+    render(); return;
+  }
+  const w = e.target.closest('[data-weg]');
+  if (w) { S.ziele = S.ziele.filter(z => z.id !== +w.dataset.weg); render(); return; }
+  const card = e.target.closest('.z-card'); if (!card) return;
+  const z = zFind(card.dataset.id); if (!z) return;
+  const st = e.target.closest('.z-st'), sg = e.target.closest('.z-anl button'), pk = e.target.closest('.z-puenkt');
+  const x = compute().Z.find(q => q.z === z);
+  if (st) {
+    const d = +st.dataset.d, f = st.dataset.f;
+    if (f === 'betrag') z.betrag = snap(z.betrag, Math.abs(d), Math.sign(d));
+    if (f === 'jahre') { z.jahre = z.wunsch = Math.max((z.start || 0) + 1, Math.min(50, Math.ceil(x.monate / 12) + d)); z.rate = null; }
+    if (f === 'rate') z.rate = snap(x.rate, Math.abs(d), Math.sign(d));
+  }
+  if (sg) z.anlage = sg.dataset.v;
+  if (pk) { z.rate = null; z.start = 0; z.jahre = z.wunsch ?? z.jahre; }
+  if (st || sg || pk) render();
+});
+
 function render() {
   const vorteil = einmVorteil();
   const C = compute(); compute.last = C;
@@ -2333,6 +2790,7 @@ function render() {
   if (PLAY.pending) heroVerbergen();
 
   if (PAGE === 'toepfe' || LP.k) drawLoes(C);
+  if (S.ziele.length) renderZiele(C);
 
   /* 2 · Weg dorthin */
   const rates = r.raten.map(x => ({ ...x, rate: x.rate == null || !isFinite(x.rate) ? x.rate : Math.ceil(x.rate) })), base = rates[0].rate;
@@ -2362,6 +2820,8 @@ function render() {
   $('qFull').hidden = !(r.kapital > 0 && vorschlag > 0); marke($('qFull'), vorschlag, `ganze Lücke ${fE(vorschlag)}`);
   $('vglTick').hidden = C.V == null; if (C.V) marke($('vglTick'), C.V.rate, fE(C.V.rate));
   renderVgl(C);
+  $('nachFx').hidden = !(C.nachher > 0);
+  if (C.nachher > 0) $('nachFx').innerHTML = `Ab ${K.jahr + 1} <b>${fE(C.nachher)} mehr</b> im Monat in die Altersvorsorge, dann ist die Lücke zu. Zum Beispiel aus der nächsten Gehaltserhöhung.`;
   // Schnellknöpfe: ganze Lücke oder nur die Mindestsicherung
   const avMin = compute.last ? compute.last.avMin : 0;
   setMoney('einm', S.ersp, S.ersp <= 0);
@@ -3012,7 +3472,7 @@ placeBonus();
 MQ_HANDY.addEventListener?.('change', () => { placeBonus(); if (S.started) render(); });
 
 /* Seiten: Daten → Lücke → Weg → Lösung, immer nur ein Modul im Bild */
-const PAGES = ['intake', 'luecke', 'warten', 'toepfe'];
+const PAGES = ['intake', 'luecke', 'warten', 'toepfe', 'ziele'];
 let PAGE = 'intake';
 function navPill() {
   const btns = [...document.querySelectorAll('#tbNav button')], b = btns.find(x => x.dataset.go === PAGE) || btns[0];
@@ -3111,7 +3571,7 @@ $('go').addEventListener('click', () => {
   if ($('go')._busy) return;
   if ($('go').disabled) return;
   $('go')._busy = true; pulse($('q3'), 'fin');
-  setTimeout(() => { $('go')._busy = false; if (!S.started) start(); else { S.open.delete(3); render(); go('luecke'); } }, 150);
+  setTimeout(() => { $('go')._busy = false; if (!S.started) start(); else { S.open.delete(4); render(); go('luecke'); } }, 150);
 });
 
 /* Fragen: weiter, zurück, zuklappen */
@@ -3142,8 +3602,8 @@ function weiter(i) {
   const handy = innerWidth <= 640;
   if (handy) S.open.delete(i);
   let neu = null;
-  if (!S.started && i === S.step && i < 3) { S.step = i + 1; S.open.add(i + 1); neu = i + 1; }
-  else if (!handy && i < 3) neu = i + 1;
+  if (!S.started && i === S.step && i < 4) { S.step = i + 1; S.open.add(i + 1); neu = i + 1; }
+  else if (!handy && i < 4) neu = i + 1;
   q.classList.add('just'); setTimeout(() => q.classList.remove('just'), 1100);
   render(); oeffnet(neu);
 }
@@ -3154,7 +3614,7 @@ function enterIn(el) {
   const q = el.closest('.q');
   if (!q) { el.blur(); return; }
   const i = +q.id.slice(1);
-  if (i === 3) { el.blur(); $('go').click(); } else weiter(i);
+  if (i === 4) el.blur(); else weiter(i);
 }
 
 /* Ereignisse */
@@ -3216,10 +3676,11 @@ const money = {
   grvB: v => { if (v > 0) { S.grvMode = 'brief'; S.grvWert = v; } else S.grvMode = 'auto'; },
   spar: v => S.spar = v,
   vgl: v => S.vgl = v,
+  budget: v => S.budget = v > 0 ? v : null,
   immPreis: v => S.immPreis = v, immMiete: v => halteAnteil(() => { S.immMiete = v; }),
   mindest: v => S.mindestHeute = v
 };
-const stepOf = id => id === 'bedarf' || id === 'immMiete' || id === 'mindest' ? 50 : id === 'spar' || id === 'vgl' ? 25 : id === 'immPreis' ? 10000 : id === 'ersp' || id === 'einm' ? 1000 : 100;
+const stepOf = id => id === 'budget' || id === 'immMiete' || id === 'mindest' ? 50 : id === 'spar' || id === 'vgl' ? 25 : id === 'immPreis' ? 10000 : id === 'ersp' || id === 'einm' ? 1000 : 100;
 const snap = (cur, st, dir) => dir > 0 ? (Math.floor(cur / st + 1e-9) + 1) * st : Math.max(0, (cur % st > 1e-9 ? Math.floor(cur / st) : Math.round(cur / st) - 1) * st);
 Object.entries(money).forEach(([id, fn]) => {
   const el = $(id);
@@ -3279,7 +3740,7 @@ $('reset').addEventListener('click', () => {
   S = structuredClone(DEF); render._gap = null; $('results').hidden = true; $('topbar').hidden = true; SEEN.clear(); QSEEN.clear(); QSEEN.add(0); $('ring')._shown = false;
   stopPlay(); RING.k = 4; PATH.k = null; PATH.cur = null; PATH.shown = false; PATH.playing = false; cancelAnimationFrame(PATH.raf); cancelAnimationFrame(PATH.play);
   Object.assign(LP, { k: null, cur: null, shown: false, playing: false, scrub: false, d: null }); cancelAnimationFrame(LP.raf); cancelAnimationFrame(LP.play); cancelAnimationFrame(TL.raf); TL.p = 0; $('tl').classList.remove('live'); ['cmpNv', 'cmpWv', 'cmpMv'].forEach(id => $(id)._v = undefined);
-  PAGE = 'intake'; ['luecke', 'warten', 'toepfe'].forEach(x => { $(x).hidden = true; $(x).classList.remove('in-r', 'in-l', 'in-s', 'out-l', 'out-r', 'leert'); $(x).removeAttribute('style'); }); $('intake').hidden = false;
+  PAGE = 'intake'; ['luecke', 'warten', 'toepfe', 'ziele'].forEach(x => { $(x).hidden = true; $(x).classList.remove('in-r', 'in-l', 'in-s', 'out-l', 'out-r', 'leert'); $(x).removeAttribute('style'); }); $('intake').hidden = false;
   render(); window.scrollTo({ top: 0, behavior: 'auto' }); zeigeStart();
 });
 addEventListener('resize', () => { onScroll(); render(); if (S.started) navPill(); setSeg('status', S.status); setSeg('ums', S.ums); setSeg('einmZiel', S.einmZiel); });
@@ -3314,7 +3775,10 @@ const docDaten = () => {
   const now = new Date();
   return { now, D: { p, r, T: { ...T, anteil }, S: { ...S, topf2: 'depot' }, name: '', datum: now.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }), vorschlag, spar,
     sicher: r.kapital > 0 && sicher.heute > 0 ? sicher : null,
-    avMin: compute().avMin, einmPlus: einmAus() ? 0 : einmVorteil(), E: E.on && E.betrag > 0 ? E : null, weg: r.kapital > 0 && r.raten[0].rate > 0 && isFinite(r.raten[0].rate) ? pathData(r, Math.ceil(r.raten[0].rate)) : null,
+    ziele: (() => { const C = compute(); if (!C.Z.length) return null; const P = sparplan(C);
+      return { budget: S.budget, P: { A: P.A, jahr: P.jahr, jetzt: P.jetzt, spitze: P.spitze, zeilen: P.zeilen.map(q => ({ k: q.k, n: q.n, rate: q.rate, von: q.von, bis: q.bis, ende: q.ende, farbe: q.farbe })) },
+        liste: C.Z.map((x, i) => ({ n: zName(x.z), betrag: x.z.betrag, ab: x.ab, abJahr: x.abJahr, jahr: x.jahr, ok: x.ok, depot: x.depot, rate: x.rate, ziel: x.ziel, spaeter: x.spaeter, farbe: i })) }; })(),
+    nachher: compute().nachher, avMin: compute().avMin, einmPlus: einmAus() ? 0 : einmVorteil(), E: E.on && E.betrag > 0 ? E : null, weg: r.kapital > 0 && r.raten[0].rate > 0 && isFinite(r.raten[0].rate) ? pathData(r, Math.ceil(r.raten[0].rate)) : null,
     loes: r.n > 0 && H.kapital > 0 ? (() => { const A = loesungVerlauf(p, r, H.T, eB), B = V ? loesungVerlauf(p, r, V.T, eB) : null;
       return { A, B, ra: lpReihe(A), rb: B ? lpReihe(B) : null, eB, H: kurz(H), V: kurz(V) }; })() : null,
     viz: depA && S.ums ? depotVerlauf(T.dep >= 1 ? T.dep : 100, r.n, S.anspar, S.ums) : null,
