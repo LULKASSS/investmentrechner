@@ -172,7 +172,7 @@ test('Sparrate vergleichen: weicht man vom Vorschlag ab, wird er zur Vergleichsr
   // ausschalten und wieder holen
   await page.click('#vglAus');
   await expect(page.locator('#vglFx')).toBeHidden();
-  expect(await page.locator('#lpVgl').getAttribute('d')).toBe('');
+  await expect(page.locator('#lpVgl')).toHaveAttribute('d', '');
   await expect(page.locator('#vglAn')).toHaveText(`Vergleichen mit ${vorschlag} €`);
   await page.click('#vglAn');
   await expect(page.locator('#vglFx')).toBeVisible();
